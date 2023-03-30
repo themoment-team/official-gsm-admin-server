@@ -1,7 +1,7 @@
 package com.themoment.officialgsm.global.util;
 
-import com.themoment.officialgsm.domain.Admin.entity.Admin;
-import com.themoment.officialgsm.domain.Admin.repository.AdminRepository;
+import com.themoment.officialgsm.domain.Admin.entity.User;
+import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CurrentUserUtil {
 
-    private final AdminRepository adminRepository;
+    private final UserRepository adminRepository;
 
-    public Admin CurrentUser(){
+    public User CurrentUser(){
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
         return adminRepository.findAdminByName(id)
                 .orElseThrow(()-> new RuntimeException("유저가 없습니다."));
