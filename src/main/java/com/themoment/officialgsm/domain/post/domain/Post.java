@@ -25,6 +25,6 @@ public class Post extends BaseTimeEntity {
     private String postWriter;
 
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private Category category;
 
 }
