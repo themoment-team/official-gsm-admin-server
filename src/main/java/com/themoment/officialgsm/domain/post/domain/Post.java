@@ -1,10 +1,7 @@
 package com.themoment.officialgsm.domain.post.domain;
 
 import com.themoment.officialgsm.global.entity.BaseTimeEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,5 +20,7 @@ public class Post extends BaseTimeEntity {
     private String postTitle;
     private String postContent;
     private String postWriter;
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
 }
