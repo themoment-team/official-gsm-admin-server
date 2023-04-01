@@ -17,9 +17,13 @@ public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postSeq;
+
     private String postTitle;
+
     private String postContent;
+
     private String postWriter;
+
     @Enumerated(EnumType.STRING)
     private Type type;
 
