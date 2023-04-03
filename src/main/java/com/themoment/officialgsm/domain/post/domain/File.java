@@ -21,4 +21,8 @@ public class File {
 
     @Enumerated(EnumType.STRING)
     private Type type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_seq")
+    private Post post;
 }
