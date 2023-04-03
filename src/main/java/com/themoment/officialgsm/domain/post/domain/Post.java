@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -26,5 +29,8 @@ public class Post extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private Category category;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "post")
+    private List<File> files = new ArrayList<>();
 
 }
