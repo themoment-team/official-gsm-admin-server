@@ -1,6 +1,8 @@
 package com.themoment.officialgsm.domain.Admin.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +16,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class User {
     @Id
-    private String id;
-    private String name;
-    private String password;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userSeq;
+    private String userName;
+    private String userPwd;
 }

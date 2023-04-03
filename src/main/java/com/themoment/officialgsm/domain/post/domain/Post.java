@@ -1,5 +1,6 @@
 package com.themoment.officialgsm.domain.post.domain;
 
+import com.themoment.officialgsm.domain.Admin.entity.User;
 import com.themoment.officialgsm.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,12 +26,14 @@ public class Post extends BaseTimeEntity {
 
     private String postContent;
 
-    private String postWriter;
-
     @Enumerated(EnumType.STRING)
     private Category category;
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "post")
     private List<File> files = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_seq")
+    private User user;
 
 }
