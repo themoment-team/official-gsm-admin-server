@@ -1,0 +1,27 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: 'true'
+        show_sql: 'true'
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost8080/official
+    username: root
+    password: jwjw0185**
+
+  data:
+    redis:
+      port: 8080
+      host: 127.0.0.1
+
+logging:
+  level:
+    org:hibernate:SQL: debug
+
+jwt:
+  accessSecret: sruUC4+0P7oneMQdgNb7s1lttC7MtLvkJ+Qhf5oMGkAjOuU=
+  refreshSecret: 73A6yQSrol/ZHVW8nf2wTX9Bry9EYxqzowfEgOzRdo75l3U=
