@@ -31,7 +31,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToOne(cascade = CascadeType.REMOVE, mappedBy = "user")
+    @OneToOne(cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
     @JoinColumn(name = "approver")
     private Approver approver;
 
