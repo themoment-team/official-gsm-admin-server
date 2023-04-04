@@ -13,8 +13,8 @@ public class CurrentUserUtil {
     private final UserRepository adminRepository;
 
     public User CurrentUser(){
-        String id = SecurityContextHolder.getContext().getAuthentication().getName();
-        return adminRepository.findUserByName(id)
+        String userid = SecurityContextHolder.getContext().getAuthentication().getName();
+        return adminRepository.findUserByUserId(userid)
                 .orElseThrow(()-> new RuntimeException("유저가 없습니다."));
     }
 }
