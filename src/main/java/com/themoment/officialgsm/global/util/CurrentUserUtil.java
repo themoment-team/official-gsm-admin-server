@@ -14,7 +14,7 @@ public class CurrentUserUtil {
 
     public User CurrentUser(){
         String id = SecurityContextHolder.getContext().getAuthentication().getName();
-        return adminRepository.findUserByName(id)
+        return adminRepository.findUserByUserName(id)
                 .orElseThrow(()-> new RuntimeException("유저가 없습니다."));
     }
 }
