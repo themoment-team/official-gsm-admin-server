@@ -1,5 +1,7 @@
 package com.themoment.officialgsm.global.security;
 
+import com.themoment.officialgsm.global.security.handler.CustomAccessDeniedHandler;
+import com.themoment.officialgsm.global.security.handler.CustomAuthenticationEntryPointHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,11 @@ public class SecurityConfig {
         httpSecurity
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        httpSecurity
+                .exceptionHandling()
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
+                .authenticationEntryPoint(new CustomAuthenticationEntryPointHandler());
 
         return httpSecurity.build();
     }
