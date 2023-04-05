@@ -17,7 +17,7 @@ public class File {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fileSeq;
 
-    private String fileUri;
+    private String fileUrl;
 
     @Enumerated(EnumType.STRING)
     private Type type;
