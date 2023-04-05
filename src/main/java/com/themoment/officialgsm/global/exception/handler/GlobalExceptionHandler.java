@@ -1,6 +1,7 @@
 package com.themoment.officialgsm.global.exception.handler;
 
 import com.themoment.officialgsm.global.exception.CustomException;
+import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.exception.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,12 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode(), e);
         return ErrorResponse.toResponseEntity(e.getErrorCode());
+    }
+
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<ErrorResponse> handleCustomException(Exception e) {
+        log.error("UnknownExceptionHandler throw Exception : {}", e.getMessage(), e);
+        return ErrorResponse.toResponseEntity(ErrorCode.UNKNOWN_ERROR);
     }
 
 }
