@@ -8,6 +8,8 @@ import com.themoment.officialgsm.domain.board.entity.file.Type;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
 import com.themoment.officialgsm.domain.board.repository.PostRepository;
+import com.themoment.officialgsm.global.exception.CustomException;
+import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.util.AwsS3Util;
 import com.themoment.officialgsm.global.util.CurrentUserUtil;
 import lombok.RequiredArgsConstructor;
@@ -47,5 +49,16 @@ public class BoardService {
                     .build();
             fileRepository.save(file);
         }
+    }
+
+    public void removePost(Long postSeq) {
+        Post post = postRepository.findById(postSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        List<File> fileList = post.getFiles();
+        for(File file : fileList) {
+            awsS3Util.deleteS3(file.getFileUrl());
+        }
+        postRepository.delete(post);
     }
 }
