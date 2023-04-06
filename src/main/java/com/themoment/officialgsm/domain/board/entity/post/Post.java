@@ -1,7 +1,7 @@
-package com.themoment.officialgsm.domain.board.domain.post;
+package com.themoment.officialgsm.domain.board.entity.post;
 
 import com.themoment.officialgsm.domain.Admin.entity.User;
-import com.themoment.officialgsm.domain.board.domain.file.File;
+import com.themoment.officialgsm.domain.board.entity.file.File;
 import com.themoment.officialgsm.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

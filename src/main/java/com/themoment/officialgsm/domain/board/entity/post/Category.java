@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.board.domain.post;
+package com.themoment.officialgsm.domain.board.entity.post;
 
 public enum Category {
 

@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.board.domain.file;
+package com.themoment.officialgsm.domain.board.entity.file;
 
 public enum Type {
 
