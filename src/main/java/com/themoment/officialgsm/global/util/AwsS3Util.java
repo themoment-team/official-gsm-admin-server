@@ -34,6 +34,10 @@ public class AwsS3Util {
     public List<FileDto> upload(List<MultipartFile> multipartFiles) {
         List<FileDto> fileDtoList = new ArrayList<>();
 
+        if(multipartFiles == null) {
+            return fileDtoList;
+        }
+
         for (MultipartFile file : multipartFiles) {
             String originalFileName = file.getOriginalFilename();
             String fileName = createFileName(originalFileName);
