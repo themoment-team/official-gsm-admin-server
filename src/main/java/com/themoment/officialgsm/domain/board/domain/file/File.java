@@ -1,5 +1,6 @@
-package com.themoment.officialgsm.domain.board.domain;
+package com.themoment.officialgsm.domain.board.domain.file;
 
+import com.themoment.officialgsm.domain.board.domain.post.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
