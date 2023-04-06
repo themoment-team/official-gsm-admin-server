@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.themoment.officialgsm.domain.post.dto.FileDto;
+import com.themoment.officialgsm.domain.board.dto.FileDto;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.post.domain;
+package com.themoment.officialgsm.domain.board.domain;
 
 import com.themoment.officialgsm.domain.Admin.entity.User;
 import com.themoment.officialgsm.global.entity.BaseTimeEntity;

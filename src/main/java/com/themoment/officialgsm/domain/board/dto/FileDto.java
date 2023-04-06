@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.post.dto;
+package com.themoment.officialgsm.domain.board.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

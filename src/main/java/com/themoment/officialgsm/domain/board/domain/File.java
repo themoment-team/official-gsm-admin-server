@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.post.domain;
+package com.themoment.officialgsm.domain.board.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
