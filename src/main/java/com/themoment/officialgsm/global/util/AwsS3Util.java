@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,8 @@ public class AwsS3Util {
     private String region;
 
     private final AmazonS3 amazonS3;
+
+    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList(".jpg", ".png", ".mp4", ".hwp", ".pdf", ".xlsx");
 
     public List<FileDto> upload(List<MultipartFile> multipartFiles) {
         List<FileDto> fileDtoList = new ArrayList<>();
@@ -65,13 +68,17 @@ public class AwsS3Util {
         return fileExtension.replace(".","").toUpperCase();
     }
 
-    private String createFileName(String filename) {
-        return UUID.randomUUID().toString().concat(getFileExtension(filename));
+    private String createFileName(String fileName) {
+        return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
 
-    private String getFileExtension(String filename){
+    private String getFileExtension(String fileName){
         try {
-            return filename.substring(filename.lastIndexOf("."));
+            String extension = fileName.substring(fileName.lastIndexOf("."));
+            if (!ALLOWED_EXTENSIONS.contains(extension.toLowerCase())) {
+                throw new CustomException(ErrorCode.WRONG_INPUT_FILE);
+            }
+            return extension;
         } catch (StringIndexOutOfBoundsException e) {
             throw new CustomException(ErrorCode.WRONG_INPUT_FILE);
         }
