@@ -1,6 +1,7 @@
 package com.themoment.officialgsm.domain.board.controller;
 
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
+import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
 import com.themoment.officialgsm.domain.board.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,12 @@ public class BoardController {
     public ResponseEntity<Void> postAdd(@RequestPart("content") AddPostRequest addPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
         boardService.addPost(addPostRequest, multipartFiles);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/modify/{postSeq}")
+    public ResponseEntity<Void> postModify(@PathVariable Long postSeq, @RequestBody ModifyPostRequest modifyPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
+        boardService.modifyPost(postSeq, modifyPostRequest, multipartFiles);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{boardSeq}")
