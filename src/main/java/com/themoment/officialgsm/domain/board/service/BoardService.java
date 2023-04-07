@@ -31,8 +31,6 @@ public class BoardService {
     private final AwsS3Util awsS3Util;
 
     public void addPost(AddPostRequest addPostRequest, List<MultipartFile> multipartFiles) {
-        List<FileDto> fileDtoList = awsS3Util.upload(multipartFiles);
-
         User user = currentUserUtil.CurrentUser();
         Post post = Post.builder()
                 .postTitle(addPostRequest.getPostTitle())
@@ -40,17 +38,9 @@ public class BoardService {
                 .category(addPostRequest.getCategory())
                 .user(user)
                 .build();
-        postRepository.save(post);
 
-        for (FileDto fileDto : fileDtoList) {
-            File file = File.builder()
-                    .fileUrl(fileDto.getFileUrl())
-                    .fileName(fileDto.getFileName())
-                    .type(Type.valueOf(fileDto.getType()))
-                    .post(post)
-                    .build();
-            fileRepository.save(file);
-        }
+        postRepository.save(post);
+        saveFiles(post, multipartFiles);
     }
 
     public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> multipartFiles) {
@@ -71,6 +61,10 @@ public class BoardService {
             }
         }
 
+        saveFiles(post, multipartFiles);
+    }
+
+    private void saveFiles(Post post, List<MultipartFile> multipartFiles) {
         List<FileDto> fileDtoList = awsS3Util.upload(multipartFiles);
         for (FileDto fileDto : fileDtoList) {
             File file = File.builder()
@@ -79,6 +73,7 @@ public class BoardService {
                     .type(Type.valueOf(fileDto.getType()))
                     .post(post)
                     .build();
+
             fileRepository.save(file);
         }
     }
