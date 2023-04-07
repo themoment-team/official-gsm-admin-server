@@ -19,13 +19,13 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/add")
-    public ResponseEntity<Void> postAdd(@RequestBody AddPostRequest addPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
+    public ResponseEntity<Void> postAdd(@RequestPart("content") AddPostRequest addPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
         boardService.addPost(addPostRequest, multipartFiles);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/modify/{postSeq}")
-    public ResponseEntity<Void> postModify(@PathVariable Long postSeq, @RequestBody ModifyPostRequest modifyPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
+    public ResponseEntity<Void> postModify(@PathVariable Long postSeq, @RequestPart("content") ModifyPostRequest modifyPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
         boardService.modifyPost(postSeq, modifyPostRequest, multipartFiles);
         return new ResponseEntity<>(HttpStatus.OK);
     }
