@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,13 +56,18 @@ public class BoardService {
 
         List<String> deleteFileUrls = modifyPostRequest.getDeleteFileUrl();
         if (!deleteFileUrls.isEmpty()) {
-            for (String deleteFileUrl : deleteFileUrls) {
-                awsS3Util.deleteS3(deleteFileUrl);
-                fileRepository.deleteByFileUrl(deleteFileUrl);
-            }
+            deleteS3Files(deleteFileUrls);
         }
 
         saveFiles(post, multipartFiles);
+    }
+
+    public void removePost(Long postSeq) {
+        Post post = postRepository.findById(postSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        deletePostFiles(post.getFiles());
+        postRepository.delete(post);
     }
 
     private void saveFiles(Post post, List<MultipartFile> multipartFiles) {
@@ -78,14 +84,18 @@ public class BoardService {
         }
     }
 
-    public void removePost(Long postSeq) {
-        Post post = postRepository.findById(postSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
-
-        List<File> fileList = post.getFiles();
-        for(File file : fileList) {
-            awsS3Util.deleteS3(file.getFileUrl());
+    private void deleteS3Files(List<String> deleteFileUrls) {
+        for (String deleteFileUrl : deleteFileUrls) {
+            awsS3Util.deleteS3(deleteFileUrl);
+            fileRepository.deleteByFileUrl(deleteFileUrl);
         }
-        postRepository.delete(post);
+    }
+
+    private void deletePostFiles(List<File> fileList) {
+        List<String> deleteFileUrls = new ArrayList<>();
+        for (File file : fileList) {
+            deleteFileUrls.add(file.getFileUrl());
+        }
+        deleteS3Files(deleteFileUrls);
     }
 }
