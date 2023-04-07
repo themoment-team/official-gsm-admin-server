@@ -37,4 +37,10 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "user_seq")
     private User user;
 
+    public void update(String postTitle, String postContent, Category category) {
+        this.postTitle = postTitle;
+        this.postContent = postContent;
+        this.category = category;
+    }
+
 }
