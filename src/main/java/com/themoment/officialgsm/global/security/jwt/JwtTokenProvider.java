@@ -59,4 +59,11 @@ public class JwtTokenProvider {
             throw new CustomException(ErrorCode.TOKEN_NOT_VALID);
         }
     }
+
+    public String validateToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return "";
+    }
 }
