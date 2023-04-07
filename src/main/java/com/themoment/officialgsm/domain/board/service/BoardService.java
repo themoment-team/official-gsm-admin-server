@@ -3,6 +3,7 @@ package com.themoment.officialgsm.domain.board.service;
 import com.themoment.officialgsm.domain.Admin.entity.User;
 import com.themoment.officialgsm.domain.board.dto.FileDto;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
+import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
 import com.themoment.officialgsm.domain.board.entity.file.File;
 import com.themoment.officialgsm.domain.board.entity.file.Type;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
@@ -46,6 +47,37 @@ public class BoardService {
                     .fileUrl(fileDto.getFileUrl())
                     .fileName(fileDto.getFileName())
                     .type(Type.valueOf(fileDto.getType()))
+                    .post(post)
+                    .build();
+            fileRepository.save(file);
+        }
+    }
+
+    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> multipartFiles) {
+        Post post = postRepository.findById(postSeq)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        post.update(
+                modifyPostRequest.getPostTitle(),
+                modifyPostRequest.getPostContent(),
+                modifyPostRequest.getCategory()
+                );
+
+        List<String> deleteFileUrls = modifyPostRequest.getDeleteFileUrl();
+        if (!deleteFileUrls.isEmpty()) {
+            for (String deleteFileUrl : deleteFileUrls) {
+                awsS3Util.deleteS3(deleteFileUrl);
+                fileRepository.deleteByFileUrl(deleteFileUrl);
+            }
+        }
+
+        List<FileDto> fileDtoList = awsS3Util.upload(multipartFiles);
+        for (FileDto fileDto : fileDtoList) {
+            File file = File.builder()
+                    .fileUrl(fileDto.getFileUrl())
+                    .fileName(fileDto.getFileName())
+                    .type(Type.valueOf(fileDto.getType()))
+                    .post(post)
                     .build();
             fileRepository.save(file);
         }
