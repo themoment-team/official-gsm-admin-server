@@ -2,6 +2,7 @@ package com.themoment.officialgsm.global.security.jwt;
 
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.exception.ErrorCode;
+import com.themoment.officialgsm.global.security.auth.AuthDetailsService;
 import com.themoment.officialgsm.global.security.jwt.properties.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -9,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -21,7 +24,11 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtTokenProvider {
+
     private final JwtProperties jwtProperties;
+
+    private final AuthDetailsService authDetailsService;
+
 
     @AllArgsConstructor
     public enum TokenType{
@@ -65,5 +72,14 @@ public class JwtTokenProvider {
             return token.substring(7);
         }
         return "";
+    }
+
+    public String getTokenUserId(String token, String secret){
+        return getTokenBody(token, secret).get("userId", String.class);
+    }
+
+    public UsernamePasswordAuthenticationToken authentication(String token){
+        UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenUserId(token, jwtProperties.getAccessSecret()));
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
