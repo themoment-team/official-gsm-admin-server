@@ -77,7 +77,7 @@ public class AwsS3Util {
         }
     }
 
-    private String getDomainUrl(String filePath) {
+    private String getDomainUrl(String filePath) {    // 추후 domainUrl 수정 !!
         String s3Url = String.format("https://%s.s3.%s.amazonaws.com/", bucket, region);
         String domainUrl = "https://my-domain.com/";
 
@@ -85,7 +85,8 @@ public class AwsS3Util {
         return domainUrl + key;
     }
 
-    public void deleteS3(String fileName){
+    public void deleteS3(String deleteFileUrl){      // 추후 domainUrl 수정 !!
+        String fileName = deleteFileUrl.replace("https://my-domain.com/", "");
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 
