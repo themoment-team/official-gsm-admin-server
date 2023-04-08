@@ -2,9 +2,12 @@ package com.themoment.officialgsm.domain.board.controller;
 
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
 import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
+import com.themoment.officialgsm.domain.board.dto.response.PostListResponse;
+import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,12 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+
+    @GetMapping("/post/list")
+    public ResponseEntity<Page<PostListResponse>> postList(@RequestParam int pageNumber, @RequestParam Category category) {
+        Page<PostListResponse> postList = boardService.findPosts(pageNumber, category);
+        return new ResponseEntity<>(postList, HttpStatus.OK);
+    }
 
     @PostMapping("/add")
     public ResponseEntity<Void> postAdd(@RequestPart("content") AddPostRequest addPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
