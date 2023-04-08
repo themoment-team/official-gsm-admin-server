@@ -16,32 +16,33 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1/post")
 @RequiredArgsConstructor
 public class BoardController {
 
     private final BoardService boardService;
 
-    @GetMapping("/post/list")
+    @GetMapping("/list")
     public ResponseEntity<Page<PostListResponse>> postList(@RequestParam int pageNumber, @RequestParam Category category) {
         Page<PostListResponse> postList = boardService.findPosts(pageNumber, category);
         return new ResponseEntity<>(postList, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Void> postAdd(@RequestPart("content") AddPostRequest addPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
         boardService.addPost(addPostRequest, multipartFiles);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PatchMapping("/modify/{postSeq}")
+    @PatchMapping("/{postSeq}")
     public ResponseEntity<Void> postModify(@PathVariable Long postSeq, @RequestPart("content") ModifyPostRequest modifyPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
         boardService.modifyPost(postSeq, modifyPostRequest, multipartFiles);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{boardSeq}")
-    public ResponseEntity<Void> postDelete(@PathVariable Long boardSeq) {
-        boardService.removePost(boardSeq);
+    @DeleteMapping("/{postSeq}")
+    public ResponseEntity<Void> postDelete(@PathVariable Long postSeq) {
+        boardService.removePost(postSeq);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
