@@ -26,15 +26,10 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtTokenProvider {
-
     private final JwtProperties jwtProperties;
-
     private final AuthDetailsService authDetailsService;
-
     private final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 120 * 1000;
-
     private final long REFRESH_TOKEN_EXPIRE_TIME = ACCESS_TOKEN_EXPIRE_TIME * 12;
-
 
     @AllArgsConstructor
     public enum TokenType{
