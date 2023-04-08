@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostListResponse {
 
+    private Long postSeq;
     private String postTitle;
     private String postWriter;
     private Category category;
@@ -23,6 +24,7 @@ public class PostListResponse {
 
     public static PostListResponse toDto(Post post) {
         return PostListResponse.builder()
+                .postSeq(post.getPostSeq())
                 .postTitle(post.getPostTitle())
                 .postWriter(post.getUser().getUserName())
                 .category(post.getCategory())
