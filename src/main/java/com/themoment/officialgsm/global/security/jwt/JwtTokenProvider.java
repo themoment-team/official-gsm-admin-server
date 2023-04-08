@@ -29,6 +29,10 @@ public class JwtTokenProvider {
 
     private final AuthDetailsService authDetailsService;
 
+    private final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 120 * 1000;
+
+    private final long REFRESH_TOKEN_EXPIRE_TIME = ACCESS_TOKEN_EXPIRE_TIME * 12;
+
 
     @AllArgsConstructor
     public enum TokenType{
@@ -41,7 +45,7 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(bytes);
     }
 
-    private String generateToken(String userId, String type, String secret, long expiredTime){
+    private String generatedToken(String userId, String type, String secret, long expiredTime){
         final Claims claims = Jwts.claims();
         claims.put("userId", userId);
         claims.put("type", type);
@@ -51,6 +55,14 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(System.currentTimeMillis()))
                 .signWith(getSignInKey(secret), SignatureAlgorithm.ES256)
                 .compact();
+    }
+
+    public String generatedAccessToken(String userId){
+        return generatedToken(userId, TokenType.ACCESS_TOKEN.name(), jwtProperties.getAccessSecret(), ACCESS_TOKEN_EXPIRE_TIME);
+    }
+
+    public String generatedRefreshToken(String userId){
+        return generatedToken(userId, TokenType.REFRESH_TOKEN.name(), jwtProperties.getRefreshSecret(), REFRESH_TOKEN_EXPIRE_TIME);
     }
 
     private Claims getTokenBody(String token, String secret){
@@ -74,12 +86,13 @@ public class JwtTokenProvider {
         return "";
     }
 
-    public String getTokenUserId(String token, String secret){
-        return getTokenBody(token, secret).get("userId", String.class);
-    }
-
     public UsernamePasswordAuthenticationToken authentication(String token){
         UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenUserId(token, jwtProperties.getAccessSecret()));
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
+
+    public String getTokenUserId(String token, String secret){
+        return getTokenBody(token, secret).get("userId", String.class);
+    }
+
 }
