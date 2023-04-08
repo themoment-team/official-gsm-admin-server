@@ -4,8 +4,10 @@ import com.themoment.officialgsm.domain.Admin.entity.User;
 import com.themoment.officialgsm.domain.board.dto.FileDto;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
 import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
+import com.themoment.officialgsm.domain.board.dto.response.PostListResponse;
 import com.themoment.officialgsm.domain.board.entity.file.File;
 import com.themoment.officialgsm.domain.board.entity.file.Type;
+import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
 import com.themoment.officialgsm.domain.board.repository.PostRepository;
@@ -14,6 +16,10 @@ import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.util.AwsS3Util;
 import com.themoment.officialgsm.global.util.CurrentUserUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +36,13 @@ public class BoardService {
     private final PostRepository postRepository;
     private final FileRepository fileRepository;
     private final AwsS3Util awsS3Util;
+
+    public Page<PostListResponse> findPosts(int pageNumber, Category category) {
+        Pageable pageable = PageRequest.of(pageNumber, 5, Sort.by("createdAt").descending());
+        Page<Post> posts = postRepository.findAllByCategory(pageable, category);
+
+        return posts.map(PostListResponse::toDto);
+    }
 
     public void addPost(AddPostRequest addPostRequest, List<MultipartFile> multipartFiles) {
         User user = currentUserUtil.CurrentUser();
