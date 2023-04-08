@@ -6,6 +6,7 @@ import com.themoment.officialgsm.global.security.auth.AuthDetailsService;
 import com.themoment.officialgsm.global.security.jwt.properties.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -86,6 +88,11 @@ public class JwtTokenProvider {
         return "";
     }
 
+    public String resolveToken(HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        return validateToken(token);
+    }
+
     public UsernamePasswordAuthenticationToken authentication(String token){
         UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenUserId(token, jwtProperties.getAccessSecret()));
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -93,6 +100,14 @@ public class JwtTokenProvider {
 
     public String getTokenUserId(String token, String secret){
         return getTokenBody(token, secret).get("userId", String.class);
+    }
+
+    public ZonedDateTime getExpiredAtToken(){
+        return ZonedDateTime.now().plusSeconds(ACCESS_TOKEN_EXPIRE_TIME);
+    }
+
+    public long getExpiredAtoTokenToLong(){
+        return ACCESS_TOKEN_EXPIRE_TIME/1000L;
     }
 
 }
