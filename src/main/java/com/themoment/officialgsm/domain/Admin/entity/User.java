@@ -19,5 +19,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userSeq;
     private String userName;
+    private String userId;
     private String userPwd;
 }
