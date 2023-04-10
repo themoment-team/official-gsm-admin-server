@@ -9,10 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,5 +28,11 @@ public class UserController {
     public ResponseEntity<SignInResponse> signIn(@RequestBody @Valid SignInRequest signInRequest){
         SignInResponse data = userService.signIn(signInRequest);
         return new ResponseEntity<>(data, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization")String accessToken){
+        userService.logout(accessToken);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
