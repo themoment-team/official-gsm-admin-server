@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CurrentUserUtil {
+public class UserUtil {
 
     private final UserRepository adminRepository;
 

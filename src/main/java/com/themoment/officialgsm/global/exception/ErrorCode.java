@@ -6,6 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
+    WRONG_SCHOOL_IP("학교 IP가 아닙니다.", 400),
+    USERID_ALREADY_EXIST("이미 존재하는 유저 아이디 입니다.", 409),
     UNKNOWN_ERROR("알 수 없는 에러입니다.", 500),
     USER_NOT_FOUND("유저를 찾을 수 없습니다.", 404),
     TOKEN_EXPIRATION("토큰이 만료되었습니다.", 401),
