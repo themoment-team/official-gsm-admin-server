@@ -1,5 +1,6 @@
 package com.themoment.officialgsm.domain.Admin.service.impl;
 
+import com.themoment.officialgsm.domain.Admin.entity.BlackList;
 import com.themoment.officialgsm.domain.Admin.entity.RefreshToken;
 import com.themoment.officialgsm.domain.Admin.entity.User;
 import com.themoment.officialgsm.domain.Admin.presentation.dto.request.SignInRequest;
@@ -12,9 +13,11 @@ import com.themoment.officialgsm.domain.Admin.service.UserService;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
+import com.themoment.officialgsm.global.util.UserUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,8 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final BlackListRepository blackListRepository;
+    private final RedisTemplate redisTemplate;
+    private final UserUtil userUtil;
 
     @Value("${ip}")
     private final String schoolIp;
@@ -66,5 +71,27 @@ public class UserServiceImpl implements UserService {
                 .refreshToken(refreshToken)
                 .expiredAt(jwtTokenProvider.getExpiredAtToken())
                 .build();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void logout(String accessToken) {
+        User user = userUtil.CurrentUser();
+        RefreshToken refreshToken = refreshTokenRepository.findRefreshTokenByUserId(user.getUserId())
+                .orElseThrow(()-> new CustomException(ErrorCode.REFRESH_TOKEN_NOTFOUND));
+        refreshTokenRepository.delete(refreshToken);
+        saveBlackList(user.getUserId(), accessToken);
+    }
+
+    private void saveBlackList(String userId, String accessToken){
+        if(redisTemplate.opsForValue().get(accessToken) != null){
+            throw new CustomException(ErrorCode.BLACK_LIST_ALREADY_EXIST);
+        }
+        BlackList blackList = BlackList.builder()
+                .userId(userId)
+                .accessToken(jwtTokenProvider.validateToken(accessToken))
+                .timeToLive(jwtTokenProvider.getExpiredAtoTokenToLong())
+                .build();
+        blackListRepository.save(blackList);
     }
 }

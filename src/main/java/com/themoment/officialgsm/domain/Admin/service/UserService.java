@@ -9,4 +9,6 @@ public interface UserService {
     void signUp(SignUpRequest signUpRequest, String ip);
 
     SignInResponse signIn(SignInRequest signInRequest);
+
+    void logout(String accessToken);
 }

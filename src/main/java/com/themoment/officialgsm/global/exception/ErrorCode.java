@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
+    REFRESH_TOKEN_NOTFOUND("리프레시 토큰을 찾을 수 없습니다.", 404),
     WRONG_PASSWORD("잘못된 비밀번호 입니다.", 400),
     USERID_NOT_FOUND("유저 아이디를 찾을 수 없습니다.", 404),
     WRONG_SCHOOL_IP("학교 IP가 아닙니다.", 400),
