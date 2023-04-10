@@ -12,6 +12,7 @@ import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${ip}")
     private final String schoolIp;
@@ -34,7 +37,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = User.builder()
                 .userId(signUpRequest.getUserId())
-                .userPwd(signUpRequest.getPassword())
+                .userPwd(passwordEncoder.encode(signUpRequest.getPassword()))
                 .userName(signUpRequest.getName())
                 .build();
         userRepository.save(user);
