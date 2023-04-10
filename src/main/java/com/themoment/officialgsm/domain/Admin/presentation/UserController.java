@@ -24,4 +24,10 @@ public class UserController {
         userService.signUp(signUpRequest, ip);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @PostMapping("/signin")
+    public ResponseEntity<SignInResponse> signIn(@RequestBody @Valid SignInRequest signInRequest){
+        SignInResponse data = userService.signIn(signInRequest);
+        return new ResponseEntity<>(data, HttpStatus.OK);
+    }
 }
