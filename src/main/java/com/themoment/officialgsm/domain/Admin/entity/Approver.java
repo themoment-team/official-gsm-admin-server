@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Approver {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = true)
+    @Column(name = "approver_id",nullable = true)
     private Long grantorSeq;
 
     @Column(nullable = true)

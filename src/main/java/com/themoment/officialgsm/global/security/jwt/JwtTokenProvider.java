@@ -3,7 +3,6 @@ package com.themoment.officialgsm.global.security.jwt;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.security.auth.AuthDetailsService;
-import com.themoment.officialgsm.global.security.jwt.properties.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Getter
@@ -26,7 +25,10 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtTokenProvider {
-    private final JwtProperties jwtProperties;
+    @Value("${jwt.accessSecret}")
+    private String accessSecret;
+    @Value("${jwt.refreshSecret}")
+    private String refreshSecret;
     private final AuthDetailsService authDetailsService;
     private final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 120 * 1000;
     private final long REFRESH_TOKEN_EXPIRE_TIME = ACCESS_TOKEN_EXPIRE_TIME * 12;
@@ -55,11 +57,11 @@ public class JwtTokenProvider {
     }
 
     public String generatedAccessToken(String userId){
-        return generatedToken(userId, TokenType.ACCESS_TOKEN.name(), jwtProperties.getAccessSecret(), ACCESS_TOKEN_EXPIRE_TIME);
+        return generatedToken(userId, TokenType.ACCESS_TOKEN.name(), accessSecret, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
     public String generatedRefreshToken(String userId){
-        return generatedToken(userId, TokenType.REFRESH_TOKEN.name(), jwtProperties.getRefreshSecret(), REFRESH_TOKEN_EXPIRE_TIME);
+        return generatedToken(userId, TokenType.REFRESH_TOKEN.name(), refreshSecret, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
     private Claims getTokenBody(String token, String secret){
@@ -89,7 +91,7 @@ public class JwtTokenProvider {
     }
 
     public UsernamePasswordAuthenticationToken authentication(String token){
-        UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenUserId(token, jwtProperties.getAccessSecret()));
+        UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenUserId(token, accessSecret));
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 

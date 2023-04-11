@@ -28,8 +28,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToOne(cascade = CascadeType.REMOVE, mappedBy = "user", orphanRemoval = true)
-    @JoinColumn(name = "approver")
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JoinColumn(name = "approver_id")
     private Approver approver;
 
     @PrePersist

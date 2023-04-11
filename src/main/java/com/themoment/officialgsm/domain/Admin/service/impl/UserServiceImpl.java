@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     private final UserUtil userUtil;
 
     @Value("${ip}")
-    private final String schoolIp;
+    private String schoolIp;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
