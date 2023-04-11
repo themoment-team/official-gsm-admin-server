@@ -22,7 +22,7 @@ public class PostListResponse {
     private LocalDateTime createdAt;
     private Boolean FileIsExist;
 
-    public static PostListResponse toDto(Post post) {
+    public static PostListResponse of(Post post) {
         return PostListResponse.builder()
                 .postSeq(post.getPostSeq())
                 .postTitle(post.getPostTitle())
