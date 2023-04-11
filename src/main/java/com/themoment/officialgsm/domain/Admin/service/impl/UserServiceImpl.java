@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = User.builder()
                 .userId(signUpRequest.getUserId())
-                .userPwd(passwordEncoder.encode(signUpRequest.getPassword()))
+                .userPwd(passwordEncoder.encode(signUpRequest.getUserPwd()))
                 .userName(signUpRequest.getName())
                 .build();
         userRepository.save(user);
