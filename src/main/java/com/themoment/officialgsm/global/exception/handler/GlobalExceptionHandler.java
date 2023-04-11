@@ -15,13 +15,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode(), e);
-        return ErrorResponse.toResponseEntity(e.getErrorCode());
+        return ErrorResponse.toResponseEntity(e.getErrorCode(), e.getDetailMessage());
     }
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(Exception e) {
         log.error("UnknownExceptionHandler throw Exception : {}", e.getMessage(), e);
-        return ErrorResponse.toResponseEntity(ErrorCode.UNKNOWN_ERROR);
+        return ErrorResponse.toResponseEntity(ErrorCode.UNKNOWN_ERROR, "예외 처리되지 않은 에러가 발생하였습니다.");
     }
 
 }
