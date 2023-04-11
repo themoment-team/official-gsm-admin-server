@@ -60,7 +60,7 @@ public class BoardService {
     @Transactional
     public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> multipartFiles) {
         Post post = postRepository.findById(postSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND, "게시글 수정 과정에서 게시글을 찾지 못하였습니다."));
 
         post.update(
                 modifyPostRequest.getPostTitle(),
@@ -79,7 +79,7 @@ public class BoardService {
     @Transactional
     public void removePost(Long postSeq) {
         Post post = postRepository.findById(postSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND, "게시글 삭제 과정에서 게시글을 찾지 못하였습니다."));
 
         deletePostFiles(post.getFiles());
         postRepository.delete(post);
