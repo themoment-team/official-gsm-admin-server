@@ -29,8 +29,8 @@ public class User {
     private Role role;
 
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JoinColumn(name = "approver_id")
-    private Approver approver;
+    @JoinColumn(name = "grantor_id")
+    private Grantor grantor;
 
     @PrePersist
     public void prePersist(){

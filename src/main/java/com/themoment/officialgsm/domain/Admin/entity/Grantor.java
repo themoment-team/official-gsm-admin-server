@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Approver {
+public class Grantor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "approver_id",nullable = true)
+    @Column(name = "grantor_id",nullable = true)
     private Long grantorSeq;
 
     @Column(nullable = true)
@@ -25,6 +25,6 @@ public class Approver {
     @Column(nullable = true)
     private LocalDateTime approvedAt;
 
-    @OneToOne(cascade = CascadeType.REMOVE, mappedBy = "approver")
+    @OneToOne(cascade = CascadeType.REMOVE, mappedBy = "grantor")
     private User user;
 }
