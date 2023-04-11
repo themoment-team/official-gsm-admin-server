@@ -9,7 +9,6 @@ public class CustomException extends RuntimeException{
     private final String detailMessage;
 
     public CustomException(ErrorCode errorCode, String detailMessage) {
-        super(errorCode.getMessage());
         this.errorCode = errorCode;
         this.detailMessage = detailMessage;
     }
