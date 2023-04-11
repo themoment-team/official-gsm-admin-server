@@ -14,7 +14,6 @@ import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
 import com.themoment.officialgsm.global.util.UserUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
