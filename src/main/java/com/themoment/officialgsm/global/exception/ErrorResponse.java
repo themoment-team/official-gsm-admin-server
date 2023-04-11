@@ -13,14 +13,14 @@ public class ErrorResponse {
 
     private final String formatNow = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd / HH : mm : ss "));
     private final int status;
-    private final String message;
+    private final String detailMessage;
 
-    public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorCode errorCode) {
+    public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorCode errorCode, String detailMessage) {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ErrorResponse.builder()
                         .status(errorCode.getStatus())
-                        .message(errorCode.getMessage())
+                        .detailMessage(detailMessage)
                         .build()
                 );
     }
