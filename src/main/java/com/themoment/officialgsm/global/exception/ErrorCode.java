@@ -14,5 +14,5 @@ public enum ErrorCode {
     POST_NOT_FOUND(404, "존재하지 않는 게시글입니다.");
 
     private final int status;
-    private final String detail;
+    private final String message;
 }

@@ -20,7 +20,7 @@ public class ErrorResponse {
                 .status(errorCode.getStatus())
                 .body(ErrorResponse.builder()
                         .status(errorCode.getStatus())
-                        .message(errorCode.getDetail())
+                        .message(errorCode.getMessage())
                         .build()
                 );
     }
