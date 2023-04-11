@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class BoardService {
 
@@ -44,6 +43,7 @@ public class BoardService {
         return posts.map(PostListResponse::of);
     }
 
+    @Transactional
     public void addPost(AddPostRequest addPostRequest, List<MultipartFile> multipartFiles) {
         User user = currentUserUtil.CurrentUser();
         Post post = Post.builder()
@@ -57,6 +57,7 @@ public class BoardService {
         saveFiles(post, multipartFiles);
     }
 
+    @Transactional
     public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> multipartFiles) {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
@@ -75,6 +76,7 @@ public class BoardService {
         saveFiles(post, multipartFiles);
     }
 
+    @Transactional
     public void removePost(Long postSeq) {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
