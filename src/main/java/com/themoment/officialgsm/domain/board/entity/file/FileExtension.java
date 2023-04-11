@@ -1,6 +1,6 @@
 package com.themoment.officialgsm.domain.board.entity.file;
 
-public enum Type {
+public enum FileExtension {
 
     PNG,
     JPG,

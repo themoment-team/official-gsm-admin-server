@@ -6,7 +6,7 @@ import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
 import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
 import com.themoment.officialgsm.domain.board.dto.response.PostListResponse;
 import com.themoment.officialgsm.domain.board.entity.file.File;
-import com.themoment.officialgsm.domain.board.entity.file.Type;
+import com.themoment.officialgsm.domain.board.entity.file.FileExtension;
 import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
@@ -89,7 +89,7 @@ public class BoardService {
             File file = File.builder()
                     .fileUrl(fileDto.getFileUrl())
                     .fileName(fileDto.getFileName())
-                    .type(Type.valueOf(fileDto.getType()))
+                    .fileExtension(FileExtension.valueOf(fileDto.getType()))
                     .post(post)
                     .build();
 

@@ -23,7 +23,7 @@ public class File {
     private String fileName;
 
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private FileExtension fileExtension;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_seq")
