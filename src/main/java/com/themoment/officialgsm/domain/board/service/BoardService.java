@@ -87,6 +87,8 @@ public class BoardService {
 
     private void saveFiles(Post post, List<MultipartFile> multipartFiles) {
         List<FileDto> fileDtoList = awsS3Util.upload(multipartFiles);
+
+        List<File> fileList = new ArrayList<>();
         for (FileDto fileDto : fileDtoList) {
             File file = File.builder()
                     .fileUrl(fileDto.getFileUrl())
@@ -95,8 +97,10 @@ public class BoardService {
                     .post(post)
                     .build();
 
-            fileRepository.save(file);
+            fileList.add(file);
         }
+
+        fileRepository.saveAll(fileList);
     }
 
     private void deleteS3Files(List<String> deleteFileUrls) {
