@@ -13,10 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,11 +31,11 @@ public class AwsS3Util {
     private final String DOMAIN_URL = "https://my-domain.com/";   // 추후 수정해야함 !
 
     public List<FileDto> upload(List<MultipartFile> multipartFiles) {
-        List<FileDto> fileDtoList = new ArrayList<>();
-
-        if(multipartFiles == null) {
-            return fileDtoList;
+        if(multipartFiles == null || multipartFiles.isEmpty()) {
+            return Collections.emptyList();
         }
+
+        List<FileDto> fileDtoList = new ArrayList<>();
 
         for (MultipartFile file : multipartFiles) {
             String originalFileName = file.getOriginalFilename();
