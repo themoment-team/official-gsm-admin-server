@@ -12,7 +12,6 @@ import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
 import com.themoment.officialgsm.domain.board.repository.PostRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
-import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.util.AwsS3Util;
 import com.themoment.officialgsm.global.util.CurrentUserUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,7 +60,7 @@ public class BoardService {
     @Transactional
     public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> multipartFiles) {
         Post post = postRepository.findById(postSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND, "게시글 수정 과정에서 게시글을 찾지 못하였습니다."));
+                .orElseThrow(() -> new CustomException("게시글 수정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
 
         post.update(
                 modifyPostRequest.getPostTitle(),
@@ -79,7 +79,7 @@ public class BoardService {
     @Transactional
     public void removePost(Long postSeq) {
         Post post = postRepository.findById(postSeq)
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND, "게시글 삭제 과정에서 게시글을 찾지 못하였습니다."));
+                .orElseThrow(() -> new CustomException("게시글 삭제 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
 
         deletePostFiles(post.getFiles());
         postRepository.delete(post);

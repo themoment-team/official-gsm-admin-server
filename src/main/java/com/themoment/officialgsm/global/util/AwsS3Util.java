@@ -4,9 +4,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.themoment.officialgsm.domain.board.dto.FileDto;
 import com.themoment.officialgsm.global.exception.CustomException;
-import com.themoment.officialgsm.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,7 +55,7 @@ public class AwsS3Util {
                 );
                 fileDtoList.add(fileDto);
             } catch(IOException e) {
-                throw new CustomException(ErrorCode.FILE_UPLOAD_ERROR, "파일 업로드 과정에서 예외가 발생하였습니다.");
+                throw new CustomException("파일 업로드 과정에서 예외가 발생하였습니다.", HttpStatus.BAD_REQUEST);
             }
         }
         return fileDtoList;
@@ -73,11 +73,11 @@ public class AwsS3Util {
         try {
             String extension = fileName.substring(fileName.lastIndexOf("."));
             if (!ALLOWED_EXTENSIONS.contains(extension.toLowerCase())) {
-                throw new CustomException(ErrorCode.WRONG_INPUT_FILE, "파일 확장자 형식이 잘못되었습니다.");
+                throw new CustomException("파일 확장자 형식이 잘못되었습니다.", HttpStatus.BAD_REQUEST);
             }
             return extension;
         } catch (StringIndexOutOfBoundsException e) {
-            throw new CustomException(ErrorCode.WRONG_INPUT_FILE, "파일 확장자가 존재하지 않습니다.");
+            throw new CustomException("파일 확장자가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
