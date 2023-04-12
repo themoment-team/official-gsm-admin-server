@@ -1,10 +1,7 @@
 package com.themoment.officialgsm.global.util;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.themoment.officialgsm.domain.board.dto.FileDto;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.exception.ErrorCode;
@@ -92,9 +89,15 @@ public class AwsS3Util {
         return domainUrl + key;
     }
 
-    public void deleteS3(String deleteFileUrl){      // 추후 domainUrl 수정 !!
-        String fileName = deleteFileUrl.replace("https://my-domain.com/", "");
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+    public void deleteS3(List<String> deleteFileUrls){      // 추후 domainUrl 수정 !!
+        List<String> deleteFileKeys = new ArrayList<>();
+        for (String deleteFileUrl : deleteFileUrls) {
+            deleteFileKeys.add(deleteFileUrl.replace("https://my-domain.com/", ""));
+        }
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket)
+                .withKeys(deleteFileKeys.toArray(new String[0]));
+
+        amazonS3.deleteObjects(deleteObjectsRequest);
     }
 
 }
