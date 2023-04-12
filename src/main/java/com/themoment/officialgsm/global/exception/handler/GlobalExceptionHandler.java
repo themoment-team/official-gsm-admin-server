@@ -14,13 +14,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
-        log.error("handleCustomException throw CustomException : {}", e.getMessage(), e);
         return ErrorResponse.toResponseEntity(e.getDetailMessage(), e.getHttpStatus());
     }
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(Exception e) {
-        log.error("UnknownExceptionHandler throw Exception : {}", e.getMessage(), e);
         return ErrorResponse.toResponseEntity("예외 처리되지 않은 에러가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
