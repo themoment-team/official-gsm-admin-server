@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -42,12 +43,9 @@ public class AwsS3Util {
         for (MultipartFile file : multipartFiles) {
             String originalFileName = file.getOriginalFilename();
             String fileName = createFileName(originalFileName);
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength(file.getSize());
-            objectMetadata.setContentType(file.getContentType());
 
             try(InputStream inputStream = file.getInputStream()) {
-                amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+                amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, extractMetaData(file))
                         .withCannedAcl(CannedAccessControlList.PublicRead));
                 FileDto fileDto = new FileDto(
                         getDomainUrl(amazonS3.getUrl(bucket, fileName).toString()),
@@ -60,6 +58,14 @@ public class AwsS3Util {
             }
         }
         return fileDtoList;
+    }
+
+    private ObjectMetadata extractMetaData(MultipartFile file) {
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.getSize());
+        objectMetadata.setContentType(file.getContentType());
+
+        return objectMetadata;
     }
 
     private String convertToConstant(String fileExtension) {
