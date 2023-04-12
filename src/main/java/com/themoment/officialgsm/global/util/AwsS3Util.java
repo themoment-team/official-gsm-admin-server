@@ -51,7 +51,7 @@ public class AwsS3Util {
                 );
                 fileDtoList.add(fileDto);
             } catch(IOException e) {
-                throw new CustomException("파일 업로드 과정에서 예외가 발생하였습니다.", HttpStatus.BAD_REQUEST);
+                throw new CustomException("파일 업로드 과정에서 예외가 발생하였습니다.", HttpStatus.BAD_REQUEST, e);
             }
         }
         return fileDtoList;
