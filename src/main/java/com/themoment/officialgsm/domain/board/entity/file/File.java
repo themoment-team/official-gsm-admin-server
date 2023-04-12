@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -15,8 +18,10 @@ import lombok.NoArgsConstructor;
 public class File {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fileSeq;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Builder.Default
+    private String fileSeq = UUID.randomUUID().toString();
 
     private String fileUrl;
 
