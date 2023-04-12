@@ -104,10 +104,8 @@ public class BoardService {
     }
 
     private void deleteS3Files(List<String> deleteFileUrls) {
-        for (String deleteFileUrl : deleteFileUrls) {
-            awsS3Util.deleteS3(deleteFileUrl);
-            fileRepository.deleteByFileUrl(deleteFileUrl);
-        }
+        awsS3Util.deleteS3(deleteFileUrls);
+        fileRepository.deleteByFileUrls(deleteFileUrls);
     }
 
     private void deletePostFiles(List<File> fileList) {
