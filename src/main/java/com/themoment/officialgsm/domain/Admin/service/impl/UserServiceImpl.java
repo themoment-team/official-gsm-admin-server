@@ -13,8 +13,11 @@ import com.themoment.officialgsm.domain.Admin.service.UserService;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
+import com.themoment.officialgsm.global.util.ClientIpUtil;
 import com.themoment.officialgsm.global.util.UserUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -31,13 +35,14 @@ public class UserServiceImpl implements UserService {
     private final BlackListRepository blackListRepository;
     private final RedisTemplate redisTemplate;
     private final UserUtil userUtil;
+    private final ClientIpUtil clientIpUtil;
 
     @Value("${ip}")
     private String schoolIp;
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void signUp(SignUpRequest signUpRequest, String ip) {
+    public void signUp(SignUpRequest signUpRequest, HttpServletRequest request) {
+        String ip = clientIpUtil.getIp(request);
         if (userRepository.existsByUserId(signUpRequest.getUserId())){
             throw new CustomException(ErrorCode.USERID_ALREADY_EXIST);
         }

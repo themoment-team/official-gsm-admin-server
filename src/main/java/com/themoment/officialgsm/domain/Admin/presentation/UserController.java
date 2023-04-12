@@ -19,8 +19,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest signUpRequest, HttpServletRequest request){
-        String ip = request.getRemoteAddr();
-        userService.signUp(signUpRequest, ip);
+        userService.signUp(signUpRequest, request);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

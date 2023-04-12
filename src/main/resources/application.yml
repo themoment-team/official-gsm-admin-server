@@ -1,5 +1,7 @@
 spring:
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: 'true'
@@ -24,4 +26,4 @@ jwt:
   accessSecret: sruUC4+0P7oneMQdgNb7s1lttC7MtLvkJ+Qhf5oMGkAjOuU=
   refreshSecret: 73A6yQSrol/ZHVW8nf2wTX9Bry9EYxqzowfEgOzRdo75l3U=
 
-ip: "210.218.52.13"
+ip: "0:0:0:0:0:0:0:1"
