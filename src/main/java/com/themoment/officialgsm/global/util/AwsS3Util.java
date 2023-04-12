@@ -29,7 +29,8 @@ public class AwsS3Util {
 
     private final AmazonS3 amazonS3;
 
-    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList(".jpg", ".png", ".mp4", ".hwp", ".pdf", ".xlsx");
+    private final List<String> ALLOWED_EXTENSIONS = Arrays.asList(".jpg", ".png", ".mp4", ".hwp", ".pdf", ".xlsx");
+    private final String DOMAIN_URL = "https://my-domain.com/";   // 추후 수정해야함 !
 
     public List<FileDto> upload(List<MultipartFile> multipartFiles) {
         List<FileDto> fileDtoList = new ArrayList<>();
@@ -81,18 +82,17 @@ public class AwsS3Util {
         }
     }
 
-    private String getDomainUrl(String filePath) {    // 추후 domainUrl 수정 !!
+    private String getDomainUrl(String filePath) {
         String s3Url = String.format("https://%s.s3.%s.amazonaws.com/", bucket, region);
-        String domainUrl = "https://my-domain.com/";
-
         String key = filePath.replace(s3Url, "");
-        return domainUrl + key;
+
+        return DOMAIN_URL + key;
     }
 
-    public void deleteS3(List<String> deleteFileUrls){      // 추후 domainUrl 수정 !!
+    public void deleteS3(List<String> deleteFileUrls){
         List<String> deleteFileKeys = new ArrayList<>();
         for (String deleteFileUrl : deleteFileUrls) {
-            deleteFileKeys.add(deleteFileUrl.replace("https://my-domain.com/", ""));
+            deleteFileKeys.add(deleteFileUrl.replace(DOMAIN_URL, ""));
         }
         DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket)
                 .withKeys(deleteFileKeys.toArray(new String[0]));
