@@ -18,7 +18,6 @@ public class PostListResponse {
     private Long postSeq;
     private String postTitle;
     private String postWriter;
-    private Category category;
     private LocalDateTime createdAt;
     private Boolean FileIsExist;
 
@@ -27,7 +26,6 @@ public class PostListResponse {
                 .postSeq(post.getPostSeq())
                 .postTitle(post.getPostTitle())
                 .postWriter(post.getUser().getUserName())
-                .category(post.getCategory())
                 .createdAt(post.getCreatedAt())
                 .FileIsExist(post.getFiles()!=null)
                 .build();
