@@ -1,6 +1,5 @@
 package com.themoment.officialgsm.domain.board.dto.response;
 
-import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +20,7 @@ public class PostListResponse {
     private LocalDateTime createdAt;
     private Boolean FileIsExist;
 
-    public static PostListResponse of(Post post) {
+    public static PostListResponse from(Post post) {
         return PostListResponse.builder()
                 .postSeq(post.getPostSeq())
                 .postTitle(post.getPostTitle())
