@@ -35,4 +35,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String requestURI = request.getRequestURI();
+        return requestURI.equals("/auth/signup")
+                || requestURI.equals("/auth/signin")
+                || requestURI.equals("/auth/logout")
+                || requestURI.equals("/auth/token/reissue");
+    }
 }

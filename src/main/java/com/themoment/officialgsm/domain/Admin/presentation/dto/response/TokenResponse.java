@@ -10,9 +10,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SignInResponse {
-    private String accessToken;
-    private String refreshToken;
+public class TokenResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private ZonedDateTime expiredAt;
 }

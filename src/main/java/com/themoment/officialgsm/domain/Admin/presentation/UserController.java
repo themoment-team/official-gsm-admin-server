@@ -2,9 +2,10 @@ package com.themoment.officialgsm.domain.Admin.presentation;
 
 import com.themoment.officialgsm.domain.Admin.presentation.dto.request.SignInRequest;
 import com.themoment.officialgsm.domain.Admin.presentation.dto.request.SignUpRequest;
-import com.themoment.officialgsm.domain.Admin.presentation.dto.response.SignInResponse;
+import com.themoment.officialgsm.domain.Admin.presentation.dto.response.TokenResponse;
 import com.themoment.officialgsm.domain.Admin.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,8 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<SignInResponse> signIn(@RequestBody @Valid SignInRequest signInRequest){
-        SignInResponse data = userService.signIn(signInRequest);
+    public ResponseEntity<TokenResponse> signIn(@RequestBody @Valid SignInRequest signInRequest, HttpServletResponse response){
+        TokenResponse data = userService.signIn(signInRequest, response);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
@@ -33,5 +34,11 @@ public class UserController {
     public ResponseEntity<Void> logout(@RequestHeader("Authorization")String accessToken){
         userService.logout(accessToken);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/token/reissue")
+    public ResponseEntity<TokenResponse> TokenReissue(HttpServletRequest request, HttpServletResponse response){
+        TokenResponse data = userService.tokenReissue(request, response);
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
 }

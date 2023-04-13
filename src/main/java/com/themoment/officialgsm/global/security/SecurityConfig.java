@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/signup").permitAll()
                         .requestMatchers("/auth/signin").permitAll()
                         .requestMatchers("/auth/logout").permitAll()
+                        .requestMatchers("/auth/token/reissue").permitAll()
                         .anyRequest().authenticated();
 
         httpSecurity

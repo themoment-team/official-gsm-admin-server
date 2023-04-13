@@ -51,8 +51,8 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()))
-                .signWith(getSignInKey(secret), SignatureAlgorithm.ES256)
+                .setExpiration(new Date(System.currentTimeMillis()+expiredTime))
+                .signWith(getSignInKey(secret), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -76,6 +76,17 @@ public class JwtTokenProvider {
         } catch (JwtException e){
             throw new CustomException(ErrorCode.TOKEN_NOT_VALID);
         }
+    }
+    public String getRefreshTokenUserId(String token) {
+        return getRefreshTokenBody(token).getSubject();
+    }
+
+    public Claims getRefreshTokenBody(String token) throws ExpiredJwtException, IllegalArgumentException, MalformedJwtException, UnsupportedJwtException, PrematureJwtException {
+        return Jwts.parserBuilder()
+                .setSigningKey(refreshSecret.getBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public String validateToken(String token) {
@@ -105,6 +116,16 @@ public class JwtTokenProvider {
 
     public long getExpiredAtoTokenToLong(){
         return ACCESS_TOKEN_EXPIRE_TIME/1000L;
+    }
+
+    public boolean isExpiredToken(String token) {
+        final Date expiration = getRefreshTokenBody(token).getExpiration();
+
+        return expiration.before(new Date());
+    }
+
+    public boolean isValidToken(String token) {
+        return !isExpiredToken(token);
     }
 
 }

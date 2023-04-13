@@ -19,13 +19,13 @@ public class User {
     @Column(name = "user_seq")
     private Long userSeq;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(nullable = false)
     private String userId;
 
-    @Column(name = "user_name", nullable = false)
+    @Column(nullable = false)
     private String userName;
 
-    @Column(name = "user_pwd",nullable = false)
+    @Column(nullable = false)
     private String userPwd;
 
     @Enumerated(EnumType.STRING)
