@@ -89,25 +89,23 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
-    public String validateToken(String token) {
-        if (token != null && token.startsWith("Bearer ")) {
-            return token.substring(7);
-        }
-        return "";
-    }
-
-    public String resolveToken(HttpServletRequest request){
-        String token = request.getHeader("Authorization");
-        return validateToken(token);
-    }
-
     public UsernamePasswordAuthenticationToken authentication(String token){
         UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenUserId(token, accessSecret));
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
     public String getTokenUserId(String token, String secret){
+        log.info(getTokenBody(token, secret).get("userId", String.class));
         return getTokenBody(token, secret).get("userId", String.class);
+    }
+
+    public String resolveToken(HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        if(token != null && token.startsWith("Bearer ")){
+            return token.substring(7);
+        } else {
+            return token;
+        }
     }
 
     public ZonedDateTime getExpiredAtToken(){
@@ -120,7 +118,6 @@ public class JwtTokenProvider {
 
     public boolean isExpiredToken(String token) {
         final Date expiration = getRefreshTokenBody(token).getExpiration();
-
         return expiration.before(new Date());
     }
 

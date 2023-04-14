@@ -4,6 +4,7 @@ import com.themoment.officialgsm.global.filter.JwtRequestFilter;
 import com.themoment.officialgsm.global.security.handler.CustomAccessDeniedHandler;
 import com.themoment.officialgsm.global.security.handler.CustomAuthenticationEntryPointHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -46,7 +47,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                         .requestMatchers("/auth/signup").permitAll()
                         .requestMatchers("/auth/signin").permitAll()
-                        .requestMatchers("/auth/logout").permitAll()
                         .requestMatchers("/auth/token/reissue").permitAll()
                         .anyRequest().authenticated();
 

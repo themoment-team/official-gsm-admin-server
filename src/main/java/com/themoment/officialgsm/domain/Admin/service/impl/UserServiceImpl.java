@@ -70,9 +70,10 @@ public class UserServiceImpl implements UserService {
 
         String accessToken = jwtTokenProvider.generatedAccessToken(signInRequest.getUserId());
         String refreshToken = jwtTokenProvider.generatedRefreshToken(signInRequest.getUserId());
+        log.info(refreshToken);
         CookieUtil.addRefreshTokenCookie(response, "access_token", accessToken, 60*120, true);
         CookieUtil.addRefreshTokenCookie(response, "refresh_token",refreshToken,60*120*12,true);
-        RefreshToken entityToRedis = new RefreshToken(signInRequest.getUserId(), refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
+        RefreshToken entityToRedis =  new RefreshToken(signInRequest.getUserId(),refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
         refreshTokenRepository.save(entityToRedis);
         return TokenResponse.builder()
                 .expiredAt(jwtTokenProvider.getExpiredAtToken())
@@ -106,9 +107,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void logout(String accessToken) {
+    public void logout(HttpServletRequest request) {
         User user = userUtil.CurrentUser();
-        RefreshToken refreshToken = refreshTokenRepository.findRefreshTokenByUserId(user.getUserId())
+        String accessToken = jwtTokenProvider.resolveToken(request);
+        RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
                 .orElseThrow(()-> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
         refreshTokenRepository.delete(refreshToken);
         saveBlackList(user.getUserId(), accessToken);
@@ -120,7 +122,7 @@ public class UserServiceImpl implements UserService {
         }
         BlackList blackList = BlackList.builder()
                 .userId(userId)
-                .accessToken(jwtTokenProvider.validateToken(accessToken))
+                .accessToken(accessToken)
                 .timeToLive(jwtTokenProvider.getExpiredAtoTokenToLong())
                 .build();
         blackListRepository.save(blackList);

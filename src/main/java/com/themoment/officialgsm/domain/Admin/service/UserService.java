@@ -11,7 +11,7 @@ public interface UserService {
 
     TokenResponse signIn(SignInRequest signInRequest, HttpServletResponse httpServletResponse);
 
-    void logout(String accessToken);
+    void logout(HttpServletRequest request);
 
     TokenResponse tokenReissue(HttpServletRequest request, HttpServletResponse response);
 }

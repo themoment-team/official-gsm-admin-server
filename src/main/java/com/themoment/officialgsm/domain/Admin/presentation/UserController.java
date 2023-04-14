@@ -31,8 +31,8 @@ public class UserController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization")String accessToken){
-        userService.logout(accessToken);
+    public ResponseEntity<Void> logout(HttpServletRequest request){
+        userService.logout(request);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

@@ -2,12 +2,14 @@ package com.themoment.officialgsm.global.security.auth;
 
 import com.themoment.officialgsm.domain.Admin.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
 @AllArgsConstructor
+@Slf4j
 public class AuthDetails implements UserDetails {
     private User user;
 

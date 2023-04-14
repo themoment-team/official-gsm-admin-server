@@ -3,11 +3,14 @@ package com.themoment.officialgsm.global.filter;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
+import com.themoment.officialgsm.global.util.CookieUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +21,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtProvider;
     private final RedisTemplate<String, Object> redisTemplate;
@@ -25,8 +29,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = jwtProvider.resolveToken(request);
-        if (token.equals("")){
+        String token = CookieUtil.getCookieValue(request, "access_token");
+        if (token != null){
             if (redisTemplate.opsForValue().get(token) != null){
                 throw new CustomException(ErrorCode.BLACK_LIST_ALREADY_EXIST);
             }
@@ -34,14 +38,5 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(request, response);
-    }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String requestURI = request.getRequestURI();
-        return requestURI.equals("/auth/signup")
-                || requestURI.equals("/auth/signin")
-                || requestURI.equals("/auth/logout")
-                || requestURI.equals("/auth/token/reissue");
     }
 }
