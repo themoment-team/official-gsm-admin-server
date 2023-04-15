@@ -70,7 +70,6 @@ public class UserServiceImpl implements UserService {
 
         String accessToken = jwtTokenProvider.generatedAccessToken(signInRequest.getUserId());
         String refreshToken = jwtTokenProvider.generatedRefreshToken(signInRequest.getUserId());
-        log.info(refreshToken);
         CookieUtil.addRefreshTokenCookie(response, "access_token", accessToken, 60*120, true);
         CookieUtil.addRefreshTokenCookie(response, "refresh_token",refreshToken,60*120*12,true);
         RefreshToken entityToRedis =  new RefreshToken(signInRequest.getUserId(),refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
@@ -84,14 +83,16 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public TokenResponse tokenReissue(HttpServletRequest request, HttpServletResponse response) {
         String token = CookieUtil.getCookieValue(request, "refresh_token");
-        String userId = jwtTokenProvider.getRefreshTokenUserId(token);
-        RefreshToken refreshToken = refreshTokenRepository.findRefreshTokenByUserId(userId)
+        String secret = jwtTokenProvider.getRefreshSecret();
+        String userId = jwtTokenProvider.getTokenUserId(token, secret);
+        log.info(userId);
+        RefreshToken refreshToken = refreshTokenRepository.findById(userId)
                 .orElseThrow(()->new CustomException(ErrorCode.REFRESH_TOKEN_NOT_VALID));
         String newAccessToken = jwtTokenProvider.generatedAccessToken(userId);
         String newRefreshToken = jwtTokenProvider.generatedRefreshToken(userId);
 
         if (!refreshToken.getToken().equals(token)) {
-            if (jwtTokenProvider.isValidToken(token)) {
+            if (jwtTokenProvider.isValidToken(token, secret)) {
                 throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_VALID);
             }
         }

@@ -20,7 +20,6 @@ public class AuthDetailsService implements UserDetailsService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        log.info(userId);
         return userRepository.findUserByUserId(userId)
                 .map(AuthDetails::new)
                 .orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));

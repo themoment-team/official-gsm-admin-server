@@ -77,17 +77,6 @@ public class JwtTokenProvider {
             throw new CustomException(ErrorCode.TOKEN_NOT_VALID);
         }
     }
-    public String getRefreshTokenUserId(String token) {
-        return getRefreshTokenBody(token).getSubject();
-    }
-
-    public Claims getRefreshTokenBody(String token) throws ExpiredJwtException, IllegalArgumentException, MalformedJwtException, UnsupportedJwtException, PrematureJwtException {
-        return Jwts.parserBuilder()
-                .setSigningKey(refreshSecret.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
 
     public UsernamePasswordAuthenticationToken authentication(String token){
         UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenUserId(token, accessSecret));
@@ -95,7 +84,6 @@ public class JwtTokenProvider {
     }
 
     public String getTokenUserId(String token, String secret){
-        log.info(getTokenBody(token, secret).get("userId", String.class));
         return getTokenBody(token, secret).get("userId", String.class);
     }
 
@@ -116,13 +104,13 @@ public class JwtTokenProvider {
         return ACCESS_TOKEN_EXPIRE_TIME/1000L;
     }
 
-    public boolean isExpiredToken(String token) {
-        final Date expiration = getRefreshTokenBody(token).getExpiration();
+    public boolean isExpiredToken(String token, String secret) {
+        final Date expiration = getTokenBody(token, secret).getExpiration();
         return expiration.before(new Date());
     }
 
-    public boolean isValidToken(String token) {
-        return !isExpiredToken(token);
+    public boolean isValidToken(String token, String secret) {
+        return !isExpiredToken(token, secret);
     }
 
 }
