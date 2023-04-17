@@ -37,10 +37,6 @@ public class User {
 
     private LocalDateTime approvedAt;
 
-    public void setGrantor(User grantor) {
-        this.grantor = grantor;
-    }
-
     @PrePersist
     public void prePersist(){
         this.role = this.role == null ? Role.UN_APPROVE : Role.ADMIN;

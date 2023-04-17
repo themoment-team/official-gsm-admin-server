@@ -64,6 +64,7 @@ public class UserServiceImpl implements UserService {
     public TokenResponse signIn(SignInRequest signInRequest, HttpServletResponse response) {
         User user = userRepository.findUserByUserId(signInRequest.getUserId())
                 .orElseThrow(()-> new CustomException(ErrorCode.USERID_NOT_FOUND));
+
         if (!passwordEncoder.matches(signInRequest.getUserPwd(), user.getUserPwd())){
             throw new CustomException(ErrorCode.WRONG_PASSWORD);
         }
@@ -85,7 +86,6 @@ public class UserServiceImpl implements UserService {
         String token = CookieUtil.getCookieValue(request, "refresh_token");
         String secret = jwtTokenProvider.getRefreshSecret();
         String userId = jwtTokenProvider.getTokenUserId(token, secret);
-        log.info(userId);
         RefreshToken refreshToken = refreshTokenRepository.findById(userId)
                 .orElseThrow(()->new CustomException(ErrorCode.REFRESH_TOKEN_NOT_VALID));
         String newAccessToken = jwtTokenProvider.generatedAccessToken(userId);
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void logout(HttpServletRequest request) {
         User user = userUtil.CurrentUser();
-        String accessToken = jwtTokenProvider.resolveToken(request);
+        String accessToken = CookieUtil.getCookieValue(request, "access_token");
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
                 .orElseThrow(()-> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
         refreshTokenRepository.delete(refreshToken);

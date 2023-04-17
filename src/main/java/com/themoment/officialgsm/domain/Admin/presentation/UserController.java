@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/token/reissue")
-    public ResponseEntity<TokenResponse> TokenReissue(HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<TokenResponse> tokenReissue(HttpServletRequest request, HttpServletResponse response){
         TokenResponse data = userService.tokenReissue(request, response);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }

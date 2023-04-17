@@ -87,15 +87,6 @@ public class JwtTokenProvider {
         return getTokenBody(token, secret).get("userId", String.class);
     }
 
-    public String resolveToken(HttpServletRequest request){
-        String token = request.getHeader("Authorization");
-        if(token != null && token.startsWith("Bearer ")){
-            return token.substring(7);
-        } else {
-            return token;
-        }
-    }
-
     public ZonedDateTime getExpiredAtToken(){
         return ZonedDateTime.now().plusSeconds(ACCESS_TOKEN_EXPIRE_TIME);
     }
