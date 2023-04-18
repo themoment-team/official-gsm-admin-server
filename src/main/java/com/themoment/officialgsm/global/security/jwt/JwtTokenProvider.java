@@ -1,16 +1,15 @@
 package com.themoment.officialgsm.global.security.jwt;
 
 import com.themoment.officialgsm.global.exception.CustomException;
-import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.security.auth.AuthDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -72,9 +71,9 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e){
-            throw new CustomException(ErrorCode.TOKEN_EXPIRATION);
+            throw new CustomException("토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED);
         } catch (JwtException e){
-            throw new CustomException(ErrorCode.TOKEN_NOT_VALID);
+            throw new CustomException("토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
         }
     }
 

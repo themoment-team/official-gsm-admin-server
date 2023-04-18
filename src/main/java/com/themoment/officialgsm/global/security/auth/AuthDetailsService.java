@@ -2,9 +2,9 @@ package com.themoment.officialgsm.global.security.auth;
 
 import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
-import com.themoment.officialgsm.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,6 +22,6 @@ public class AuthDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         return userRepository.findUserByUserId(userId)
                 .map(AuthDetails::new)
-                .orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(()-> new CustomException("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
     }
 }

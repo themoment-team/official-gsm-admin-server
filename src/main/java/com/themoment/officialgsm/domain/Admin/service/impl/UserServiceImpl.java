@@ -11,7 +11,6 @@ import com.themoment.officialgsm.domain.Admin.repository.RefreshTokenRepository;
 import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
 import com.themoment.officialgsm.domain.Admin.service.UserService;
 import com.themoment.officialgsm.global.exception.CustomException;
-import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
 import com.themoment.officialgsm.global.util.ClientIpUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
@@ -22,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,10 +46,10 @@ public class UserServiceImpl implements UserService {
     public void signUp(SignUpRequest signUpRequest, HttpServletRequest request) {
         String ip = clientIpUtil.getIp(request);
         if (userRepository.existsByUserId(signUpRequest.getUserId())){
-            throw new CustomException(ErrorCode.USERID_ALREADY_EXIST);
+            throw new CustomException("이미 사용되고 있는 유저 아이디입니다.", HttpStatus.CONFLICT);
         }
         if (!ip.equals(schoolIp)) {
-            throw new CustomException(ErrorCode.WRONG_SCHOOL_IP);
+            throw new CustomException("학교 아이피가 아닙니다.", HttpStatus.BAD_REQUEST);
         }
         User user = User.builder()
                 .userId(signUpRequest.getUserId())
@@ -63,10 +63,10 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public TokenResponse signIn(SignInRequest signInRequest, HttpServletResponse response) {
         User user = userRepository.findUserByUserId(signInRequest.getUserId())
-                .orElseThrow(()-> new CustomException(ErrorCode.USERID_NOT_FOUND));
+                .orElseThrow(()-> new CustomException("사용자 아이디를 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
 
         if (!passwordEncoder.matches(signInRequest.getUserPwd(), user.getUserPwd())){
-            throw new CustomException(ErrorCode.WRONG_PASSWORD);
+            throw new CustomException("패스워드가 틀렸습니다.", HttpStatus.BAD_REQUEST);
         }
 
         String accessToken = jwtTokenProvider.generatedAccessToken(signInRequest.getUserId());
@@ -87,13 +87,13 @@ public class UserServiceImpl implements UserService {
         String secret = jwtTokenProvider.getRefreshSecret();
         String userId = jwtTokenProvider.getTokenUserId(token, secret);
         RefreshToken refreshToken = refreshTokenRepository.findById(userId)
-                .orElseThrow(()->new CustomException(ErrorCode.REFRESH_TOKEN_NOT_VALID));
+                .orElseThrow(()->new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST));
         String newAccessToken = jwtTokenProvider.generatedAccessToken(userId);
         String newRefreshToken = jwtTokenProvider.generatedRefreshToken(userId);
 
         if (!refreshToken.getToken().equals(token)) {
             if (jwtTokenProvider.isValidToken(token, secret)) {
-                throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_VALID);
+                throw new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
             }
         }
 
@@ -112,14 +112,14 @@ public class UserServiceImpl implements UserService {
         User user = userUtil.CurrentUser();
         String accessToken = CookieUtil.getCookieValue(request, "access_token");
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
-                .orElseThrow(()-> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
+                .orElseThrow(()-> new CustomException("리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         refreshTokenRepository.delete(refreshToken);
         saveBlackList(user.getUserId(), accessToken);
     }
 
     private void saveBlackList(String userId, String accessToken){
         if(redisTemplate.opsForValue().get(accessToken) != null){
-            throw new CustomException(ErrorCode.BLACK_LIST_ALREADY_EXIST);
+            throw new CustomException("이미 블랙리스트에 존재합니다.", HttpStatus.CONFLICT);
         }
         BlackList blackList = BlackList.builder()
                 .userId(userId)

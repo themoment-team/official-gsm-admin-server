@@ -1,7 +1,6 @@
 package com.themoment.officialgsm.global.filter;
 
 import com.themoment.officialgsm.global.exception.CustomException;
-import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
 import com.themoment.officialgsm.global.util.CookieUtil;
 import jakarta.servlet.FilterChain;
@@ -11,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String token = CookieUtil.getCookieValue(request, "access_token");
         if (token != null){
             if (redisTemplate.opsForValue().get(token) != null){
-                throw new CustomException(ErrorCode.BLACK_LIST_ALREADY_EXIST);
+                throw new CustomException("이미 블랙리스트에 존재합니다.", HttpStatus.CONFLICT);
             }
             UsernamePasswordAuthenticationToken auth = jwtProvider.authentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
