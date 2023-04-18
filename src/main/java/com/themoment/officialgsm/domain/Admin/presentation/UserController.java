@@ -41,4 +41,10 @@ public class UserController {
         TokenResponse data = userService.tokenReissue(request, response);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
+
+    @GetMapping("/unapproved/return")
+    public ResponseEntity<UnapprovedUserListResponse> unapprovedList(){
+        UnapprovedUserListResponse list = userService.unapprovedListExecute();
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
 }
