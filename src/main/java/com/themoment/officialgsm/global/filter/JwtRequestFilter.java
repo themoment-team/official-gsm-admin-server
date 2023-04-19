@@ -31,7 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String token = CookieUtil.getCookieValue(request, "access_token");
         if (token != null){
             if (redisTemplate.opsForValue().get(token) != null){
-                throw new CustomException("이미 블랙리스트에 존재합니다.", HttpStatus.CONFLICT);
+                throw new CustomException("유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED);
             }
             UsernamePasswordAuthenticationToken auth = jwtProvider.authentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);

@@ -39,6 +39,6 @@ public class User {
 
     @PrePersist
     public void prePersist(){
-        this.role = this.role == null ? Role.UN_APPROVE : Role.ADMIN;
+        this.role = this.role == null ? Role.UNAPPROVED : Role.ADMIN;
     }
 }
