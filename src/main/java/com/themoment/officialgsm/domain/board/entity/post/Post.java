@@ -30,7 +30,7 @@ public class Post extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "post")
+    @OneToMany(mappedBy = "post")
     private List<File> files = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
