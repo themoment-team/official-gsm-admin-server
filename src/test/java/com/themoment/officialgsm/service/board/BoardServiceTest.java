@@ -3,6 +3,7 @@ package com.themoment.officialgsm.service.board;
 import com.themoment.officialgsm.domain.Admin.entity.User;
 import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
+import com.themoment.officialgsm.domain.board.dto.response.PostListResponse;
 import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.PostRepository;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +44,6 @@ class BoardServiceTest {
     @Autowired
     private PostRepository postRepository;
 
-
     @BeforeEach
     void setUp() {
 
@@ -68,6 +69,43 @@ class BoardServiceTest {
         User currentUser = currentUserUtil.CurrentUser();
 
         assertNotNull(currentUser);
+    }
+
+    @Test
+    @DisplayName("게시물 전체 조회")
+    void findPosts() {
+
+        // given
+        AddPostRequest addPostRequest = AddPostRequest.builder()
+                .postTitle("제목")
+                .postContent("내용")
+                .category(Category.NOTICE)
+                .build();
+
+        MockMultipartFile mockFile = new MockMultipartFile(
+                "file",
+                "test.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "Some data for the .jpg file".getBytes()
+        );
+
+        // when
+        for(int i = 0; i < 11; i++) {
+            boardService.addPost(addPostRequest,List.of(mockFile));
+        }
+
+        em.flush();
+        em.clear();
+
+        // then
+        Page<PostListResponse> postListResponses = boardService.findPosts(0, Category.NOTICE);
+
+        assertThat(postListResponses.getSize()).isEqualTo(5);
+        assertThat(postListResponses.getTotalElements()).isEqualTo(11);
+        assertThat(postListResponses.getTotalPages()).isEqualTo(3);
+
+        assertThat(postListResponses.getContent().get(0).getPostTitle()).isEqualTo(addPostRequest.getPostTitle());
+        assertThat(postListResponses.getContent().get(0).getFileIsExist()).isTrue();
     }
 
     @Test
