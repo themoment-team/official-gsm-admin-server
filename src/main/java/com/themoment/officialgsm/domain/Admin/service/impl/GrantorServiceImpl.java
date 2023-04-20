@@ -28,7 +28,7 @@ public class GrantorServiceImpl implements GrantorService {
         return userRepository.findUsersByRole(Role.UNAPPROVED).stream()
                 .map(user -> new UnapprovedUserResponse(
                         user.getUserSeq(),
-                        user.getUserId(),
+                        user.getUserId().substring(0,4) + "****",
                         user.getUserName(),
                         user.getRole()
                 )).collect(Collectors.toList());
