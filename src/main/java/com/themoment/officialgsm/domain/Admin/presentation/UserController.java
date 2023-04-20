@@ -3,7 +3,6 @@ package com.themoment.officialgsm.domain.Admin.presentation;
 import com.themoment.officialgsm.domain.Admin.presentation.dto.request.SignInRequest;
 import com.themoment.officialgsm.domain.Admin.presentation.dto.request.SignUpRequest;
 import com.themoment.officialgsm.domain.Admin.presentation.dto.response.TokenResponse;
-import com.themoment.officialgsm.domain.Admin.presentation.dto.response.UnapprovedUserListResponse;
 import com.themoment.officialgsm.domain.Admin.presentation.dto.response.UnapprovedUserResponse;
 import com.themoment.officialgsm.domain.Admin.service.GrantorService;
 import com.themoment.officialgsm.domain.Admin.service.UserService;
@@ -52,5 +51,11 @@ public class UserController {
     public ResponseEntity<List<UnapprovedUserResponse>> unapprovedList(){
         List<UnapprovedUserResponse> list = grantorService.unapprovedListExecute();
         return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @PatchMapping("/approved")
+    public ResponseEntity<Void> approved(){
+        grantorService.approvedExecute();
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
