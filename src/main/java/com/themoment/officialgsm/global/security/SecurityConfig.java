@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/signin").permitAll()
                         .requestMatchers("/auth/token/reissue").permitAll()
                         .requestMatchers("/auth/unapproved/list").hasAuthority("ADMIN")
+                        .requestMatchers("/auth/approved/*").hasAuthority("ADMIN")
                         .anyRequest().authenticated();
         httpSecurity
                 .sessionManagement()

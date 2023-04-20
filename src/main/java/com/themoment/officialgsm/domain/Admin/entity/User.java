@@ -41,4 +41,10 @@ public class User {
     public void prePersist(){
         this.role = this.role == null ? Role.UNAPPROVED : Role.ADMIN;
     }
+
+    public void updateRoleAndGrantor(User grantor, Role role, LocalDateTime approvedAt) {
+        this.grantor = grantor;
+        this.role = role;
+        this.approvedAt = approvedAt;
+    }
 }

@@ -53,9 +53,9 @@ public class UserController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PatchMapping("/approved")
-    public ResponseEntity<Void> approved(){
-        grantorService.approvedExecute();
+    @PatchMapping("/approved/{id}")
+    public ResponseEntity<Void> approved(@PathVariable Long id){
+        grantorService.approvedExecute(id);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

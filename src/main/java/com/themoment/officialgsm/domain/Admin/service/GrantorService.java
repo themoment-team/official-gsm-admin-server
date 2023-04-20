@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface GrantorService {
     List<UnapprovedUserResponse> unapprovedListExecute();
+
+    void approvedExecute(Long id);
 }
