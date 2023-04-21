@@ -3,6 +3,7 @@ package com.themoment.officialgsm.service.board;
 import com.themoment.officialgsm.domain.Admin.entity.User;
 import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
+import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
 import com.themoment.officialgsm.domain.board.dto.response.PostListResponse;
 import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
@@ -27,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Transactional
@@ -142,4 +144,53 @@ class BoardServiceTest {
         assertThat(post.getUser().getUserName()).isEqualTo("최장우");
         assertThat(post.getFiles().get(0).getFileName()).isEqualTo(mockFile.getOriginalFilename());
     }
+
+    @Test
+    @DisplayName("게시물 수정")
+    void modifyPost() {
+
+        // given
+        AddPostRequest addPostRequest = AddPostRequest.builder()
+                .postTitle("제목")
+                .postContent("내용")
+                .category(Category.NOTICE)
+                .build();
+
+        MockMultipartFile mockFile = new MockMultipartFile(
+                "file",
+                "test.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "Some data for the .jpg file".getBytes()
+        );
+
+        // when
+        boardService.addPost(addPostRequest, List.of(mockFile));
+
+        em.flush();
+        em.clear();
+
+        //given
+        ModifyPostRequest modifyPostRequest = ModifyPostRequest.builder()
+                .postTitle("변경된 제목")
+                .postContent("변경된 내용")
+                .category(Category.FAMILY_NEWSLETTER)
+                .deleteFileUrl(List.of(postRepository.findAll().get(0).getFiles().get(0).getFileUrl()))
+                .build();
+
+        Long postSeq = postRepository.findAll().get(0).getPostSeq();
+
+        // when
+        boardService.modifyPost(postSeq, modifyPostRequest, null);
+
+        em.flush();
+        em.clear();
+
+        // then
+        Post modifiedPost = postRepository.findAll().get(0);
+
+        assertThat(modifiedPost.getPostTitle()).isEqualTo(modifyPostRequest.getPostTitle());
+        assertNotEquals(modifiedPost.getCreatedAt(), modifiedPost.getModifiedAt());
+        assertThat(modifiedPost.getFiles().size()).isEqualTo(0);
+    }
+
 }
