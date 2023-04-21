@@ -49,6 +49,23 @@ class BoardServiceTest {
     @Autowired
     private FileRepository fileRepository;
 
+    private AddPostRequest getAddPostRequest() {
+        return AddPostRequest.builder()
+                .postTitle("제목")
+                .postContent("내용")
+                .category(Category.NOTICE)
+                .build();
+    }
+
+    private MockMultipartFile getMockFile() {
+        return new MockMultipartFile(
+                "file",
+                "test.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "Some data for the .jpg file".getBytes()
+        );
+    }
+
     @BeforeEach
     void setUp() {
 
@@ -81,18 +98,8 @@ class BoardServiceTest {
     void findPosts() {
 
         // given
-        AddPostRequest addPostRequest = AddPostRequest.builder()
-                .postTitle("제목")
-                .postContent("내용")
-                .category(Category.NOTICE)
-                .build();
-
-        MockMultipartFile mockFile = new MockMultipartFile(
-                "file",
-                "test.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "Some data for the .jpg file".getBytes()
-        );
+        AddPostRequest addPostRequest = getAddPostRequest();
+        MockMultipartFile mockFile = getMockFile();
 
         // when
         for(int i = 0; i < 11; i++) {
@@ -118,18 +125,8 @@ class BoardServiceTest {
     void addPost() {
 
         // given
-        AddPostRequest addPostRequest = AddPostRequest.builder()
-                .postTitle("제목")
-                .postContent("내용")
-                .category(Category.NOTICE)
-                .build();
-
-        MockMultipartFile mockFile = new MockMultipartFile(
-                "file",
-                "test.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "Some data for the .jpg file".getBytes()
-        );
+        AddPostRequest addPostRequest = getAddPostRequest();
+        MockMultipartFile mockFile = getMockFile();
 
         // when
         boardService.addPost(addPostRequest, List.of(mockFile));
@@ -153,18 +150,8 @@ class BoardServiceTest {
     void modifyPost() {
 
         // given
-        AddPostRequest addPostRequest = AddPostRequest.builder()
-                .postTitle("제목")
-                .postContent("내용")
-                .category(Category.NOTICE)
-                .build();
-
-        MockMultipartFile mockFile = new MockMultipartFile(
-                "file",
-                "test.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "Some data for the .jpg file".getBytes()
-        );
+        AddPostRequest addPostRequest = getAddPostRequest();
+        MockMultipartFile mockFile = getMockFile();
 
         // when
         boardService.addPost(addPostRequest, List.of(mockFile));
@@ -201,18 +188,8 @@ class BoardServiceTest {
     void removePost() {
 
         // given
-        AddPostRequest addPostRequest = AddPostRequest.builder()
-                .postTitle("제목")
-                .postContent("내용")
-                .category(Category.NOTICE)
-                .build();
-
-        MockMultipartFile mockFile = new MockMultipartFile(
-                "file",
-                "test.jpg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "Some data for the .jpg file".getBytes()
-        );
+        AddPostRequest addPostRequest = getAddPostRequest();
+        MockMultipartFile mockFile = getMockFile();
 
         // when
         boardService.addPost(addPostRequest, List.of(mockFile));
