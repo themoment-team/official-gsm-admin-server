@@ -7,6 +7,7 @@ import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
 import com.themoment.officialgsm.domain.board.dto.response.PostListResponse;
 import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
+import com.themoment.officialgsm.domain.board.repository.FileRepository;
 import com.themoment.officialgsm.domain.board.repository.PostRepository;
 import com.themoment.officialgsm.domain.board.service.BoardService;
 import com.themoment.officialgsm.global.util.CurrentUserUtil;
@@ -45,6 +46,8 @@ class BoardServiceTest {
     private BoardService boardService;
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private FileRepository fileRepository;
 
     @BeforeEach
     void setUp() {
@@ -191,6 +194,38 @@ class BoardServiceTest {
         assertThat(modifiedPost.getPostTitle()).isEqualTo(modifyPostRequest.getPostTitle());
         assertNotEquals(modifiedPost.getCreatedAt(), modifiedPost.getModifiedAt());
         assertThat(modifiedPost.getFiles().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("게시물 삭제")
+    void removePost() {
+
+        // given
+        AddPostRequest addPostRequest = AddPostRequest.builder()
+                .postTitle("제목")
+                .postContent("내용")
+                .category(Category.NOTICE)
+                .build();
+
+        MockMultipartFile mockFile = new MockMultipartFile(
+                "file",
+                "test.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "Some data for the .jpg file".getBytes()
+        );
+
+        // when
+        boardService.addPost(addPostRequest, List.of(mockFile));
+
+        em.flush();
+        em.clear();
+
+        Long postSeq = postRepository.findAll().get(0).getPostSeq();
+        boardService.removePost(postSeq);
+
+        // then
+        assertThat(postRepository.findAll().size()).isEqualTo(0);
+        assertThat(fileRepository.findAll().size()).isEqualTo(0);
     }
 
 }
