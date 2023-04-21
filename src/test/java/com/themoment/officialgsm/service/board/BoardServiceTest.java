@@ -170,7 +170,7 @@ class BoardServiceTest {
         Long postSeq = postRepository.findAll().get(0).getPostSeq();
 
         // when
-        boardService.modifyPost(postSeq, modifyPostRequest, null);
+        boardService.modifyPost(postSeq, modifyPostRequest, List.of(mockFile, mockFile, mockFile));
 
         em.flush();
         em.clear();
@@ -180,7 +180,7 @@ class BoardServiceTest {
 
         assertThat(modifiedPost.getPostTitle()).isEqualTo(modifyPostRequest.getPostTitle());
         assertNotEquals(modifiedPost.getCreatedAt(), modifiedPost.getModifiedAt());
-        assertThat(modifiedPost.getFiles().size()).isEqualTo(0);
+        assertThat(modifiedPost.getFiles().size()).isEqualTo(3);
     }
 
     @Test
