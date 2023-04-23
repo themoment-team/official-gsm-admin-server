@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.index.Indexed;
 @NoArgsConstructor
 @ToString
 @Builder
-@RedisHash("blackList")
+@RedisHash("admin-api.blackList")
 public class BlackList {
     @Id
     private String userId;
