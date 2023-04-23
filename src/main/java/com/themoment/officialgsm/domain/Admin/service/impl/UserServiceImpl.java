@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
         CookieUtil.addRefreshTokenCookie(response, "access_token", newAccessToken, 60*120, true);
         CookieUtil.addRefreshTokenCookie(response, "refresh_token", newRefreshToken, 60*120*12, true);
-        refreshToken.exchangeRefreshToken(newRefreshToken);
+        refreshToken.updateRefreshToken(newRefreshToken);
         refreshTokenRepository.save(refreshToken);
         return TokenResponse.builder()
                 .expiredAt(jwtTokenProvider.getExpiredAtToken())
