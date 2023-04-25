@@ -110,7 +110,7 @@ class BoardServiceTest {
         em.clear();
 
         // then
-        Page<PostListResponse> postListResponses = boardService.findPosts(0, Category.NOTICE);
+        Page<PostListResponse> postListResponses = boardService.findPostList(0, Category.NOTICE);
 
         assertThat(postListResponses.getSize()).isEqualTo(5);
         assertThat(postListResponses.getTotalElements()).isEqualTo(11);
