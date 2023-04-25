@@ -9,7 +9,6 @@ import com.themoment.officialgsm.domain.Admin.presentation.dto.response.TokenRes
 import com.themoment.officialgsm.domain.Admin.repository.BlackListRepository;
 import com.themoment.officialgsm.domain.Admin.repository.RefreshTokenRepository;
 import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
-import com.themoment.officialgsm.domain.Admin.service.UserService;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
 import com.themoment.officialgsm.global.util.ClientIpUtil;
@@ -29,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -59,7 +58,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public TokenResponse signIn(SignInRequest signInRequest, HttpServletResponse response) {
         User user = userRepository.findUserByUserId(signInRequest.getUserId())
@@ -80,7 +78,6 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public TokenResponse tokenReissue(HttpServletRequest request, HttpServletResponse response) {
         String token = CookieUtil.getCookieValue(request, "refresh_token");
@@ -91,10 +88,8 @@ public class UserServiceImpl implements UserService {
         String newAccessToken = jwtTokenProvider.generatedAccessToken(userId);
         String newRefreshToken = jwtTokenProvider.generatedRefreshToken(userId);
 
-        if (!refreshToken.getToken().equals(token)) {
-            if (jwtTokenProvider.isValidToken(token, secret)) {
-                throw new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
-            }
+        if (!refreshToken.getToken().equals(token) && !jwtTokenProvider.isValidToken(token, secret)) {
+            throw new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
         CookieUtil.addRefreshTokenCookie(response, "access_token", newAccessToken, 60*120, true);
@@ -106,7 +101,6 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void logout(HttpServletRequest request) {
         User user = userUtil.CurrentUser();

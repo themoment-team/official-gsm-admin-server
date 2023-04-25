@@ -100,7 +100,7 @@ public class JwtTokenProvider {
     }
 
     public boolean isValidToken(String token, String secret) {
-        return !isExpiredToken(token, secret);
+        return isExpiredToken(token, secret);
     }
 
 }
