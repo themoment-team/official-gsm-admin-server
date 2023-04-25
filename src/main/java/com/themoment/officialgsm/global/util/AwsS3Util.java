@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class AwsS3Util {
     private final AmazonS3 amazonS3;
 
     private final List<String> ALLOWED_EXTENSIONS = Arrays.asList(".jpg", ".png", ".mp4", ".hwp", ".pdf", ".xlsx");
-    private final String DOMAIN_URL = "https://my-domain.com/";   // 추후 수정해야함 !
+    private final String DOMAIN_URL = "http://bucket.ottokeng.site/";   // 추후 수정해야함 !
 
     public List<FileDto> upload(List<MultipartFile> multipartFiles) {
         if(multipartFiles == null || multipartFiles.isEmpty()) {
