@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class CookieUtil {
-    public static void addRefreshTokenCookie(HttpServletResponse response, String name, String value, Integer maxAge, boolean httpOnly){
+    public static void addRefreshTokenCookie(HttpServletResponse response, String name, String value, Long maxAge, boolean httpOnly){
         Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(maxAge);
+        cookie.setMaxAge(Math.toIntExact(maxAge));
         cookie.setHttpOnly(httpOnly);
         response.addCookie(cookie);
     }
