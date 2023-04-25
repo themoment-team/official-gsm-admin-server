@@ -38,16 +38,16 @@ class BoardServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    private FileRepository fileRepository;
     @PersistenceContext
     private EntityManager em;
     @Autowired
     private CurrentUserUtil currentUserUtil;
     @Autowired
     private BoardService boardService;
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private FileRepository fileRepository;
 
     private AddPostRequest getAddPostRequest() {
         return AddPostRequest.builder()
