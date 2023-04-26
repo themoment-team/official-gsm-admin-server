@@ -29,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
+    private static final String aT = "access_token";
+    private static final String rT = "refresh_token";
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -69,8 +71,8 @@ public class UserService {
 
         String accessToken = jwtTokenProvider.generatedAccessToken(signInRequest.getUserId());
         String refreshToken = jwtTokenProvider.generatedRefreshToken(signInRequest.getUserId());
-        CookieUtil.addRefreshTokenCookie(response, "access_token", accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
-        CookieUtil.addRefreshTokenCookie(response, "refresh_token",refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addRefreshTokenCookie(response, aT, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addRefreshTokenCookie(response, rT, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         RefreshToken entityToRedis =  new RefreshToken(signInRequest.getUserId(),refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
         refreshTokenRepository.save(entityToRedis);
         return TokenResponse.builder()
@@ -80,7 +82,7 @@ public class UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public TokenResponse tokenReissue(HttpServletRequest request, HttpServletResponse response) {
-        String token = CookieUtil.getCookieValue(request, "refresh_token");
+        String token = CookieUtil.getCookieValue(request, rT);
         String secret = jwtTokenProvider.getRefreshSecret();
         String userId = jwtTokenProvider.getTokenUserId(token, secret);
         RefreshToken refreshToken = refreshTokenRepository.findById(userId)
@@ -92,8 +94,8 @@ public class UserService {
             throw new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        CookieUtil.addRefreshTokenCookie(response, "access_token", newAccessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
-        CookieUtil.addRefreshTokenCookie(response, "refresh_token", newRefreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addRefreshTokenCookie(response, aT, newAccessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addRefreshTokenCookie(response, rT, newRefreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         refreshToken.updateRefreshToken(newRefreshToken);
         refreshTokenRepository.save(refreshToken);
         return TokenResponse.builder()
@@ -104,7 +106,7 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public void logout(HttpServletRequest request) {
         User user = userUtil.CurrentUser();
-        String accessToken = CookieUtil.getCookieValue(request, "access_token");
+        String accessToken = CookieUtil.getCookieValue(request, aT);
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
                 .orElseThrow(()-> new CustomException("리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         refreshTokenRepository.delete(refreshToken);

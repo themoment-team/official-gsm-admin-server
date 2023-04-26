@@ -22,16 +22,17 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
+    private static final String aT = "access_token";
     private final JwtTokenProvider jwtProvider;
     private final RedisTemplate<String, Object> redisTemplate;
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = CookieUtil.getCookieValue(request, "access_token");
+        String token = CookieUtil.getCookieValue(request, aT);
         if (token != null){
             if (redisTemplate.opsForValue().get(token) != null){
-                throw new CustomException("이미 블랙리스트에 존재합니다.", HttpStatus.CONFLICT);
+                throw new CustomException("유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED);
             }
             UsernamePasswordAuthenticationToken auth = jwtProvider.authentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
