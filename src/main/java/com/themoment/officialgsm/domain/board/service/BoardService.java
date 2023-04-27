@@ -45,7 +45,7 @@ public class BoardService {
 
     @Transactional
     public void addPost(AddPostRequest addPostRequest, List<MultipartFile> multipartFiles) {
-        User user = currentUserUtil.CurrentUser();
+        User user = currentUserUtil.getCurrentUser();
         Post post = Post.builder()
                 .postTitle(addPostRequest.getPostTitle())
                 .postContent(addPostRequest.getPostContent())

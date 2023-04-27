@@ -104,7 +104,7 @@ public class UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public void logout(HttpServletRequest request) {
-        User user = userUtil.CurrentUser();
+        User user = userUtil.getCurrentUser();
         String accessToken = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
                 .orElseThrow(()-> new CustomException("리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
