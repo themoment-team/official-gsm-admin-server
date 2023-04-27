@@ -11,7 +11,6 @@ import com.themoment.officialgsm.domain.Admin.repository.RefreshTokenRepository;
 import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
-import com.themoment.officialgsm.global.util.ClientIpUtil;
 import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
 import com.themoment.officialgsm.global.util.UserUtil;
@@ -37,14 +36,12 @@ public class UserService {
     private final BlackListRepository blackListRepository;
     private final RedisTemplate redisTemplate;
     private final UserUtil userUtil;
-    private final ClientIpUtil clientIpUtil;
 
     @Value("${ip}")
     private String schoolIp;
 
     @Transactional(rollbackFor = Exception.class)
-    public void signUp(SignUpRequest signUpRequest, HttpServletRequest request) {
-        String ip = clientIpUtil.getIp(request);
+    public void signUp(SignUpRequest signUpRequest, String ip) {
         if (userRepository.existsByUserId(signUpRequest.getUserId())){
             throw new CustomException("이미 사용되고 있는 유저 아이디입니다.", HttpStatus.CONFLICT);
         }
@@ -80,8 +77,7 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TokenResponse tokenReissue(HttpServletRequest request, HttpServletResponse response) {
-        String token = CookieUtil.getCookieValue(request, ConstantsUtil.refreshToken);
+    public TokenResponse tokenReissue(String token, HttpServletResponse response) {
         String secret = jwtTokenProvider.getRefreshSecret();
         String userId = jwtTokenProvider.getTokenUserId(token, secret);
         RefreshToken refreshToken = refreshTokenRepository.findById(userId)
@@ -103,9 +99,8 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void logout(HttpServletRequest request) {
+    public void logout(String accessToken) {
         User user = userUtil.getCurrentUser();
-        String accessToken = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
                 .orElseThrow(() -> new CustomException("리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         refreshTokenRepository.delete(refreshToken);
