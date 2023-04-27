@@ -12,6 +12,7 @@ import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
 import com.themoment.officialgsm.global.util.ClientIpUtil;
+import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
 import com.themoment.officialgsm.global.util.UserUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,8 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-    private static final String aT = "access_token";
-    private static final String rT = "refresh_token";
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -71,8 +70,8 @@ public class UserService {
 
         String accessToken = jwtTokenProvider.generatedAccessToken(signInRequest.getUserId());
         String refreshToken = jwtTokenProvider.generatedRefreshToken(signInRequest.getUserId());
-        CookieUtil.addRefreshTokenCookie(response, aT, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
-        CookieUtil.addRefreshTokenCookie(response, rT, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addRefreshTokenCookie(response, ConstantsUtil.accessToken, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addRefreshTokenCookie(response, ConstantsUtil.refreshToken, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         RefreshToken entityToRedis =  new RefreshToken(signInRequest.getUserId(),refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
         refreshTokenRepository.save(entityToRedis);
         return TokenResponse.builder()
@@ -82,7 +81,7 @@ public class UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public TokenResponse tokenReissue(HttpServletRequest request, HttpServletResponse response) {
-        String token = CookieUtil.getCookieValue(request, rT);
+        String token = CookieUtil.getCookieValue(request, ConstantsUtil.refreshToken);
         String secret = jwtTokenProvider.getRefreshSecret();
         String userId = jwtTokenProvider.getTokenUserId(token, secret);
         RefreshToken refreshToken = refreshTokenRepository.findById(userId)
@@ -94,8 +93,8 @@ public class UserService {
             throw new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        CookieUtil.addRefreshTokenCookie(response, aT, newAccessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
-        CookieUtil.addRefreshTokenCookie(response, rT, newRefreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addRefreshTokenCookie(response, ConstantsUtil.accessToken, newAccessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addRefreshTokenCookie(response, ConstantsUtil.refreshToken, newRefreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         refreshToken.updateRefreshToken(newRefreshToken);
         refreshTokenRepository.save(refreshToken);
         return TokenResponse.builder()
@@ -106,7 +105,7 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public void logout(HttpServletRequest request) {
         User user = userUtil.CurrentUser();
-        String accessToken = CookieUtil.getCookieValue(request, aT);
+        String accessToken = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
                 .orElseThrow(()-> new CustomException("리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         refreshTokenRepository.delete(refreshToken);
