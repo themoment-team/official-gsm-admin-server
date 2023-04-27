@@ -62,7 +62,7 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public TokenResponse signIn(SignInRequest signInRequest, HttpServletResponse response) {
         User user = userRepository.findUserByUserId(signInRequest.getUserId())
-                .orElseThrow(()-> new CustomException("사용자 아이디를 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new CustomException("사용자 아이디를 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
 
         if (!passwordEncoder.matches(signInRequest.getUserPwd(), user.getUserPwd())){
             throw new CustomException("패스워드가 틀렸습니다.", HttpStatus.BAD_REQUEST);
@@ -85,7 +85,7 @@ public class UserService {
         String secret = jwtTokenProvider.getRefreshSecret();
         String userId = jwtTokenProvider.getTokenUserId(token, secret);
         RefreshToken refreshToken = refreshTokenRepository.findById(userId)
-                .orElseThrow(()->new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST));
         String newAccessToken = jwtTokenProvider.generatedAccessToken(userId);
         String newRefreshToken = jwtTokenProvider.generatedRefreshToken(userId);
 
@@ -107,7 +107,7 @@ public class UserService {
         User user = userUtil.getCurrentUser();
         String accessToken = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
-                .orElseThrow(()-> new CustomException("리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new CustomException("리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         refreshTokenRepository.delete(refreshToken);
         saveBlackList(user.getUserId(), accessToken);
     }
