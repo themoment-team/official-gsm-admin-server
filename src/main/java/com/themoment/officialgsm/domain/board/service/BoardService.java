@@ -13,7 +13,7 @@ import com.themoment.officialgsm.domain.board.repository.FileRepository;
 import com.themoment.officialgsm.domain.board.repository.PostRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.util.AwsS3Util;
-import com.themoment.officialgsm.global.util.CurrentUserUtil;
+import com.themoment.officialgsm.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardService {
 
-    private final CurrentUserUtil currentUserUtil;
+    private final UserUtil currentUserUtil;
     private final PostRepository postRepository;
     private final FileRepository fileRepository;
     private final AwsS3Util awsS3Util;
@@ -46,7 +46,7 @@ public class BoardService {
 
     @Transactional
     public void addPost(AddPostRequest addPostRequest, List<MultipartFile> multipartFiles) {
-        User user = currentUserUtil.CurrentUser();
+        User user = currentUserUtil.getCurrentUser();
         Post post = Post.builder()
                 .postTitle(addPostRequest.getPostTitle())
                 .postContent(addPostRequest.getPostContent())

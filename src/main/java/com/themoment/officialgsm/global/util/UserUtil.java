@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CurrentUserUtil {
+public class UserUtil {
 
     private final UserRepository userRepository;
 
-    public User CurrentUser(){
-        String id = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findUserByUserName(id)
-                .orElseThrow(()-> new CustomException("요청하신 사용자 id:{}가 존재하지 않습니다.", HttpStatus.INTERNAL_SERVER_ERROR));
+    public User getCurrentUser(){
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findUserByUserName(userId)
+                .orElseThrow(() -> new CustomException("요청하신 사용자 id:{}가 존재하지 않습니다.", HttpStatus.INTERNAL_SERVER_ERROR));
     }
 }
