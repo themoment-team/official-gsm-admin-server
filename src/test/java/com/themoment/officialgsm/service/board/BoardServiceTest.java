@@ -76,7 +76,6 @@ class BoardServiceTest {
                 .userPwd("비밀번호")
                 .build();
 
-        // when
         userRepository.save(user);
 
         em.flush();
@@ -87,9 +86,10 @@ class BoardServiceTest {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(token);
 
-        // then
+        // when
         User currentUser = currentUserUtil.CurrentUser();
 
+        // then
         assertNotNull(currentUser);
     }
 
@@ -101,7 +101,6 @@ class BoardServiceTest {
         AddPostRequest addPostRequest = getAddPostRequest();
         MockMultipartFile mockFile = getMockFile();
 
-        // when
         for(int i = 0; i < 11; i++) {
             boardService.addPost(addPostRequest,List.of(mockFile));
         }
@@ -109,9 +108,10 @@ class BoardServiceTest {
         em.flush();
         em.clear();
 
-        // then
+        // when
         Page<PostListResponse> postListResponses = boardService.findPostList(0, Category.NOTICE);
 
+        // then
         assertThat(postListResponses.getSize()).isEqualTo(5);
         assertThat(postListResponses.getTotalElements()).isEqualTo(11);
         assertThat(postListResponses.getTotalPages()).isEqualTo(3);
@@ -128,15 +128,15 @@ class BoardServiceTest {
         AddPostRequest addPostRequest = getAddPostRequest();
         MockMultipartFile mockFile = getMockFile();
 
-        // when
         boardService.addPost(addPostRequest, List.of(mockFile));
 
         em.flush();
         em.clear();
 
-        //then
+        // when
         Post post = postRepository.findAll().get(0);
 
+        //then
         assertThat(post.getPostTitle()).isEqualTo(addPostRequest.getPostTitle());
         assertThat(post.getPostContent()).isEqualTo(addPostRequest.getPostContent());
         assertThat(post.getCategory()).isEqualTo(addPostRequest.getCategory());
@@ -153,13 +153,11 @@ class BoardServiceTest {
         AddPostRequest addPostRequest = getAddPostRequest();
         MockMultipartFile mockFile = getMockFile();
 
-        // when
         boardService.addPost(addPostRequest, List.of(mockFile));
 
         em.flush();
         em.clear();
 
-        //given
         ModifyPostRequest modifyPostRequest = ModifyPostRequest.builder()
                 .postTitle("변경된 제목")
                 .postContent("변경된 내용")
@@ -169,15 +167,15 @@ class BoardServiceTest {
 
         Long postSeq = postRepository.findAll().get(0).getPostSeq();
 
-        // when
         boardService.modifyPost(postSeq, modifyPostRequest, List.of(mockFile, mockFile, mockFile));
 
         em.flush();
         em.clear();
 
-        // then
+        // when
         Post modifiedPost = postRepository.findAll().get(0);
 
+        // then
         assertThat(modifiedPost.getPostTitle()).isEqualTo(modifyPostRequest.getPostTitle());
         assertNotEquals(modifiedPost.getCreatedAt(), modifiedPost.getModifiedAt());
         assertThat(modifiedPost.getFiles().size()).isEqualTo(3);
@@ -191,7 +189,6 @@ class BoardServiceTest {
         AddPostRequest addPostRequest = getAddPostRequest();
         MockMultipartFile mockFile = getMockFile();
 
-        // when
         boardService.addPost(addPostRequest, List.of(mockFile));
 
         em.flush();
