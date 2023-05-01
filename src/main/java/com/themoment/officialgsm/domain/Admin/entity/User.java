@@ -20,10 +20,10 @@ public class User {
     private Long userSeq;
 
     @Column(nullable = false)
-    private String userId;
+    private String userName;
 
     @Column(nullable = false)
-    private String userName;
+    private String userId;
 
     @Column(nullable = false)
     private String userPwd;

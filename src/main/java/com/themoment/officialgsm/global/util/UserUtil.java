@@ -2,21 +2,21 @@ package com.themoment.officialgsm.global.util;
 
 import com.themoment.officialgsm.domain.Admin.entity.User;
 import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
+import com.themoment.officialgsm.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class UserUtil {
 
-    private final UserRepository adminRepository;
+    private final UserRepository userRepository;
 
-    public User CurrentUser(){
+    public User getCurrentUser(){
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        return adminRepository.findUserByUserId(userId)
-                .orElseThrow(()-> new RuntimeException("유저가 없습니다."));
+        return userRepository.findUserByUserId(userId)
+                .orElseThrow(() -> new CustomException("요청하신 사용자 id:{}가 존재하지 않습니다.", HttpStatus.INTERNAL_SERVER_ERROR));
     }
 }

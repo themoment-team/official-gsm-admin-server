@@ -4,7 +4,6 @@ import com.themoment.officialgsm.domain.Admin.entity.Role;
 import com.themoment.officialgsm.domain.Admin.entity.User;
 import com.themoment.officialgsm.domain.Admin.presentation.dto.response.UnapprovedUserResponse;
 import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
-import com.themoment.officialgsm.domain.Admin.service.GrantorService;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +18,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GrantorServiceImpl implements GrantorService {
+public class GrantorService {
     private final UserRepository userRepository;
     private final UserUtil userUtil;
 
-    @Override
     public List<UnapprovedUserResponse> unapprovedListExecute() {
         return userRepository.findUsersByRole(Role.UNAPPROVED).stream()
                 .map(user -> new UnapprovedUserResponse(
@@ -34,9 +32,8 @@ public class GrantorServiceImpl implements GrantorService {
                 )).collect(Collectors.toList());
     }
 
-    @Override
     public void approvedExecute(Long id) {
-        User grantor = userUtil.CurrentUser();
+        User grantor = userUtil.getCurrentUser();
         User user = userRepository.findById(id)
                 .orElseThrow(()-> new CustomException("Id를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         LocalDateTime approvedAt = LocalDateTime.now();

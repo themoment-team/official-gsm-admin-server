@@ -9,10 +9,9 @@ import com.themoment.officialgsm.domain.Admin.presentation.dto.response.TokenRes
 import com.themoment.officialgsm.domain.Admin.repository.BlackListRepository;
 import com.themoment.officialgsm.domain.Admin.repository.RefreshTokenRepository;
 import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
-import com.themoment.officialgsm.domain.Admin.service.UserService;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
-import com.themoment.officialgsm.global.util.ClientIpUtil;
+import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
 import com.themoment.officialgsm.global.util.UserUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -37,14 +36,12 @@ public class UserServiceImpl implements UserService {
     private final BlackListRepository blackListRepository;
     private final RedisTemplate redisTemplate;
     private final UserUtil userUtil;
-    private final ClientIpUtil clientIpUtil;
 
     @Value("${ip}")
     private String schoolIp;
 
     @Transactional(rollbackFor = Exception.class)
-    public void signUp(SignUpRequest signUpRequest, HttpServletRequest request) {
-        String ip = clientIpUtil.getIp(request);
+    public void signUp(SignUpRequest signUpRequest, String ip) {
         if (userRepository.existsByUserId(signUpRequest.getUserId())){
             throw new CustomException("이미 사용되고 있는 유저 아이디입니다.", HttpStatus.CONFLICT);
         }
@@ -59,11 +56,10 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public TokenResponse signIn(SignInRequest signInRequest, HttpServletResponse response) {
         User user = userRepository.findUserByUserId(signInRequest.getUserId())
-                .orElseThrow(()-> new CustomException("사용자 아이디를 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new CustomException("사용자 아이디를 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
 
         if (!passwordEncoder.matches(signInRequest.getUserPwd(), user.getUserPwd())){
             throw new CustomException("패스워드가 틀렸습니다.", HttpStatus.BAD_REQUEST);
@@ -71,8 +67,8 @@ public class UserServiceImpl implements UserService {
 
         String accessToken = jwtTokenProvider.generatedAccessToken(signInRequest.getUserId());
         String refreshToken = jwtTokenProvider.generatedRefreshToken(signInRequest.getUserId());
-        CookieUtil.addRefreshTokenCookie(response, "access_token", accessToken, 60*120, true);
-        CookieUtil.addRefreshTokenCookie(response, "refresh_token",refreshToken,60*120*12,true);
+        CookieUtil.addTokenCookie(response, ConstantsUtil.accessToken, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addTokenCookie(response, ConstantsUtil.refreshToken, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         RefreshToken entityToRedis =  new RefreshToken(signInRequest.getUserId(),refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
         refreshTokenRepository.save(entityToRedis);
         return TokenResponse.builder()
@@ -80,39 +76,33 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
-    public TokenResponse tokenReissue(HttpServletRequest request, HttpServletResponse response) {
-        String token = CookieUtil.getCookieValue(request, "refresh_token");
+    public TokenResponse tokenReissue(String token, HttpServletResponse response) {
         String secret = jwtTokenProvider.getRefreshSecret();
         String userId = jwtTokenProvider.getTokenUserId(token, secret);
         RefreshToken refreshToken = refreshTokenRepository.findById(userId)
-                .orElseThrow(()->new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST));
         String newAccessToken = jwtTokenProvider.generatedAccessToken(userId);
         String newRefreshToken = jwtTokenProvider.generatedRefreshToken(userId);
 
-        if (!refreshToken.getToken().equals(token)) {
-            if (jwtTokenProvider.isValidToken(token, secret)) {
-                throw new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
-            }
+        if (!refreshToken.getToken().equals(token) && !jwtTokenProvider.isValidToken(token, secret)) {
+            throw new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        CookieUtil.addRefreshTokenCookie(response, "access_token", newAccessToken, 60*120, true);
-        CookieUtil.addRefreshTokenCookie(response, "refresh_token", newRefreshToken, 60*120*12, true);
-        refreshToken.exchangeRefreshToken(newRefreshToken);
+        CookieUtil.addTokenCookie(response, ConstantsUtil.accessToken, newAccessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addTokenCookie(response, ConstantsUtil.refreshToken, newRefreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
+        refreshToken.updateRefreshToken(newRefreshToken);
         refreshTokenRepository.save(refreshToken);
         return TokenResponse.builder()
                 .expiredAt(jwtTokenProvider.getExpiredAtToken())
                 .build();
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void logout(HttpServletRequest request) {
-        User user = userUtil.CurrentUser();
-        String accessToken = CookieUtil.getCookieValue(request, "access_token");
+    public void logout(String accessToken) {
+        User user = userUtil.getCurrentUser();
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
-                .orElseThrow(()-> new CustomException("리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new CustomException("리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         refreshTokenRepository.delete(refreshToken);
         saveBlackList(user.getUserId(), accessToken);
     }

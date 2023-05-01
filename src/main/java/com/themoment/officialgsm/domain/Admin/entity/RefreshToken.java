@@ -20,7 +20,7 @@ public class RefreshToken {
     @TimeToLive
     private Long expiredAt;
 
-    public void exchangeRefreshToken(String token){
+    public void updateRefreshToken(String token){
         this.token = token;
     }
 }

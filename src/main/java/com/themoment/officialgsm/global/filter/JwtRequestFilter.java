@@ -2,6 +2,7 @@ package com.themoment.officialgsm.global.filter;
 
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
+import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,7 +29,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = CookieUtil.getCookieValue(request, "access_token");
+        String token = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
         if (token != null){
             if (redisTemplate.opsForValue().get(token) != null){
                 throw new CustomException("유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED);
