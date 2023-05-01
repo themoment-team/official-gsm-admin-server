@@ -19,6 +19,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(Exception e) {
+        log.error("UncheckedException", e);
         return ErrorResponse.toResponseEntity("예외 처리되지 않은 에러가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

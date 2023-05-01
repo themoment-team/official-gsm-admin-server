@@ -1,5 +1,6 @@
 package com.themoment.officialgsm.global.security;
 
+import com.themoment.officialgsm.domain.Admin.entity.Role;
 import com.themoment.officialgsm.global.filter.JwtRequestFilter;
 import com.themoment.officialgsm.global.security.handler.CustomAccessDeniedHandler;
 import com.themoment.officialgsm.global.security.handler.CustomAuthenticationEntryPointHandler;
@@ -46,8 +47,9 @@ public class SecurityConfig {
                         .requestMatchers("/auth/signup").permitAll()
                         .requestMatchers("/auth/signin").permitAll()
                         .requestMatchers("/auth/token/reissue").permitAll()
-                        .anyRequest().denyAll();
-
+                        .requestMatchers("/auth/unapproved/list").hasAuthority("ADMIN")
+                        .requestMatchers("/auth/approved/*").hasAuthority("ADMIN")
+                        .anyRequest().authenticated();
         httpSecurity
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

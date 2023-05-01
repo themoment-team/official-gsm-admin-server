@@ -67,8 +67,8 @@ public class UserService {
 
         String accessToken = jwtTokenProvider.generatedAccessToken(signInRequest.getUserId());
         String refreshToken = jwtTokenProvider.generatedRefreshToken(signInRequest.getUserId());
-        CookieUtil.addRefreshTokenCookie(response, ConstantsUtil.accessToken, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
-        CookieUtil.addRefreshTokenCookie(response, ConstantsUtil.refreshToken, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addTokenCookie(response, ConstantsUtil.accessToken, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addTokenCookie(response, ConstantsUtil.refreshToken, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         RefreshToken entityToRedis =  new RefreshToken(signInRequest.getUserId(),refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
         refreshTokenRepository.save(entityToRedis);
         return TokenResponse.builder()
@@ -89,8 +89,8 @@ public class UserService {
             throw new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        CookieUtil.addRefreshTokenCookie(response, ConstantsUtil.accessToken, newAccessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
-        CookieUtil.addRefreshTokenCookie(response, ConstantsUtil.refreshToken, newRefreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addTokenCookie(response, ConstantsUtil.accessToken, newAccessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
+        CookieUtil.addTokenCookie(response, ConstantsUtil.refreshToken, newRefreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         refreshToken.updateRefreshToken(newRefreshToken);
         refreshTokenRepository.save(refreshToken);
         return TokenResponse.builder()
