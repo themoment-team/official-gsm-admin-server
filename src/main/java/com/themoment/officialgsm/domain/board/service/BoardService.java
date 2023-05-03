@@ -9,6 +9,7 @@ import com.themoment.officialgsm.domain.board.entity.file.File;
 import com.themoment.officialgsm.domain.board.entity.file.FileExtension;
 import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
+import com.themoment.officialgsm.domain.board.repository.FileBulkRepository;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
 import com.themoment.officialgsm.domain.board.repository.PostRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
@@ -35,6 +36,7 @@ public class BoardService {
     private final PostRepository postRepository;
     private final FileRepository fileRepository;
     private final AwsS3Util awsS3Util;
+    private final FileBulkRepository fileBulkRepository;
 
     @Transactional(readOnly = true)
     public Page<PostListResponse> findPostList(int pageNumber, Category category) {
@@ -101,7 +103,7 @@ public class BoardService {
             fileList.add(file);
         }
 
-        fileRepository.saveAll(fileList);
+        fileBulkRepository.saveAll(fileList);
     }
 
     private void deleteS3Files(List<String> deleteFileUrls) {
