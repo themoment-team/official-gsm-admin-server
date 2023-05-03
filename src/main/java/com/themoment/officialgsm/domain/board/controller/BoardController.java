@@ -24,7 +24,7 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<Page<PostListResponse>> postList(@RequestParam int pageNumber, @RequestParam Category category) {
-        Page<PostListResponse> postList = boardService.findPosts(pageNumber, category);
+        Page<PostListResponse> postList = boardService.findPostList(pageNumber, category);
         return new ResponseEntity<>(postList, HttpStatus.OK);
     }
 
