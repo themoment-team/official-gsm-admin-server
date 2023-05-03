@@ -16,13 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/post")
+@RequestMapping("/api/post")
 @RequiredArgsConstructor
 public class BoardController {
 
     private final BoardService boardService;
 
-    @GetMapping("/list")
+    @GetMapping
     public ResponseEntity<Page<PostListResponse>> postList(@RequestParam int pageNumber, @RequestParam Category category) {
         Page<PostListResponse> postList = boardService.findPostList(pageNumber, category);
         return new ResponseEntity<>(postList, HttpStatus.OK);
