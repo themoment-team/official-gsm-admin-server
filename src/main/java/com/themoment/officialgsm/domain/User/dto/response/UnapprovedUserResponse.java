@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.User.presentation.dto.response;
+package com.themoment.officialgsm.domain.User.dto.response;
 
 import com.themoment.officialgsm.domain.User.entity.Role;
 import lombok.AllArgsConstructor;
