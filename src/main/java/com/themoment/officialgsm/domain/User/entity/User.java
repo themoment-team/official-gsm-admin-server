@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.Admin.entity;
+package com.themoment.officialgsm.domain.User.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

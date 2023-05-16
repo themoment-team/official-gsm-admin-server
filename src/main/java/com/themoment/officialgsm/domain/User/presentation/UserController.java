@@ -1,11 +1,11 @@
-package com.themoment.officialgsm.domain.Admin.presentation;
+package com.themoment.officialgsm.domain.User.presentation;
 
-import com.themoment.officialgsm.domain.Admin.presentation.dto.request.SignInRequest;
-import com.themoment.officialgsm.domain.Admin.presentation.dto.request.SignUpRequest;
-import com.themoment.officialgsm.domain.Admin.presentation.dto.response.TokenResponse;
-import com.themoment.officialgsm.domain.Admin.presentation.dto.response.UnapprovedUserResponse;
-import com.themoment.officialgsm.domain.Admin.service.impl.GrantorService;
-import com.themoment.officialgsm.domain.Admin.service.impl.UserService;
+import com.themoment.officialgsm.domain.User.presentation.dto.request.SignInRequest;
+import com.themoment.officialgsm.domain.User.presentation.dto.request.SignUpRequest;
+import com.themoment.officialgsm.domain.User.presentation.dto.response.TokenResponse;
+import com.themoment.officialgsm.domain.User.presentation.dto.response.UnapprovedUserResponse;
+import com.themoment.officialgsm.domain.User.service.impl.GrantorService;
+import com.themoment.officialgsm.domain.User.service.impl.UserService;
 import com.themoment.officialgsm.global.util.ClientIpUtil;
 import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;

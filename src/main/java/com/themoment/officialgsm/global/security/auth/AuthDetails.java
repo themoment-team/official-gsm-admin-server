@@ -1,13 +1,12 @@
 package com.themoment.officialgsm.global.security.auth;
 
-import com.themoment.officialgsm.domain.Admin.entity.User;
+import com.themoment.officialgsm.domain.User.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.themoment.officialgsm.global.util;
 
-import com.themoment.officialgsm.domain.Admin.entity.User;
-import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
+import com.themoment.officialgsm.domain.User.entity.User;
+import com.themoment.officialgsm.domain.User.repository.UserRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
