@@ -10,7 +10,7 @@ import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
 import com.themoment.officialgsm.domain.board.repository.PostRepository;
 import com.themoment.officialgsm.domain.board.service.BoardService;
-import com.themoment.officialgsm.global.util.CurrentUserUtil;
+import com.themoment.officialgsm.global.util.UserUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -45,7 +45,7 @@ class BoardServiceTest {
     @PersistenceContext
     private EntityManager em;
     @Autowired
-    private CurrentUserUtil currentUserUtil;
+    private UserUtil userUtil;
     @Autowired
     private BoardService boardService;
 
@@ -87,7 +87,7 @@ class BoardServiceTest {
         securityContext.setAuthentication(token);
 
         // when
-        User currentUser = currentUserUtil.CurrentUser();
+        User currentUser = userUtil.getCurrentUser();
 
         // then
         assertNotNull(currentUser);
