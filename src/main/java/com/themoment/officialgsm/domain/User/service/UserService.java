@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.User.service.impl;
+package com.themoment.officialgsm.domain.User.service;
 
 import com.themoment.officialgsm.domain.User.entity.BlackList;
 import com.themoment.officialgsm.domain.User.entity.RefreshToken;

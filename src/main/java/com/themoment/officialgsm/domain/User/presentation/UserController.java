@@ -4,8 +4,8 @@ import com.themoment.officialgsm.domain.User.presentation.dto.request.SignInRequ
 import com.themoment.officialgsm.domain.User.presentation.dto.request.SignUpRequest;
 import com.themoment.officialgsm.domain.User.presentation.dto.response.TokenResponse;
 import com.themoment.officialgsm.domain.User.presentation.dto.response.UnapprovedUserResponse;
-import com.themoment.officialgsm.domain.User.service.impl.GrantorService;
-import com.themoment.officialgsm.domain.User.service.impl.UserService;
+import com.themoment.officialgsm.domain.User.service.GrantorService;
+import com.themoment.officialgsm.domain.User.service.UserService;
 import com.themoment.officialgsm.global.util.ClientIpUtil;
 import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
