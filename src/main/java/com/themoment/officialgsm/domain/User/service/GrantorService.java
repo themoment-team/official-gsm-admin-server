@@ -1,7 +1,7 @@
 package com.themoment.officialgsm.domain.User.service;
 
-import com.themoment.officialgsm.domain.User.entity.Role;
-import com.themoment.officialgsm.domain.User.entity.User;
+import com.themoment.officialgsm.domain.User.entity.user.Role;
+import com.themoment.officialgsm.domain.User.entity.user.User;
 import com.themoment.officialgsm.domain.User.dto.response.UnapprovedUserResponse;
 import com.themoment.officialgsm.domain.User.repository.UserRepository;
 import com.themoment.officialgsm.global.exception.CustomException;

@@ -1,8 +1,8 @@
 package com.themoment.officialgsm.domain.User.service;
 
-import com.themoment.officialgsm.domain.User.entity.BlackList;
-import com.themoment.officialgsm.domain.User.entity.RefreshToken;
-import com.themoment.officialgsm.domain.User.entity.User;
+import com.themoment.officialgsm.domain.User.entity.token.BlackList;
+import com.themoment.officialgsm.domain.User.entity.token.RefreshToken;
+import com.themoment.officialgsm.domain.User.entity.user.User;
 import com.themoment.officialgsm.domain.User.dto.request.SignInRequest;
 import com.themoment.officialgsm.domain.User.dto.request.SignUpRequest;
 import com.themoment.officialgsm.domain.User.dto.response.TokenResponse;

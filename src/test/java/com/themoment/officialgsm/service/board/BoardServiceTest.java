@@ -1,6 +1,6 @@
 package com.themoment.officialgsm.service.board;
 
-import com.themoment.officialgsm.domain.User.entity.User;
+import com.themoment.officialgsm.domain.User.entity.user.User;
 import com.themoment.officialgsm.domain.User.repository.UserRepository;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
 import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;

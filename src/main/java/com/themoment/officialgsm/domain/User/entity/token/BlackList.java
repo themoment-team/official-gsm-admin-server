@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.User.entity;
+package com.themoment.officialgsm.domain.User.entity.token;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
