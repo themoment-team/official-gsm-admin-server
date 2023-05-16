@@ -40,7 +40,7 @@ public class UserService {
     @Value("${ip}")
     private String schoolIp;
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void signUp(SignUpRequest signUpRequest, String ip) {
         if (userRepository.existsByUserId(signUpRequest.getUserId())){
             throw new CustomException("이미 사용되고 있는 유저 아이디입니다.", HttpStatus.CONFLICT);
@@ -56,7 +56,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TokenResponse signIn(SignInRequest signInRequest, HttpServletResponse response) {
         User user = userRepository.findUserByUserId(signInRequest.getUserId())
                 .orElseThrow(() -> new CustomException("사용자 아이디를 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
@@ -76,7 +76,7 @@ public class UserService {
                 .build();
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public TokenResponse tokenReissue(String token, HttpServletResponse response) {
         String secret = jwtTokenProvider.getRefreshSecret();
         String userId = jwtTokenProvider.getTokenUserId(token, secret);
@@ -98,7 +98,7 @@ public class UserService {
                 .build();
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void logout(String accessToken) {
         User user = userUtil.getCurrentUser();
         RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
