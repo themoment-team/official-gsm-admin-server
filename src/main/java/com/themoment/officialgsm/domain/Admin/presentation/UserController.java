@@ -65,4 +65,10 @@ public class UserController {
         grantorService.approvedExecute(userSeq);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/refuse/approved/{userSeq}")
+    public ResponseEntity<Void> refuseApproved(@PathVariable Long userSeq){
+        grantorService.refuseApprovedExecute(userSeq);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
