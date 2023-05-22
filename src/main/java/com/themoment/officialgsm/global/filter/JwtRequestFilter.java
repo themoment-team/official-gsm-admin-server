@@ -26,7 +26,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtProvider;
     private final RedisTemplate<String, Object> redisTemplate;
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
