@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,12 +33,20 @@ public class GrantorService {
                 )).collect(Collectors.toList());
     }
 
-    public void approvedExecute(Long id) {
+    @Transactional
+    public void approvedExecute(Long userSeq) {
         User grantor = userUtil.getCurrentUser();
-        User user = userRepository.findById(id)
+        User user = userRepository.findById(userSeq)
                 .orElseThrow(()-> new CustomException("Id를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         LocalDateTime approvedAt = LocalDateTime.now();
         user.updateRoleAndGrantor(grantor, Role.ADMIN, approvedAt);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void refuseApprovedExecute(Long userSeq) {
+        User user = userRepository.findById(userSeq)
+                .orElseThrow(()-> new CustomException("Id를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+        userRepository.delete(user);
     }
 }
