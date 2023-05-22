@@ -1,6 +1,5 @@
 package com.themoment.officialgsm.global.security;
 
-import com.themoment.officialgsm.domain.Admin.entity.Role;
 import com.themoment.officialgsm.global.filter.JwtRequestFilter;
 import com.themoment.officialgsm.global.security.handler.CustomAccessDeniedHandler;
 import com.themoment.officialgsm.global.security.handler.CustomAuthenticationEntryPointHandler;

@@ -1,9 +1,9 @@
-package com.themoment.officialgsm.domain.Admin.service.impl;
+package com.themoment.officialgsm.domain.User.service;
 
-import com.themoment.officialgsm.domain.Admin.entity.Role;
-import com.themoment.officialgsm.domain.Admin.entity.User;
-import com.themoment.officialgsm.domain.Admin.presentation.dto.response.UnapprovedUserResponse;
-import com.themoment.officialgsm.domain.Admin.repository.UserRepository;
+import com.themoment.officialgsm.domain.User.entity.user.Role;
+import com.themoment.officialgsm.domain.User.entity.user.User;
+import com.themoment.officialgsm.domain.User.dto.response.UnapprovedUserResponse;
+import com.themoment.officialgsm.domain.User.repository.UserRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;

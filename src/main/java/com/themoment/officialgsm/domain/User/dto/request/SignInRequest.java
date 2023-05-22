@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.Admin.presentation.dto.request;
+package com.themoment.officialgsm.domain.User.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
