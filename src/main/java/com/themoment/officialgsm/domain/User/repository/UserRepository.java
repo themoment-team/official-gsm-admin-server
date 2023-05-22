@@ -1,7 +1,7 @@
-package com.themoment.officialgsm.domain.Admin.repository;
+package com.themoment.officialgsm.domain.User.repository;
 
-import com.themoment.officialgsm.domain.Admin.entity.Role;
-import com.themoment.officialgsm.domain.Admin.entity.User;
+import com.themoment.officialgsm.domain.User.entity.user.Role;
+import com.themoment.officialgsm.domain.User.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -2,12 +2,14 @@ package com.themoment.officialgsm.domain.board.dto.request;
 
 import com.themoment.officialgsm.domain.board.entity.post.Category;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ModifyPostRequest {
