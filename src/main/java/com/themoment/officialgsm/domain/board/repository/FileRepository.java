@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface FileRepository extends JpaRepository<File, String> {
+public interface FileRepository extends JpaRepository<File, Long> {
 
     @Modifying
     @Query("DELETE FROM File f WHERE f.fileUrl IN :fileUrls")
