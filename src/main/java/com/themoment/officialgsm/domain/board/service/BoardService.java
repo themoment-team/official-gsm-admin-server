@@ -38,14 +38,6 @@ public class BoardService {
     private final AwsS3Util awsS3Util;
     private final FileBulkRepository fileBulkRepository;
 
-    @Transactional(readOnly = true)
-    public Page<PostListResponse> findPostList(int pageNumber, Category category) {
-        Pageable pageable = PageRequest.of(pageNumber, 5, Sort.by("createdAt").descending());   // pageSize는 추후 수정
-        Page<Post> postList = postRepository.findAllByCategory(pageable, category);
-
-        return postList.map(PostListResponse::from);
-    }
-
     @Transactional
     public void addPost(AddPostRequest addPostRequest, List<MultipartFile> multipartFiles) {
         User user = currentUserUtil.getCurrentUser();

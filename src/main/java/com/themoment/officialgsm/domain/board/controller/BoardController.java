@@ -22,12 +22,6 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @GetMapping
-    public ResponseEntity<Page<PostListResponse>> postList(@RequestParam int pageNumber, @RequestParam Category category) {
-        Page<PostListResponse> postList = boardService.findPostList(pageNumber, category);
-        return new ResponseEntity<>(postList, HttpStatus.OK);
-    }
-
     @PostMapping
     public ResponseEntity<Void> postAdd(@RequestPart("content") AddPostRequest addPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
         boardService.addPost(addPostRequest, multipartFiles);
