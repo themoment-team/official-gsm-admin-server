@@ -43,13 +43,13 @@ public class UserService {
     }
 
     @Transactional
-    public TokenResponse tokenReissue(String token, HttpServletResponse response) {
+    public void tokenReissue(String token, HttpServletResponse response) {
         String secret = jwtTokenProvider.getRefreshSecret();
-        String userId = jwtTokenProvider.getTokenUserId(token, secret);
-        RefreshToken refreshToken = refreshTokenRepository.findById(userId)
+        String oauthId = jwtTokenProvider.getTokenOauthId(token, secret);
+        RefreshToken refreshToken = refreshTokenRepository.findById(oauthId)
                 .orElseThrow(() -> new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST));
-        String newAccessToken = jwtTokenProvider.generatedAccessToken(userId);
-        String newRefreshToken = jwtTokenProvider.generatedRefreshToken(userId);
+        String newAccessToken = jwtTokenProvider.generatedAccessToken(oauthId);
+        String newRefreshToken = jwtTokenProvider.generatedRefreshToken(oauthId);
 
         if (!refreshToken.getToken().equals(token) && !jwtTokenProvider.isValidToken(token, secret)) {
             throw new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
@@ -59,9 +59,6 @@ public class UserService {
         CookieUtil.addTokenCookie(response, ConstantsUtil.refreshToken, newRefreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         refreshToken.updateRefreshToken(newRefreshToken);
         refreshTokenRepository.save(refreshToken);
-        return TokenResponse.builder()
-                .expiredAt(jwtTokenProvider.getExpiredAtToken())
-                .build();
     }
 
     @Transactional

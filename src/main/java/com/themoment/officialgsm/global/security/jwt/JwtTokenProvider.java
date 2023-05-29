@@ -43,9 +43,9 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(bytes);
     }
 
-    private String generatedToken(String userId, String type, String secret, long expiredTime){
+    private String generatedToken(String oauthId, String type, String secret, long expiredTime){
         final Claims claims = Jwts.claims();
-        claims.put("userId", userId);
+        claims.put("oauthId", oauthId);
         claims.put("type", type);
         return Jwts.builder()
                 .setClaims(claims)
@@ -55,12 +55,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String generatedAccessToken(String userId){
-        return generatedToken(userId, TokenType.ACCESS_TOKEN.name(), accessSecret, ACCESS_TOKEN_EXPIRE_TIME);
+    public String generatedAccessToken(String oauthId){
+        return generatedToken(oauthId, TokenType.ACCESS_TOKEN.name(), accessSecret, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
-    public String generatedRefreshToken(String userId){
-        return generatedToken(userId, TokenType.REFRESH_TOKEN.name(), refreshSecret, REFRESH_TOKEN_EXPIRE_TIME);
+    public String generatedRefreshToken(String oauthId){
+        return generatedToken(oauthId, TokenType.REFRESH_TOKEN.name(), refreshSecret, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
     private Claims getTokenBody(String token, String secret){
@@ -78,12 +78,12 @@ public class JwtTokenProvider {
     }
 
     public UsernamePasswordAuthenticationToken authentication(String token){
-        UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenUserId(token, accessSecret));
+        UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenOauthId(token, accessSecret));
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
-    public String getTokenUserId(String token, String secret){
-        return getTokenBody(token, secret).get("userId", String.class);
+    public String getTokenOauthId(String token, String secret){
+        return getTokenBody(token, secret).get("oauthId", String.class);
     }
 
     public ZonedDateTime getExpiredAtToken(){

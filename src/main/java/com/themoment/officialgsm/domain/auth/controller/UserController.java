@@ -40,10 +40,10 @@ public class UserController {
     }
 
     @GetMapping("/token/reissue")
-    public ResponseEntity<TokenResponse> tokenReissue(HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Void> tokenReissue(HttpServletRequest request, HttpServletResponse response){
         String token = CookieUtil.getCookieValue(request, ConstantsUtil.refreshToken);
-        TokenResponse data = userService.tokenReissue(token, response);
-        return new ResponseEntity<>(data, HttpStatus.OK);
+        userService.tokenReissue(token, response);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/unapproved/list")

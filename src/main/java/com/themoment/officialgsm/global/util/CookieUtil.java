@@ -13,6 +13,8 @@ public class CookieUtil {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(Math.toIntExact(maxAge));
         cookie.setHttpOnly(httpOnly);
+        cookie.setDomain("");
+        cookie.setPath("/");
         response.addCookie(cookie);
     }
 
