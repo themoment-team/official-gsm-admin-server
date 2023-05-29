@@ -28,11 +28,19 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
+    private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final BlackListRepository blackListRepository;
     private final RedisTemplate redisTemplate;
     private final UserUtil userUtil;
+
+    @Transactional
+    public void nameSetExecute(String userName) {
+        User user = userUtil.getCurrentUser();
+        user.updateName(userName);
+        userRepository.save(user);
+    }
 
     @Transactional
     public TokenResponse tokenReissue(String token, HttpServletResponse response) {

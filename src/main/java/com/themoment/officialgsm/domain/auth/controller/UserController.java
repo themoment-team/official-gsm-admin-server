@@ -26,6 +26,12 @@ public class UserController {
     private final UserService userService;
     private final GrantorService grantorService;
 
+    @PatchMapping("/{userName}")
+    public ResponseEntity<Void> nameSet(@PathVariable String userName){
+        userService.nameSetExecute(userName);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request){
         String accessToken = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
