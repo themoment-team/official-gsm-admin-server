@@ -15,8 +15,8 @@ public class UserUtil {
     private final UserRepository userRepository;
 
     public User getCurrentUser(){
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findUserByUserId(userId)
-                .orElseThrow(() -> new CustomException("요청하신 사용자 id:{}가 존재하지 않습니다.", HttpStatus.INTERNAL_SERVER_ERROR));
+        String oauthId = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findUserByOauthId(oauthId)
+                .orElseThrow(() -> new CustomException("요청하신 oauthId:{}가 존재하지 않습니다.", HttpStatus.INTERNAL_SERVER_ERROR));
     }
 }

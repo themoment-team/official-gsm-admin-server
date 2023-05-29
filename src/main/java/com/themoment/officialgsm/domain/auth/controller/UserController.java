@@ -25,20 +25,6 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final GrantorService grantorService;
-    private final ClientIpUtil clientIpUtil;
-
-    @PostMapping("/signup")
-    public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest signUpRequest, HttpServletRequest request){
-        String ip = clientIpUtil.getIp(request);
-        userService.signUp(signUpRequest, ip);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PostMapping("/signin")
-    public ResponseEntity<TokenResponse> signIn(@RequestBody @Valid SignInRequest signInRequest, HttpServletResponse response){
-        TokenResponse data = userService.signIn(signInRequest, response);
-        return new ResponseEntity<>(data, HttpStatus.OK);
-    }
 
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request){

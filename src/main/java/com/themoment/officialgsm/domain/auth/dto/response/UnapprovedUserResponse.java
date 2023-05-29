@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UnapprovedUserResponse {
     private Long userSeq;
-    private String userId;
     private String userName;
     private Role role;
 }

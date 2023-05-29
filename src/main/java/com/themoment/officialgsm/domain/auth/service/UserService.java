@@ -28,52 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final BlackListRepository blackListRepository;
     private final RedisTemplate redisTemplate;
     private final UserUtil userUtil;
-
-    @Value("${ip}")
-    private String schoolIp;
-
-    @Transactional
-    public void signUp(SignUpRequest signUpRequest, String ip) {
-        if (userRepository.existsByUserId(signUpRequest.getUserId())){
-            throw new CustomException("이미 사용되고 있는 유저 아이디입니다.", HttpStatus.CONFLICT);
-        }
-        if (!ip.equals(schoolIp)) {
-            throw new CustomException("학교 아이피가 아닙니다.", HttpStatus.BAD_REQUEST);
-        }
-        User user = User.builder()
-                .userId(signUpRequest.getUserId())
-                .userPwd(passwordEncoder.encode(signUpRequest.getUserPwd()))
-                .userName(signUpRequest.getUserName())
-                .build();
-        userRepository.save(user);
-    }
-
-    @Transactional
-    public TokenResponse signIn(SignInRequest signInRequest, HttpServletResponse response) {
-        User user = userRepository.findUserByUserId(signInRequest.getUserId())
-                .orElseThrow(() -> new CustomException("사용자 아이디를 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
-
-        if (!passwordEncoder.matches(signInRequest.getUserPwd(), user.getUserPwd())){
-            throw new CustomException("패스워드가 틀렸습니다.", HttpStatus.BAD_REQUEST);
-        }
-
-        String accessToken = jwtTokenProvider.generatedAccessToken(signInRequest.getUserId());
-        String refreshToken = jwtTokenProvider.generatedRefreshToken(signInRequest.getUserId());
-        CookieUtil.addTokenCookie(response, ConstantsUtil.accessToken, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
-        CookieUtil.addTokenCookie(response, ConstantsUtil.refreshToken, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
-        RefreshToken entityToRedis =  new RefreshToken(signInRequest.getUserId(),refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
-        refreshTokenRepository.save(entityToRedis);
-        return TokenResponse.builder()
-                .expiredAt(jwtTokenProvider.getExpiredAtToken())
-                .build();
-    }
 
     @Transactional
     public TokenResponse tokenReissue(String token, HttpServletResponse response) {
@@ -100,18 +59,18 @@ public class UserService {
     @Transactional
     public void logout(String accessToken) {
         User user = userUtil.getCurrentUser();
-        RefreshToken refreshToken = refreshTokenRepository.findById(user.getUserId())
+        RefreshToken refreshToken = refreshTokenRepository.findById(user.getOauthId())
                 .orElseThrow(() -> new CustomException("리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         refreshTokenRepository.delete(refreshToken);
-        saveBlackList(user.getUserId(), accessToken);
+        saveBlackList(user.getOauthId(), accessToken);
     }
 
-    private void saveBlackList(String userId, String accessToken){
+    private void saveBlackList(String oauthId, String accessToken){
         if(redisTemplate.opsForValue().get(accessToken) != null){
             throw new CustomException("이미 블랙리스트에 존재합니다.", HttpStatus.CONFLICT);
         }
         BlackList blackList = BlackList.builder()
-                .userId(userId)
+                .oauthId(oauthId)
                 .accessToken(accessToken)
                 .timeToLive(jwtTokenProvider.getExpiredAtoTokenToLong())
                 .build();

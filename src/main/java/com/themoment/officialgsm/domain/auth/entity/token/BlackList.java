@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.index.Indexed;
 @RedisHash("admin-api.blackList")
 public class BlackList {
     @Id
-    private String userId;
+    private String oauthId;
     @Indexed
     private String accessToken;
     @TimeToLive
