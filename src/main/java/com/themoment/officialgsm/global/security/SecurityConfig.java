@@ -1,5 +1,6 @@
 package com.themoment.officialgsm.global.security;
 
+import com.themoment.officialgsm.domain.auth.service.OAuthService;
 import com.themoment.officialgsm.global.filter.JwtRequestFilter;
 import com.themoment.officialgsm.global.security.handler.CustomAccessDeniedHandler;
 import com.themoment.officialgsm.global.security.handler.CustomAuthenticationEntryPointHandler;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
+    private final OAuthService oAuthService;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
@@ -43,15 +45,13 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests()
-                        .requestMatchers("/auth/signup").permitAll()
-                        .requestMatchers("/auth/signin").permitAll()
                         .requestMatchers("/auth/token/reissue").permitAll()
                         .requestMatchers("/auth/unapproved/list").hasAuthority("ADMIN")
                         .requestMatchers("/auth/approved/*").hasAuthority("ADMIN")
                         .anyRequest().authenticated();
         httpSecurity
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.NEVER);
 
         httpSecurity
                 .exceptionHandling()
@@ -60,6 +60,12 @@ public class SecurityConfig {
 
         httpSecurity
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        httpSecurity
+                .formLogin().disable()
+                .oauth2Login()
+                .userInfoEndpoint()
+                .userService(oAuthService);
 
         return httpSecurity.build();
     }
