@@ -4,10 +4,8 @@ import com.themoment.officialgsm.domain.User.entity.user.User;
 import com.themoment.officialgsm.domain.board.dto.FileDto;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
 import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
-import com.themoment.officialgsm.domain.board.dto.response.PostListResponse;
 import com.themoment.officialgsm.domain.board.entity.file.File;
 import com.themoment.officialgsm.domain.board.entity.file.FileExtension;
-import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileBulkRepository;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
@@ -16,10 +14,6 @@ import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.util.AwsS3Util;
 import com.themoment.officialgsm.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,14 +31,6 @@ public class BoardService {
     private final FileRepository fileRepository;
     private final AwsS3Util awsS3Util;
     private final FileBulkRepository fileBulkRepository;
-
-    @Transactional(readOnly = true)
-    public Page<PostListResponse> findPostList(int pageNumber, Category category) {
-        Pageable pageable = PageRequest.of(pageNumber, 5, Sort.by("createdAt").descending());   // pageSize는 추후 수정
-        Page<Post> postList = postRepository.findAllByCategory(pageable, category);
-
-        return postList.map(PostListResponse::from);
-    }
 
     @Transactional
     public void addPost(AddPostRequest addPostRequest, List<MultipartFile> multipartFiles) {
