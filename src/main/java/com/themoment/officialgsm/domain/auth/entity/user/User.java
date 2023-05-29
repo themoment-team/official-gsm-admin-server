@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.User.entity.user;
+package com.themoment.officialgsm.domain.auth.entity.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,14 +19,11 @@ public class User {
     @Column(name = "user_seq")
     private Long userSeq;
 
-    @Column(nullable = false)
+    private String oauthId;
+
     private String userName;
 
-    @Column(nullable = false)
-    private String userId;
-
-    @Column(nullable = false)
-    private String userPwd;
+    private String userEmail;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -37,14 +34,28 @@ public class User {
 
     private LocalDateTime approvedAt;
 
-    @PrePersist
-    public void prePersist(){
-        this.role = this.role == null ? Role.UNAPPROVED : Role.ADMIN;
+    public User(String oauthId, String email, Role unapproved) {
+        this.oauthId = oauthId;
+        this.userEmail = email;
+        this.role = unapproved;
     }
 
     public void updateRoleAndGrantor(User grantor, Role role, LocalDateTime approvedAt) {
         this.grantor = grantor;
         this.role = role;
         this.approvedAt = approvedAt;
+    }
+
+    public void updateName(String userName){
+        this.userName = userName;
+    }
+
+    public User updateEmail(String email) {
+        this.userEmail = email;
+        return this;
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
     }
 }

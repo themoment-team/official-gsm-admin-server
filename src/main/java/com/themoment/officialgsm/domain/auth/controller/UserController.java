@@ -1,11 +1,11 @@
-package com.themoment.officialgsm.domain.User.controller;
+package com.themoment.officialgsm.domain.auth.controller;
 
-import com.themoment.officialgsm.domain.User.dto.request.SignInRequest;
-import com.themoment.officialgsm.domain.User.dto.request.SignUpRequest;
-import com.themoment.officialgsm.domain.User.dto.response.TokenResponse;
-import com.themoment.officialgsm.domain.User.dto.response.UnapprovedUserResponse;
-import com.themoment.officialgsm.domain.User.service.GrantorService;
-import com.themoment.officialgsm.domain.User.service.UserService;
+import com.themoment.officialgsm.domain.auth.dto.request.SignInRequest;
+import com.themoment.officialgsm.domain.auth.dto.request.SignUpRequest;
+import com.themoment.officialgsm.domain.auth.dto.response.TokenResponse;
+import com.themoment.officialgsm.domain.auth.dto.response.UnapprovedUserResponse;
+import com.themoment.officialgsm.domain.auth.service.GrantorService;
+import com.themoment.officialgsm.domain.auth.service.UserService;
 import com.themoment.officialgsm.global.util.ClientIpUtil;
 import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;

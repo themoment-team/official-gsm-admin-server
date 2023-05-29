@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.User.dto.response;
+package com.themoment.officialgsm.domain.auth.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

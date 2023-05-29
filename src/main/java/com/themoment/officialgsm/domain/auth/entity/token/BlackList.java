@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.User.entity.token;
+package com.themoment.officialgsm.domain.auth.entity.token;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -11,16 +11,12 @@ import org.springframework.data.redis.core.index.Indexed;
 @NoArgsConstructor
 @ToString
 @Builder
-@RedisHash("refreshToken")
-public class RefreshToken {
+@RedisHash("admin-api.blackList")
+public class BlackList {
     @Id
     private String userId;
     @Indexed
-    private String token;
+    private String accessToken;
     @TimeToLive
-    private Long expiredAt;
-
-    public void updateRefreshToken(String token){
-        this.token = token;
-    }
+    private Long timeToLive;
 }

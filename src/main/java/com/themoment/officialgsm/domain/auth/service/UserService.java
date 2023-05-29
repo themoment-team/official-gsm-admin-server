@@ -1,14 +1,14 @@
-package com.themoment.officialgsm.domain.User.service;
+package com.themoment.officialgsm.domain.auth.service;
 
-import com.themoment.officialgsm.domain.User.entity.token.BlackList;
-import com.themoment.officialgsm.domain.User.entity.token.RefreshToken;
-import com.themoment.officialgsm.domain.User.entity.user.User;
-import com.themoment.officialgsm.domain.User.dto.request.SignInRequest;
-import com.themoment.officialgsm.domain.User.dto.request.SignUpRequest;
-import com.themoment.officialgsm.domain.User.dto.response.TokenResponse;
-import com.themoment.officialgsm.domain.User.repository.BlackListRepository;
-import com.themoment.officialgsm.domain.User.repository.RefreshTokenRepository;
-import com.themoment.officialgsm.domain.User.repository.UserRepository;
+import com.themoment.officialgsm.domain.auth.entity.token.BlackList;
+import com.themoment.officialgsm.domain.auth.entity.token.RefreshToken;
+import com.themoment.officialgsm.domain.auth.entity.user.User;
+import com.themoment.officialgsm.domain.auth.dto.request.SignInRequest;
+import com.themoment.officialgsm.domain.auth.dto.request.SignUpRequest;
+import com.themoment.officialgsm.domain.auth.dto.response.TokenResponse;
+import com.themoment.officialgsm.domain.auth.repository.BlackListRepository;
+import com.themoment.officialgsm.domain.auth.repository.RefreshTokenRepository;
+import com.themoment.officialgsm.domain.auth.repository.UserRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
 import com.themoment.officialgsm.global.util.ConstantsUtil;

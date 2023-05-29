@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.User.dto.request;
+package com.themoment.officialgsm.domain.auth.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

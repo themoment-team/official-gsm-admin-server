@@ -1,6 +1,6 @@
-package com.themoment.officialgsm.domain.User.dto.response;
+package com.themoment.officialgsm.domain.auth.dto.response;
 
-import com.themoment.officialgsm.domain.User.entity.user.Role;
+import com.themoment.officialgsm.domain.auth.entity.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
