@@ -15,4 +15,5 @@ public class AddPostRequest {
     private String postTitle;
     private String postContent;
     private Category category;
+    private String bannerUrl;
 }
