@@ -30,14 +30,14 @@ public class User {
     private String userPwd;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Column(name = "role")
     private Role role;
 
     @OneToOne
     @JoinColumn(name = "grantor_seq", referencedColumnName = "user_seq")
     private User grantor;
 
-    @Column(name = "approved_at", nullable = false)
+    @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
     @PrePersist
