@@ -21,20 +21,24 @@ public class Post extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_seq")
     private Long postSeq;
 
+    @Column(name = "post_title", nullable = false, length = 61)
     private String postTitle;
 
+    @Column(name = "post_content", nullable = false, length = 5001)
     private String postContent;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
     private Category category;
 
     @OneToMany(mappedBy = "post")
     private List<File> files = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_seq")
+    @JoinColumn(name = "user_seq", nullable = false)
     private User user;
 
     public void update(String postTitle, String postContent, Category category) {
