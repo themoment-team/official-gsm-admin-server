@@ -75,7 +75,7 @@ public class BoardService {
     }
 
     private void saveFiles(Post post, List<MultipartFile> multipartFiles) {
-        List<FileDto> fileDtoList = awsS3Util.upload(multipartFiles);
+        List<FileDto> fileDtoList = awsS3Util.uploadList(multipartFiles);
 
         List<File> fileList = new ArrayList<>();
         for (FileDto fileDto : fileDtoList) {

@@ -29,7 +29,7 @@ public class AwsS3Util {
     private final List<String> ALLOWED_EXTENSIONS = Arrays.asList(".jpg", ".png", ".mp4", ".hwp", ".pdf", ".xlsx");
     private final String DOMAIN_URL = "http://bucket.ottokeng.site/";   // 추후 수정해야함 !
 
-    public List<FileDto> upload(List<MultipartFile> multipartFiles) {
+    public List<FileDto> uploadList(List<MultipartFile> multipartFiles) {
         if(multipartFiles == null || multipartFiles.isEmpty()) {
             return Collections.emptyList();
         }
@@ -37,23 +37,26 @@ public class AwsS3Util {
         List<FileDto> fileDtoList = new ArrayList<>();
 
         for (MultipartFile file : multipartFiles) {
-            String originalFileName = file.getOriginalFilename();
-            String fileName = createFileName(originalFileName);
-
-            try(InputStream inputStream = file.getInputStream()) {
-                amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, extractMetaData(file))
-                        .withCannedAcl(CannedAccessControlList.PublicRead));
-                FileDto fileDto = new FileDto(
-                        getDomainUrl(amazonS3.getUrl(bucket, fileName).toString()),
-                        originalFileName,
-                        convertToConstant(getFileExtension(originalFileName))
-                );
-                fileDtoList.add(fileDto);
-            } catch(IOException e) {
-                throw new CustomException("파일 업로드 과정에서 예외가 발생하였습니다.", HttpStatus.BAD_REQUEST, e);
-            }
+            fileDtoList.add(upload(file));
         }
         return fileDtoList;
+    }
+
+    public FileDto upload(MultipartFile file) {
+        String originalFileName = file.getOriginalFilename();
+        String fileName = createFileName(originalFileName);
+
+        try(InputStream inputStream = file.getInputStream()) {
+            amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, extractMetaData(file))
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            return new FileDto(
+                    getDomainUrl(amazonS3.getUrl(bucket, fileName).toString()),
+                    originalFileName,
+                    convertToConstant(getFileExtension(originalFileName))
+            );
+        } catch(IOException e) {
+            throw new CustomException("파일 업로드 과정에서 예외가 발생하였습니다.", HttpStatus.BAD_REQUEST, e);
+        }
     }
 
     private ObjectMetadata extractMetaData(MultipartFile file) {
