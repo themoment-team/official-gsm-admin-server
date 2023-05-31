@@ -1,10 +1,10 @@
 package com.themoment.officialgsm.domain.board.dto.request;
 
 import com.themoment.officialgsm.domain.board.entity.post.Category;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Builder
@@ -12,7 +12,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AddPostRequest {
 
+    @NotNull
+    @Length(min = 5, max = 60)
     private String postTitle;
+
+    @NotNull
+    @Length(max = 5000)
     private String postContent;
+
+    @NotBlank
     private Category category;
 }
