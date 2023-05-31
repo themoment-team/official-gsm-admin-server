@@ -1,7 +1,6 @@
 package com.themoment.officialgsm.domain.board.dto.request;
 
 import com.themoment.officialgsm.domain.board.entity.post.Category;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
@@ -20,6 +19,6 @@ public class AddPostRequest {
     @Length(max = 5000)
     private String postContent;
 
-    @NotBlank
+    @NotNull
     private Category category;
 }

@@ -25,7 +25,7 @@ public class ModifyPostRequest {
     @Length(max = 5000)
     private String postContent;
 
-    @NotBlank
+    @NotNull
     private Category category;
 
     @NotNull
