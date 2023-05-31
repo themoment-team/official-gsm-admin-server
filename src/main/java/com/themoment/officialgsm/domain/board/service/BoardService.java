@@ -33,12 +33,15 @@ public class BoardService {
     private final FileBulkRepository fileBulkRepository;
 
     @Transactional
-    public void addPost(AddPostRequest addPostRequest, List<MultipartFile> multipartFiles) {
+    public void addPost(AddPostRequest addPostRequest, MultipartFile bannerImage, List<MultipartFile> multipartFiles) {
         User user = currentUserUtil.getCurrentUser();
+
+        FileDto bannerImageInfo = awsS3Util.upload(bannerImage);
         Post post = Post.builder()
                 .postTitle(addPostRequest.getPostTitle())
                 .postContent(addPostRequest.getPostContent())
                 .category(addPostRequest.getCategory())
+                .bannerUrl(bannerImageInfo.getFileUrl())
                 .user(user)
                 .build();
 

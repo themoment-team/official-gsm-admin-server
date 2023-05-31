@@ -20,8 +20,8 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<Void> postAdd(@RequestPart("content") AddPostRequest addPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
-        boardService.addPost(addPostRequest, multipartFiles);
+    public ResponseEntity<Void> postAdd(@RequestPart("content") AddPostRequest addPostRequest, @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
+        boardService.addPost(addPostRequest, bannerImage, multipartFiles);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
