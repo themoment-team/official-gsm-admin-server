@@ -45,6 +45,8 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests()
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/auth/{userName}").permitAll()
                         .requestMatchers("/auth/token/reissue").permitAll()
                         .requestMatchers("/auth/unapproved/list").hasAuthority("ADMIN")
                         .requestMatchers("/auth/approved/*").hasAuthority("ADMIN")

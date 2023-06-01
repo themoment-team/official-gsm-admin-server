@@ -3,9 +3,6 @@ package com.themoment.officialgsm.domain.auth.service;
 import com.themoment.officialgsm.domain.auth.entity.token.BlackList;
 import com.themoment.officialgsm.domain.auth.entity.token.RefreshToken;
 import com.themoment.officialgsm.domain.auth.entity.user.User;
-import com.themoment.officialgsm.domain.auth.dto.request.SignInRequest;
-import com.themoment.officialgsm.domain.auth.dto.request.SignUpRequest;
-import com.themoment.officialgsm.domain.auth.dto.response.TokenResponse;
 import com.themoment.officialgsm.domain.auth.repository.BlackListRepository;
 import com.themoment.officialgsm.domain.auth.repository.RefreshTokenRepository;
 import com.themoment.officialgsm.domain.auth.repository.UserRepository;
@@ -13,14 +10,13 @@ import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
 import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
+import com.themoment.officialgsm.global.util.EmailUtil;
 import com.themoment.officialgsm.global.util.UserUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,5 +76,14 @@ public class UserService {
                 .timeToLive(jwtTokenProvider.getExpiredAtoTokenToLong())
                 .build();
         blackListRepository.save(blackList);
+    }
+
+    public void checkedEmail() {
+        User user = userUtil.getCurrentUser();
+        String emailDomain = EmailUtil.getEmailDomain(user.getUserEmail());
+        if(!emailDomain.equals("gsm.hs.kr")){
+            userRepository.delete(user);
+            throw new CustomException("GSM 이메일이 아닙니다. 다시 로그인 해주세요.", HttpStatus.BAD_REQUEST);
+        }
     }
 }

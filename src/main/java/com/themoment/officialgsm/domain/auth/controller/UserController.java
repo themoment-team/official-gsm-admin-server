@@ -1,17 +1,12 @@
 package com.themoment.officialgsm.domain.auth.controller;
 
-import com.themoment.officialgsm.domain.auth.dto.request.SignInRequest;
-import com.themoment.officialgsm.domain.auth.dto.request.SignUpRequest;
-import com.themoment.officialgsm.domain.auth.dto.response.TokenResponse;
 import com.themoment.officialgsm.domain.auth.dto.response.UnapprovedUserResponse;
 import com.themoment.officialgsm.domain.auth.service.GrantorService;
 import com.themoment.officialgsm.domain.auth.service.UserService;
-import com.themoment.officialgsm.global.util.ClientIpUtil;
 import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +56,12 @@ public class UserController {
     @DeleteMapping("/approved/{userSeq}")
     public ResponseEntity<Void> refuseApproved(@PathVariable Long userSeq){
         grantorService.refuseApprovedExecute(userSeq);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/email")
+    public ResponseEntity<Void> checkedEmail(){
+        userService.checkedEmail();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
