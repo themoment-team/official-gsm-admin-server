@@ -54,9 +54,9 @@ public class BoardService {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException("게시글 수정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
 
-        FileDto fileDto = new FileDto();
+        FileDto bannerImageInfo = new FileDto();
         if (bannerImage != null) {
-            fileDto = awsS3Util.upload(bannerImage);
+            bannerImageInfo = awsS3Util.upload(bannerImage);
             if (post.getBannerUrl() != null) {
                 deleteS3Files(List.of(post.getBannerUrl()));
             }
@@ -66,7 +66,7 @@ public class BoardService {
                 modifyPostRequest.getPostTitle(),
                 modifyPostRequest.getPostContent(),
                 modifyPostRequest.getCategory(),
-                fileDto.getFileUrl()
+                bannerImageInfo.getFileUrl()
         );
 
         List<String> deleteFileUrls = modifyPostRequest.getDeleteFileUrl();
