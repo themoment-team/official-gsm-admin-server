@@ -16,16 +16,20 @@ public class File {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "file_seq")
     private Long fileSeq;
 
+    @Column(name = "file_url", nullable = false)
     private String fileUrl;
 
+    @Column(name = "file_name", nullable = false)
     private String fileName;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "file_extension", nullable = false)
     private FileExtension fileExtension;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_seq")
+    @JoinColumn(name = "post_seq", nullable = false)
     private Post post;
 }

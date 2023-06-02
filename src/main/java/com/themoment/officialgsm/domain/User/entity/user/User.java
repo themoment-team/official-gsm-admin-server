@@ -14,27 +14,30 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_seq")
     private Long userSeq;
 
-    @Column(nullable = false)
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(nullable = false)
+    @Column(name = "user_pwd", nullable = false)
     private String userPwd;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private Role role;
 
     @OneToOne
     @JoinColumn(name = "grantor_seq", referencedColumnName = "user_seq")
     private User grantor;
 
+    @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
     @PrePersist
