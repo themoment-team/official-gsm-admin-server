@@ -21,4 +21,5 @@ public class AddPostRequest {
 
     @NotNull
     private Category category;
+    private String bannerUrl;
 }

@@ -30,6 +30,8 @@ public class Post extends BaseTimeEntity {
     @Column(name = "post_content", nullable = false, length = 5001)
     private String postContent;
 
+    private String bannerUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
     private Category category;
@@ -41,10 +43,11 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "user_seq", nullable = false)
     private User user;
 
-    public void update(String postTitle, String postContent, Category category) {
+    public void update(String postTitle, String postContent, Category category, String bannerUrl) {
         this.postTitle = postTitle;
         this.postContent = postContent;
         this.category = category;
+        this.bannerUrl = bannerUrl;
     }
 
 }

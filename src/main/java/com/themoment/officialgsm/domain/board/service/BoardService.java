@@ -33,36 +33,52 @@ public class BoardService {
     private final FileBulkRepository fileBulkRepository;
 
     @Transactional
-    public void addPost(AddPostRequest addPostRequest, List<MultipartFile> multipartFiles) {
+    public void addPost(AddPostRequest addPostRequest, MultipartFile bannerImage, List<MultipartFile> files) {
         User user = currentUserUtil.getCurrentUser();
+
+        FileDto bannerImageInfo = new FileDto();
+        if(bannerImage != null) {
+            bannerImageInfo = awsS3Util.upload(bannerImage);
+        }
+
         Post post = Post.builder()
                 .postTitle(addPostRequest.getPostTitle())
                 .postContent(addPostRequest.getPostContent())
                 .category(addPostRequest.getCategory())
+                .bannerUrl(bannerImageInfo.getFileUrl())
                 .user(user)
                 .build();
 
         postRepository.save(post);
-        saveFiles(post, multipartFiles);
+        saveFiles(post, files);
     }
 
     @Transactional
-    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> multipartFiles) {
+    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, MultipartFile bannerImage, List<MultipartFile> files) {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException("게시글 수정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
+
+        FileDto bannerImageInfo = new FileDto();
+        if (bannerImage != null) {
+            bannerImageInfo = awsS3Util.upload(bannerImage);
+            if (post.getBannerUrl() != null) {
+                deleteS3Files(List.of(post.getBannerUrl()));
+            }
+        }
 
         post.update(
                 modifyPostRequest.getPostTitle(),
                 modifyPostRequest.getPostContent(),
-                modifyPostRequest.getCategory()
-                );
+                modifyPostRequest.getCategory(),
+                bannerImageInfo.getFileUrl()
+        );
 
         List<String> deleteFileUrls = modifyPostRequest.getDeleteFileUrl();
         if (!deleteFileUrls.isEmpty()) {
             deleteS3Files(deleteFileUrls);
         }
 
-        saveFiles(post, multipartFiles);
+        saveFiles(post, files);
     }
 
     @Transactional
@@ -74,8 +90,8 @@ public class BoardService {
         postRepository.delete(post);
     }
 
-    private void saveFiles(Post post, List<MultipartFile> multipartFiles) {
-        List<FileDto> fileDtoList = awsS3Util.upload(multipartFiles);
+    private void saveFiles(Post post, List<MultipartFile> files) {
+        List<FileDto> fileDtoList = awsS3Util.uploadList(files);
 
         List<File> fileList = new ArrayList<>();
         for (FileDto fileDto : fileDtoList) {
