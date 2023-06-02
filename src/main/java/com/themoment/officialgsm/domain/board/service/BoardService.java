@@ -50,15 +50,24 @@ public class BoardService {
     }
 
     @Transactional
-    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> multipartFiles) {
+    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, MultipartFile bannerImage, List<MultipartFile> multipartFiles) {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException("게시글 수정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
+
+        FileDto fileDto = new FileDto();
+        if (bannerImage != null) {
+            fileDto = awsS3Util.upload(bannerImage);
+            if (post.getBannerUrl() != null) {
+                deleteS3Files(List.of(post.getBannerUrl()));
+            }
+        }
 
         post.update(
                 modifyPostRequest.getPostTitle(),
                 modifyPostRequest.getPostContent(),
-                modifyPostRequest.getCategory()
-                );
+                modifyPostRequest.getCategory(),
+                fileDto.getFileUrl()
+        );
 
         List<String> deleteFileUrls = modifyPostRequest.getDeleteFileUrl();
         if (!deleteFileUrls.isEmpty()) {

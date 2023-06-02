@@ -26,8 +26,8 @@ public class BoardController {
     }
 
     @PatchMapping("/{postSeq}")
-    public ResponseEntity<Void> postModify(@PathVariable Long postSeq, @RequestPart("content") ModifyPostRequest modifyPostRequest, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
-        boardService.modifyPost(postSeq, modifyPostRequest, multipartFiles);
+    public ResponseEntity<Void> postModify(@PathVariable Long postSeq, @RequestPart("content") ModifyPostRequest modifyPostRequest, @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
+        boardService.modifyPost(postSeq, modifyPostRequest, bannerImage, multipartFiles);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
