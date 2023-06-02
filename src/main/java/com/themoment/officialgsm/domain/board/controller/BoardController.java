@@ -20,14 +20,14 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<Void> postAdd(@RequestPart("content") AddPostRequest addPostRequest, @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
-        boardService.addPost(addPostRequest, bannerImage, multipartFiles);
+    public ResponseEntity<Void> postAdd(@RequestPart("content") AddPostRequest addPostRequest, @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage, @RequestPart(value = "file", required = false) List<MultipartFile> files) {
+        boardService.addPost(addPostRequest, bannerImage, files);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/{postSeq}")
-    public ResponseEntity<Void> postModify(@PathVariable Long postSeq, @RequestPart("content") ModifyPostRequest modifyPostRequest, @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage, @RequestPart(value = "file", required = false) List<MultipartFile> multipartFiles) {
-        boardService.modifyPost(postSeq, modifyPostRequest, bannerImage, multipartFiles);
+    public ResponseEntity<Void> postModify(@PathVariable Long postSeq, @RequestPart("content") ModifyPostRequest modifyPostRequest, @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage, @RequestPart(value = "file", required = false) List<MultipartFile> files) {
+        boardService.modifyPost(postSeq, modifyPostRequest, bannerImage, files);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

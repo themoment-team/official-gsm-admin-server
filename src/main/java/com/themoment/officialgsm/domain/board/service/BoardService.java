@@ -33,7 +33,7 @@ public class BoardService {
     private final FileBulkRepository fileBulkRepository;
 
     @Transactional
-    public void addPost(AddPostRequest addPostRequest, MultipartFile bannerImage, List<MultipartFile> multipartFiles) {
+    public void addPost(AddPostRequest addPostRequest, MultipartFile bannerImage, List<MultipartFile> files) {
         User user = currentUserUtil.getCurrentUser();
 
         FileDto bannerImageInfo = new FileDto();
@@ -50,11 +50,11 @@ public class BoardService {
                 .build();
 
         postRepository.save(post);
-        saveFiles(post, multipartFiles);
+        saveFiles(post, files);
     }
 
     @Transactional
-    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, MultipartFile bannerImage, List<MultipartFile> multipartFiles) {
+    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, MultipartFile bannerImage, List<MultipartFile> files) {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException("게시글 수정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
 
@@ -78,7 +78,7 @@ public class BoardService {
             deleteS3Files(deleteFileUrls);
         }
 
-        saveFiles(post, multipartFiles);
+        saveFiles(post, files);
     }
 
     @Transactional
@@ -90,8 +90,8 @@ public class BoardService {
         postRepository.delete(post);
     }
 
-    private void saveFiles(Post post, List<MultipartFile> multipartFiles) {
-        List<FileDto> fileDtoList = awsS3Util.uploadList(multipartFiles);
+    private void saveFiles(Post post, List<MultipartFile> files) {
+        List<FileDto> fileDtoList = awsS3Util.uploadList(files);
 
         List<File> fileList = new ArrayList<>();
         for (FileDto fileDto : fileDtoList) {
