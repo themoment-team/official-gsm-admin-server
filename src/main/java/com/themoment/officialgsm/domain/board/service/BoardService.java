@@ -36,7 +36,11 @@ public class BoardService {
     public void addPost(AddPostRequest addPostRequest, MultipartFile bannerImage, List<MultipartFile> multipartFiles) {
         User user = currentUserUtil.getCurrentUser();
 
-        FileDto bannerImageInfo = awsS3Util.upload(bannerImage);
+        FileDto bannerImageInfo = new FileDto();
+        if(bannerImage != null) {
+            bannerImageInfo = awsS3Util.upload(bannerImage);
+        }
+
         Post post = Post.builder()
                 .postTitle(addPostRequest.getPostTitle())
                 .postContent(addPostRequest.getPostContent())
