@@ -82,7 +82,7 @@ class BoardServiceTest {
         em.clear();
 
         UsernamePasswordAuthenticationToken token
-                = new UsernamePasswordAuthenticationToken(user.getUserName(),"password");
+                = new UsernamePasswordAuthenticationToken(user.getUserId(),"password");
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(token);
 
