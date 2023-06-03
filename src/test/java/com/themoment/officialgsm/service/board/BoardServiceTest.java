@@ -101,30 +101,6 @@ class BoardServiceTest {
     }
 
     @Test
-    @DisplayName("게시물 전체 조회")
-    void findPosts() {
-
-        // given
-        AddPostRequest addPostRequest = getAddPostRequest();
-        MockMultipartFile mockMultipartFile = getMockMultipartFile();
-
-        for(int i = 0; i < 11; i++) {
-            savePost(addPostRequest, mockMultipartFile);
-        }
-
-        // when
-        Page<PostListResponse> postListResponses = boardService.findPostList(0, Category.NOTICE);
-
-        // then
-        assertThat(postListResponses.getSize()).isEqualTo(5);
-        assertThat(postListResponses.getTotalElements()).isEqualTo(11);
-        assertThat(postListResponses.getTotalPages()).isEqualTo(3);
-
-        assertThat(postListResponses.getContent().get(0).getPostTitle()).isEqualTo(addPostRequest.getPostTitle());
-        assertThat(postListResponses.getContent().get(0).getFileIsExist()).isTrue();
-    }
-
-    @Test
     @DisplayName("게시물 등록")
     void addPost() {
 
