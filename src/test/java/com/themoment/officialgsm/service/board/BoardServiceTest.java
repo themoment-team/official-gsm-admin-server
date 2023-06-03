@@ -93,8 +93,8 @@ class BoardServiceTest {
         assertNotNull(currentUser);
     }
 
-    private void savePost(AddPostRequest addPostRequest, MockMultipartFile multipartFile) {
-        boardService.addPost(addPostRequest, List.of(multipartFile));
+    private void savePost(AddPostRequest addPostRequest, MockMultipartFile file) {
+        boardService.addPost(addPostRequest, List.of(file));
 
         em.flush();
         em.clear();
@@ -106,9 +106,9 @@ class BoardServiceTest {
 
         // given
         AddPostRequest addPostRequest = getAddPostRequest();
-        MockMultipartFile mockMultipartFile = getMockMultipartFile();
+        MockMultipartFile file = getMockMultipartFile();
 
-        savePost(addPostRequest, mockMultipartFile);
+        savePost(addPostRequest, file);
 
         // when
         Post post = postRepository.findAll().get(0);
@@ -118,7 +118,7 @@ class BoardServiceTest {
         assertThat(post.getPostContent()).isEqualTo(addPostRequest.getPostContent());
         assertThat(post.getCategory()).isEqualTo(addPostRequest.getCategory());
 
-        assertThat(post.getFiles().get(0).getFileName()).isEqualTo(mockMultipartFile.getOriginalFilename());
+        assertThat(post.getFiles().get(0).getFileName()).isEqualTo(file.getOriginalFilename());
     }
 
     @Test
@@ -127,9 +127,9 @@ class BoardServiceTest {
 
         // given
         AddPostRequest addPostRequest = getAddPostRequest();
-        MockMultipartFile mockMultipartFile = getMockMultipartFile();
+        MockMultipartFile file = getMockMultipartFile();
 
-        savePost(addPostRequest, mockMultipartFile);
+        savePost(addPostRequest, file);
 
         ModifyPostRequest modifyPostRequest = ModifyPostRequest.builder()
                 .postTitle("변경된 제목")
@@ -140,7 +140,7 @@ class BoardServiceTest {
 
         Long postSeq = postRepository.findAll().get(0).getPostSeq();
 
-        boardService.modifyPost(postSeq, modifyPostRequest, List.of(mockMultipartFile, mockMultipartFile, mockMultipartFile));
+        boardService.modifyPost(postSeq, modifyPostRequest, List.of(file, file, file));
 
         em.flush();
         em.clear();
@@ -160,9 +160,9 @@ class BoardServiceTest {
 
         // given
         AddPostRequest addPostRequest = getAddPostRequest();
-        MockMultipartFile mockMultipartFile = getMockMultipartFile();
+        MockMultipartFile file = getMockMultipartFile();
 
-        savePost(addPostRequest,mockMultipartFile);
+        savePost(addPostRequest,file);
 
         Long postSeq = postRepository.findAll().get(0).getPostSeq();
         boardService.removePost(postSeq);
