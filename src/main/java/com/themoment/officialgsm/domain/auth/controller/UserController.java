@@ -1,5 +1,6 @@
 package com.themoment.officialgsm.domain.auth.controller;
 
+import com.themoment.officialgsm.domain.auth.dto.request.UserNameRequest;
 import com.themoment.officialgsm.domain.auth.dto.response.UnapprovedUserResponse;
 import com.themoment.officialgsm.domain.auth.service.GrantorService;
 import com.themoment.officialgsm.domain.auth.service.UserService;
@@ -7,6 +8,7 @@ import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +23,9 @@ public class UserController {
     private final UserService userService;
     private final GrantorService grantorService;
 
-    @PatchMapping("/{userName}")
-    public ResponseEntity<Void> nameSet(@PathVariable String userName){
-        userService.nameSetExecute(userName);
+    @PatchMapping("/username")
+    public ResponseEntity<Void> nameSet(@Valid @RequestBody UserNameRequest request){
+        userService.nameSetExecute(request);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

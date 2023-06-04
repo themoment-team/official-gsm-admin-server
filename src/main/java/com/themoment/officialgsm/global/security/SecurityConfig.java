@@ -45,8 +45,7 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests()
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/auth/{userName}").permitAll()
+                        .requestMatchers("/main.html").permitAll()
                         .requestMatchers("/auth/token/reissue").permitAll()
                         .requestMatchers("/auth/unapproved/list").hasAuthority("ADMIN")
                         .requestMatchers("/auth/approved/*").hasAuthority("ADMIN")
@@ -65,7 +64,11 @@ public class SecurityConfig {
 
         httpSecurity
                 .formLogin().disable()
+                .httpBasic().disable()
+                .headers().frameOptions().sameOrigin()
+                .and()
                 .oauth2Login()
+                .loginProcessingUrl("/login/oauth2/code/google")
                 .userInfoEndpoint()
                 .userService(oAuthService);
 

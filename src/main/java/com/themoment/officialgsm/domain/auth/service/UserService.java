@@ -1,5 +1,6 @@
 package com.themoment.officialgsm.domain.auth.service;
 
+import com.themoment.officialgsm.domain.auth.dto.request.UserNameRequest;
 import com.themoment.officialgsm.domain.auth.entity.token.BlackList;
 import com.themoment.officialgsm.domain.auth.entity.token.RefreshToken;
 import com.themoment.officialgsm.domain.auth.entity.user.User;
@@ -32,9 +33,9 @@ public class UserService {
     private final UserUtil userUtil;
 
     @Transactional
-    public void nameSetExecute(String userName) {
+    public void nameSetExecute(UserNameRequest request) {
         User user = userUtil.getCurrentUser();
-        user.updateName(userName);
+        user.updateName(request.getUserName());
         userRepository.save(user);
     }
 
