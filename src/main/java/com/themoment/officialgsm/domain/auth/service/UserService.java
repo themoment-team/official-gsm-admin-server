@@ -79,6 +79,7 @@ public class UserService {
         blackListRepository.save(blackList);
     }
 
+    @Transactional
     public void checkedEmail() {
         User user = userUtil.getCurrentUser();
         String emailDomain = EmailUtil.getEmailDomain(user.getUserEmail());
