@@ -1,7 +1,9 @@
 package com.themoment.officialgsm.domain.auth.controller;
 
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.themoment.officialgsm.domain.auth.dto.request.UserNameRequest;
 import com.themoment.officialgsm.domain.auth.dto.response.UnapprovedUserResponse;
+import com.themoment.officialgsm.domain.auth.dto.response.UserInfoResponse;
 import com.themoment.officialgsm.domain.auth.service.GrantorService;
 import com.themoment.officialgsm.domain.auth.service.UserService;
 import com.themoment.officialgsm.global.util.ConstantsUtil;
@@ -27,6 +29,12 @@ public class UserController {
     public ResponseEntity<Void> nameSet(@Valid @RequestBody UserNameRequest request){
         userService.nameSetExecute(request);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/userinfo")
+    public ResponseEntity<UserInfoResponse> userInfo(){
+        UserInfoResponse userinfo = userService.userInfoExecute();
+        return new ResponseEntity<>(userinfo, HttpStatus.OK);
     }
 
     @DeleteMapping("/logout")

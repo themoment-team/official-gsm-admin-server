@@ -1,6 +1,7 @@
 package com.themoment.officialgsm.domain.auth.service;
 
 import com.themoment.officialgsm.domain.auth.dto.request.UserNameRequest;
+import com.themoment.officialgsm.domain.auth.dto.response.UserInfoResponse;
 import com.themoment.officialgsm.domain.auth.entity.token.BlackList;
 import com.themoment.officialgsm.domain.auth.entity.token.RefreshToken;
 import com.themoment.officialgsm.domain.auth.entity.user.User;
@@ -91,5 +92,13 @@ public class UserService {
             userRepository.delete(user);
             throw new CustomException("GSM 이메일이 아닙니다. 다시 로그인 해주세요.", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    public UserInfoResponse userInfoExecute() {
+        User user = userUtil.getCurrentUser();
+        return UserInfoResponse.builder()
+                .userName(user.getUserName())
+                .role(user.getRole())
+                .build();
     }
 }
