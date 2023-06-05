@@ -4,10 +4,8 @@ import com.themoment.officialgsm.domain.auth.entity.user.User;
 import com.themoment.officialgsm.domain.board.dto.FileDto;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
 import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
-import com.themoment.officialgsm.domain.board.dto.response.PostListResponse;
 import com.themoment.officialgsm.domain.board.entity.file.File;
 import com.themoment.officialgsm.domain.board.entity.file.FileExtension;
-import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileBulkRepository;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
@@ -16,10 +14,6 @@ import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.util.AwsS3Util;
 import com.themoment.officialgsm.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,45 +32,53 @@ public class BoardService {
     private final AwsS3Util awsS3Util;
     private final FileBulkRepository fileBulkRepository;
 
-    @Transactional(readOnly = true)
-    public Page<PostListResponse> findPostList(int pageNumber, Category category) {
-        Pageable pageable = PageRequest.of(pageNumber, 5, Sort.by("createdAt").descending());   // pageSize는 추후 수정
-        Page<Post> postList = postRepository.findAllByCategory(pageable, category);
-
-        return postList.map(PostListResponse::from);
-    }
-
     @Transactional
-    public void addPost(AddPostRequest addPostRequest, List<MultipartFile> multipartFiles) {
+    public void addPost(AddPostRequest addPostRequest, MultipartFile bannerImage, List<MultipartFile> files) {
         User user = currentUserUtil.getCurrentUser();
+
+        FileDto bannerImageInfo = new FileDto();
+        if(bannerImage != null) {
+            bannerImageInfo = awsS3Util.upload(bannerImage);
+        }
+
         Post post = Post.builder()
                 .postTitle(addPostRequest.getPostTitle())
                 .postContent(addPostRequest.getPostContent())
                 .category(addPostRequest.getCategory())
+                .bannerUrl(bannerImageInfo.getFileUrl())
                 .user(user)
                 .build();
 
         postRepository.save(post);
-        saveFiles(post, multipartFiles);
+        saveFiles(post, files);
     }
 
     @Transactional
-    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> multipartFiles) {
+    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, MultipartFile bannerImage, List<MultipartFile> files) {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException("게시글 수정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
+
+        FileDto bannerImageInfo = new FileDto();
+        if (bannerImage != null) {
+            bannerImageInfo = awsS3Util.upload(bannerImage);
+            if (post.getBannerUrl() != null) {
+                deleteS3Files(List.of(post.getBannerUrl()));
+            }
+        }
 
         post.update(
                 modifyPostRequest.getPostTitle(),
                 modifyPostRequest.getPostContent(),
-                modifyPostRequest.getCategory()
-                );
+                modifyPostRequest.getCategory(),
+                bannerImageInfo.getFileUrl()
+        );
 
         List<String> deleteFileUrls = modifyPostRequest.getDeleteFileUrl();
         if (!deleteFileUrls.isEmpty()) {
             deleteS3Files(deleteFileUrls);
         }
 
-        saveFiles(post, multipartFiles);
+        saveFiles(post, files);
     }
 
     @Transactional
@@ -88,8 +90,8 @@ public class BoardService {
         postRepository.delete(post);
     }
 
-    private void saveFiles(Post post, List<MultipartFile> multipartFiles) {
-        List<FileDto> fileDtoList = awsS3Util.upload(multipartFiles);
+    private void saveFiles(Post post, List<MultipartFile> files) {
+        List<FileDto> fileDtoList = awsS3Util.uploadList(files);
 
         List<File> fileList = new ArrayList<>();
         for (FileDto fileDto : fileDtoList) {
