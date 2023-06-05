@@ -42,7 +42,7 @@ public class AwsS3Util {
         return fileDtoList;
     }
 
-    public FileDto upload(MultipartFile file) {
+    private FileDto upload(MultipartFile file) {
         String originalFileName = file.getOriginalFilename();
         String fileName = createFileName(originalFileName);
 
