@@ -92,7 +92,7 @@ class BoardServiceTest {
     }
 
     private void savePost(AddPostRequest addPostRequest, MockMultipartFile file) {
-        boardService.addPost(addPostRequest, file, List.of(file));
+        boardService.addPost(addPostRequest, List.of(file));
 
         em.flush();
         em.clear();
@@ -138,7 +138,7 @@ class BoardServiceTest {
 
         Long postSeq = postRepository.findAll().get(0).getPostSeq();
 
-        boardService.modifyPost(postSeq, modifyPostRequest, file, List.of(file, file, file));
+        boardService.modifyPost(postSeq, modifyPostRequest, List.of(file, file, file));
 
         em.flush();
         em.clear();
