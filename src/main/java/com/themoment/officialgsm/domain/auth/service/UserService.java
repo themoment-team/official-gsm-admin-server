@@ -16,6 +16,7 @@ import com.themoment.officialgsm.global.util.UserUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class UserService {
     private final BlackListRepository blackListRepository;
     private final RedisTemplate redisTemplate;
     private final UserUtil userUtil;
+
+    @Value("domain")
+    private String schoolDomain;
 
     @Transactional
     public void nameSetExecute(UserNameRequest request) {
@@ -83,7 +87,7 @@ public class UserService {
     public void checkedEmail() {
         User user = userUtil.getCurrentUser();
         String emailDomain = EmailUtil.getEmailDomain(user.getUserEmail());
-        if(!emailDomain.equals("gsm.hs.kr")){
+        if(!emailDomain.equals(schoolDomain)){
             userRepository.delete(user);
             throw new CustomException("GSM 이메일이 아닙니다. 다시 로그인 해주세요.", HttpStatus.BAD_REQUEST);
         }
