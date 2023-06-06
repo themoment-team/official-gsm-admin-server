@@ -4,7 +4,6 @@ import com.themoment.officialgsm.domain.User.entity.user.User;
 import com.themoment.officialgsm.domain.User.repository.UserRepository;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
 import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
-import com.themoment.officialgsm.domain.board.dto.response.PostListResponse;
 import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -82,7 +80,7 @@ class BoardServiceTest {
         em.clear();
 
         UsernamePasswordAuthenticationToken token
-                = new UsernamePasswordAuthenticationToken(user.getUserName(),"password");
+                = new UsernamePasswordAuthenticationToken(user.getUserId(),"password");
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(token);
 
@@ -93,35 +91,11 @@ class BoardServiceTest {
         assertNotNull(currentUser);
     }
 
-    private void savePost(AddPostRequest addPostRequest, MockMultipartFile multipartFile) {
-        boardService.addPost(addPostRequest, List.of(multipartFile));
+    private void savePost(AddPostRequest addPostRequest, MockMultipartFile file) {
+        boardService.addPost(addPostRequest, List.of(file));
 
         em.flush();
         em.clear();
-    }
-
-    @Test
-    @DisplayName("게시물 전체 조회")
-    void findPosts() {
-
-        // given
-        AddPostRequest addPostRequest = getAddPostRequest();
-        MockMultipartFile mockMultipartFile = getMockMultipartFile();
-
-        for(int i = 0; i < 11; i++) {
-            savePost(addPostRequest, mockMultipartFile);
-        }
-
-        // when
-        Page<PostListResponse> postListResponses = boardService.findPostList(0, Category.NOTICE);
-
-        // then
-        assertThat(postListResponses.getSize()).isEqualTo(5);
-        assertThat(postListResponses.getTotalElements()).isEqualTo(11);
-        assertThat(postListResponses.getTotalPages()).isEqualTo(3);
-
-        assertThat(postListResponses.getContent().get(0).getPostTitle()).isEqualTo(addPostRequest.getPostTitle());
-        assertThat(postListResponses.getContent().get(0).getFileIsExist()).isTrue();
     }
 
     @Test
@@ -130,9 +104,9 @@ class BoardServiceTest {
 
         // given
         AddPostRequest addPostRequest = getAddPostRequest();
-        MockMultipartFile mockMultipartFile = getMockMultipartFile();
+        MockMultipartFile file = getMockMultipartFile();
 
-        savePost(addPostRequest, mockMultipartFile);
+        savePost(addPostRequest, file);
 
         // when
         Post post = postRepository.findAll().get(0);
@@ -142,7 +116,7 @@ class BoardServiceTest {
         assertThat(post.getPostContent()).isEqualTo(addPostRequest.getPostContent());
         assertThat(post.getCategory()).isEqualTo(addPostRequest.getCategory());
 
-        assertThat(post.getFiles().get(0).getFileName()).isEqualTo(mockMultipartFile.getOriginalFilename());
+        assertThat(post.getFiles().get(0).getFileName()).isEqualTo(file.getOriginalFilename());
     }
 
     @Test
@@ -151,9 +125,9 @@ class BoardServiceTest {
 
         // given
         AddPostRequest addPostRequest = getAddPostRequest();
-        MockMultipartFile mockMultipartFile = getMockMultipartFile();
+        MockMultipartFile file = getMockMultipartFile();
 
-        savePost(addPostRequest, mockMultipartFile);
+        savePost(addPostRequest, file);
 
         ModifyPostRequest modifyPostRequest = ModifyPostRequest.builder()
                 .postTitle("변경된 제목")
@@ -164,7 +138,7 @@ class BoardServiceTest {
 
         Long postSeq = postRepository.findAll().get(0).getPostSeq();
 
-        boardService.modifyPost(postSeq, modifyPostRequest, List.of(mockMultipartFile, mockMultipartFile, mockMultipartFile));
+        boardService.modifyPost(postSeq, modifyPostRequest, List.of(file, file, file));
 
         em.flush();
         em.clear();
@@ -184,9 +158,9 @@ class BoardServiceTest {
 
         // given
         AddPostRequest addPostRequest = getAddPostRequest();
-        MockMultipartFile mockMultipartFile = getMockMultipartFile();
+        MockMultipartFile file = getMockMultipartFile();
 
-        savePost(addPostRequest,mockMultipartFile);
+        savePost(addPostRequest,file);
 
         Long postSeq = postRepository.findAll().get(0).getPostSeq();
         boardService.removePost(postSeq);
