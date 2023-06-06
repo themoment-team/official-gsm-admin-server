@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class CookieUtil {
     public static void addTokenCookie(HttpServletResponse response, String name, String value, Long maxAge, boolean httpOnly){
         Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(Math.toIntExact(maxAge));
+        cookie.setMaxAge(Math.toIntExact(maxAge)/1000);
         cookie.setHttpOnly(httpOnly);
         cookie.setDomain("");
         cookie.setPath("/");

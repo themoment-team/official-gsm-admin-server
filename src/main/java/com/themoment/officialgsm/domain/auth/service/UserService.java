@@ -34,9 +34,6 @@ public class UserService {
     private final RedisTemplate redisTemplate;
     private final UserUtil userUtil;
 
-    @Value("domain")
-    private String schoolDomain;
-
     @Transactional
     public void nameSetExecute(UserNameRequest request) {
         User user = userUtil.getCurrentUser();
@@ -79,25 +76,16 @@ public class UserService {
         BlackList blackList = BlackList.builder()
                 .oauthId(oauthId)
                 .accessToken(accessToken)
-                .timeToLive(jwtTokenProvider.getExpiredAtoTokenToLong())
+                .timeToLive(jwtTokenProvider.getExpiredAtoAccessTokenToLong())
                 .build();
         blackListRepository.save(blackList);
-    }
-
-    @Transactional
-    public void checkedEmail() {
-        User user = userUtil.getCurrentUser();
-        String emailDomain = EmailUtil.getEmailDomain(user.getUserEmail());
-        if(!emailDomain.equals(schoolDomain)){
-            userRepository.delete(user);
-            throw new CustomException("GSM 이메일이 아닙니다. 다시 로그인 해주세요.", HttpStatus.BAD_REQUEST);
-        }
     }
 
     public UserInfoResponse userInfoExecute() {
         User user = userUtil.getCurrentUser();
         return UserInfoResponse.builder()
                 .userName(user.getUserName())
+                .userEmail(user.getUserEmail())
                 .role(user.getRole())
                 .build();
     }

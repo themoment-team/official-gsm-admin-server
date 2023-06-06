@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Getter
@@ -29,7 +28,7 @@ public class JwtTokenProvider {
     @Value("${jwt.refreshSecret}")
     private String refreshSecret;
     private final AuthDetailsService authDetailsService;
-    private final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 120 * 1000;
+    private final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 120 * 1000L;
     private final long REFRESH_TOKEN_EXPIRE_TIME = ACCESS_TOKEN_EXPIRE_TIME * 12;
 
     @AllArgsConstructor
@@ -86,11 +85,7 @@ public class JwtTokenProvider {
         return getTokenBody(token, secret).get("oauthId", String.class);
     }
 
-    public ZonedDateTime getExpiredAtToken(){
-        return ZonedDateTime.now().plusSeconds(ACCESS_TOKEN_EXPIRE_TIME);
-    }
-
-    public long getExpiredAtoTokenToLong(){
+    public long getExpiredAtoAccessTokenToLong(){
         return ACCESS_TOKEN_EXPIRE_TIME/1000L;
     }
 

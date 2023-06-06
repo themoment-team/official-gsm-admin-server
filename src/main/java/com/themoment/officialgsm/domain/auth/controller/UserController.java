@@ -1,6 +1,5 @@
 package com.themoment.officialgsm.domain.auth.controller;
 
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.themoment.officialgsm.domain.auth.dto.request.UserNameRequest;
 import com.themoment.officialgsm.domain.auth.dto.response.UnapprovedUserResponse;
 import com.themoment.officialgsm.domain.auth.dto.response.UserInfoResponse;
@@ -66,12 +65,6 @@ public class UserController {
     @DeleteMapping("/approved/{userSeq}")
     public ResponseEntity<Void> refuseApproved(@PathVariable Long userSeq){
         grantorService.refuseApprovedExecute(userSeq);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @DeleteMapping("/email")
-    public ResponseEntity<Void> checkedEmail(){
-        userService.checkedEmail();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

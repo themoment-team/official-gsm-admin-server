@@ -51,6 +51,8 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeHttpRequests()
+                        .requestMatchers("/login/oauth2/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers("/auth/token/reissue").permitAll()
                         .requestMatchers("/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/post").permitAll()
