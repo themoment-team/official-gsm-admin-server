@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.User.entity.token;
+package com.themoment.officialgsm.domain.auth.entity.token;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.index.Indexed;
 @RedisHash("admin-api.blackList")
 public class BlackList {
     @Id
-    private String userId;
+    private String oauthId;
     @Indexed
     private String accessToken;
     @TimeToLive

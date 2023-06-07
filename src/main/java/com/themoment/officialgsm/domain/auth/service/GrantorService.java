@@ -1,9 +1,9 @@
-package com.themoment.officialgsm.domain.User.service;
+package com.themoment.officialgsm.domain.auth.service;
 
-import com.themoment.officialgsm.domain.User.entity.user.Role;
-import com.themoment.officialgsm.domain.User.entity.user.User;
-import com.themoment.officialgsm.domain.User.dto.response.UnapprovedUserResponse;
-import com.themoment.officialgsm.domain.User.repository.UserRepository;
+import com.themoment.officialgsm.domain.auth.entity.user.Role;
+import com.themoment.officialgsm.domain.auth.entity.user.User;
+import com.themoment.officialgsm.domain.auth.dto.response.UnapprovedUserResponse;
+import com.themoment.officialgsm.domain.auth.repository.UserRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,6 @@ public class GrantorService {
         return userRepository.findUsersByRole(Role.UNAPPROVED).stream()
                 .map(user -> new UnapprovedUserResponse(
                         user.getUserSeq(),
-                        user.getUserId().substring(0,4) + "****",
                         user.getUserName(),
                         user.getRole()
                 )).collect(Collectors.toList());

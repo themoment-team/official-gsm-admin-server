@@ -1,4 +1,4 @@
-package com.themoment.officialgsm.domain.User.entity.user;
+package com.themoment.officialgsm.domain.auth.entity.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,40 +14,48 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_seq")
     private Long userSeq;
 
-    @Column(name = "user_name", nullable = false)
+    private String oauthId;
+
     private String userName;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
-
-    @Column(name = "user_pwd", nullable = false)
-    private String userPwd;
+    private String userEmail;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
     private Role role;
 
     @OneToOne
     @JoinColumn(name = "grantor_seq", referencedColumnName = "user_seq")
     private User grantor;
 
-    @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
-    @PrePersist
-    public void prePersist(){
-        this.role = this.role == null ? Role.UNAPPROVED : Role.ADMIN;
+    public User(String oauthId, String email, Role unapproved) {
+        this.oauthId = oauthId;
+        this.userEmail = email;
+        this.role = unapproved;
     }
 
     public void updateRoleAndGrantor(User grantor, Role role, LocalDateTime approvedAt) {
         this.grantor = grantor;
         this.role = role;
         this.approvedAt = approvedAt;
+    }
+
+    public void updateName(String userName){
+        this.userName = userName;
+    }
+
+    public User updateEmail(String email) {
+        this.userEmail = email;
+        return this;
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
     }
 }

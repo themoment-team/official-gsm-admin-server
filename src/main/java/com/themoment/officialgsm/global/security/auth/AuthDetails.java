@@ -1,6 +1,6 @@
 package com.themoment.officialgsm.global.security.auth;
 
-import com.themoment.officialgsm.domain.User.entity.user.User;
+import com.themoment.officialgsm.domain.auth.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,12 +22,12 @@ public class AuthDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getUserPwd();
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return user.getUserId();
+        return user.getOauthId();
     }
 
     @Override

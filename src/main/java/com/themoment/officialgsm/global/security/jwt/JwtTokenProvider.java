@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Getter
@@ -29,7 +28,7 @@ public class JwtTokenProvider {
     @Value("${jwt.refreshSecret}")
     private String refreshSecret;
     private final AuthDetailsService authDetailsService;
-    private final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 120 * 1000;
+    private final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 120 * 1000L;
     private final long REFRESH_TOKEN_EXPIRE_TIME = ACCESS_TOKEN_EXPIRE_TIME * 12;
 
     @AllArgsConstructor
@@ -43,9 +42,9 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(bytes);
     }
 
-    private String generatedToken(String userId, String type, String secret, long expiredTime){
+    private String generatedToken(String oauthId, String type, String secret, long expiredTime){
         final Claims claims = Jwts.claims();
-        claims.put("userId", userId);
+        claims.put("oauthId", oauthId);
         claims.put("type", type);
         return Jwts.builder()
                 .setClaims(claims)
@@ -55,12 +54,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String generatedAccessToken(String userId){
-        return generatedToken(userId, TokenType.ACCESS_TOKEN.name(), accessSecret, ACCESS_TOKEN_EXPIRE_TIME);
+    public String generatedAccessToken(String oauthId){
+        return generatedToken(oauthId, TokenType.ACCESS_TOKEN.name(), accessSecret, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
-    public String generatedRefreshToken(String userId){
-        return generatedToken(userId, TokenType.REFRESH_TOKEN.name(), refreshSecret, REFRESH_TOKEN_EXPIRE_TIME);
+    public String generatedRefreshToken(String oauthId){
+        return generatedToken(oauthId, TokenType.REFRESH_TOKEN.name(), refreshSecret, REFRESH_TOKEN_EXPIRE_TIME);
     }
 
     private Claims getTokenBody(String token, String secret){
@@ -78,19 +77,15 @@ public class JwtTokenProvider {
     }
 
     public UsernamePasswordAuthenticationToken authentication(String token){
-        UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenUserId(token, accessSecret));
+        UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenOauthId(token, accessSecret));
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
-    public String getTokenUserId(String token, String secret){
-        return getTokenBody(token, secret).get("userId", String.class);
+    public String getTokenOauthId(String token, String secret){
+        return getTokenBody(token, secret).get("oauthId", String.class);
     }
 
-    public ZonedDateTime getExpiredAtToken(){
-        return ZonedDateTime.now().plusSeconds(ACCESS_TOKEN_EXPIRE_TIME);
-    }
-
-    public long getExpiredAtoTokenToLong(){
+    public long getExpiredAtoAccessTokenToLong(){
         return ACCESS_TOKEN_EXPIRE_TIME/1000L;
     }
 

@@ -1,12 +1,10 @@
-package com.themoment.officialgsm.domain.User.controller;
+package com.themoment.officialgsm.domain.auth.controller;
 
-import com.themoment.officialgsm.domain.User.dto.request.SignInRequest;
-import com.themoment.officialgsm.domain.User.dto.request.SignUpRequest;
-import com.themoment.officialgsm.domain.User.dto.response.TokenResponse;
-import com.themoment.officialgsm.domain.User.dto.response.UnapprovedUserResponse;
-import com.themoment.officialgsm.domain.User.service.GrantorService;
-import com.themoment.officialgsm.domain.User.service.UserService;
-import com.themoment.officialgsm.global.util.ClientIpUtil;
+import com.themoment.officialgsm.domain.auth.dto.request.UserNameRequest;
+import com.themoment.officialgsm.domain.auth.dto.response.UnapprovedUserResponse;
+import com.themoment.officialgsm.domain.auth.dto.response.UserInfoResponse;
+import com.themoment.officialgsm.domain.auth.service.GrantorService;
+import com.themoment.officialgsm.domain.auth.service.UserService;
 import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,19 +23,17 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final GrantorService grantorService;
-    private final ClientIpUtil clientIpUtil;
 
-    @PostMapping("/signup")
-    public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest signUpRequest, HttpServletRequest request){
-        String ip = clientIpUtil.getIp(request);
-        userService.signUp(signUpRequest, ip);
+    @PatchMapping("/username")
+    public ResponseEntity<Void> nameSet(@Valid @RequestBody UserNameRequest request){
+        userService.nameSetExecute(request);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<TokenResponse> signIn(@RequestBody @Valid SignInRequest signInRequest, HttpServletResponse response){
-        TokenResponse data = userService.signIn(signInRequest, response);
-        return new ResponseEntity<>(data, HttpStatus.OK);
+    @GetMapping("/userinfo")
+    public ResponseEntity<UserInfoResponse> userInfo(){
+        UserInfoResponse userinfo = userService.userInfoExecute();
+        return new ResponseEntity<>(userinfo, HttpStatus.OK);
     }
 
     @DeleteMapping("/logout")
@@ -48,10 +44,10 @@ public class UserController {
     }
 
     @GetMapping("/token/reissue")
-    public ResponseEntity<TokenResponse> tokenReissue(HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<Void> tokenReissue(HttpServletRequest request, HttpServletResponse response){
         String token = CookieUtil.getCookieValue(request, ConstantsUtil.refreshToken);
-        TokenResponse data = userService.tokenReissue(token, response);
-        return new ResponseEntity<>(data, HttpStatus.OK);
+        userService.tokenReissue(token, response);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/unapproved/list")
