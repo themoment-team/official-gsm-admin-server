@@ -82,9 +82,6 @@ public class SecurityConfig {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .oauth2Login()
-                /*.authorizationEndpoint().baseUri("/oauth2/authorization/google").and()
-                .loginProcessingUrl("/login")
-                 */
                 .defaultSuccessUrl(redirectBaseUri)
                 .userInfoEndpoint()
                 .userService(oAuthService);
