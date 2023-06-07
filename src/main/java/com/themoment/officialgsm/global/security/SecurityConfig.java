@@ -5,6 +5,7 @@ import com.themoment.officialgsm.global.filter.JwtRequestFilter;
 import com.themoment.officialgsm.global.security.handler.CustomAccessDeniedHandler;
 import com.themoment.officialgsm.global.security.handler.CustomAuthenticationEntryPointHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,6 +31,9 @@ public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
     private final OAuthService oAuthService;
+
+    @Value("${redirect-base-uri}")
+    private String redirectBaseUri;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
@@ -78,6 +82,10 @@ public class SecurityConfig {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .oauth2Login()
+                /*.authorizationEndpoint().baseUri("/oauth2/authorization/google").and()
+                .loginProcessingUrl("/login")
+                 */
+                .defaultSuccessUrl(redirectBaseUri)
                 .userInfoEndpoint()
                 .userService(oAuthService);
 
