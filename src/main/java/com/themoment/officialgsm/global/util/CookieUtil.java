@@ -3,16 +3,12 @@ package com.themoment.officialgsm.global.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@AllArgsConstructor
-@Getter
 public class CookieUtil {
     @Value("${cookie-domain}")
     private static String cookieDomain;
@@ -21,6 +17,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(Math.toIntExact(maxAge)/1000);
         cookie.setHttpOnly(httpOnly);
+        log.info(cookieDomain);
         cookie.setDomain(cookieDomain);
         cookie.setPath("/");
         response.addCookie(cookie);
