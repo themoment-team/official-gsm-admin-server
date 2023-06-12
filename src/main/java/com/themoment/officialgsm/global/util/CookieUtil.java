@@ -11,13 +11,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class CookieUtil {
     @Value("${cookie-domain}")
-    private static String cookieDomain;
+    private String cookieDomain;
 
-    public static void addTokenCookie(HttpServletResponse response, String name, String value, Long maxAge, boolean httpOnly){
+    public void addTokenCookie(HttpServletResponse response, String name, String value, Long maxAge, boolean httpOnly){
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(Math.toIntExact(maxAge)/1000);
         cookie.setHttpOnly(httpOnly);
-        log.info(cookieDomain);
         cookie.setDomain(cookieDomain);
         cookie.setPath("/");
         response.addCookie(cookie);

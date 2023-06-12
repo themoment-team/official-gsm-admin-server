@@ -37,6 +37,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
     private final JwtTokenProvider jwtTokenProvider;
     private final HttpServletResponse httpServletResponse;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final CookieUtil cookieUtil;
     @Value("${domain}")
     private String schoolDomain;
 
@@ -62,8 +63,8 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
         String accessToken = jwtTokenProvider.generatedAccessToken(user.getOauthId());
         String refreshToken = jwtTokenProvider.generatedRefreshToken(user.getOauthId());
-        CookieUtil.addTokenCookie(httpServletResponse, ConstantsUtil.accessToken, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
-        CookieUtil.addTokenCookie(httpServletResponse, ConstantsUtil.refreshToken, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
+        cookieUtil.addTokenCookie(httpServletResponse, ConstantsUtil.accessToken, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
+        cookieUtil.addTokenCookie(httpServletResponse, ConstantsUtil.refreshToken, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         RefreshToken entityToRedis = new RefreshToken(user.getOauthId(), refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
         refreshTokenRepository.save(entityToRedis);
 
