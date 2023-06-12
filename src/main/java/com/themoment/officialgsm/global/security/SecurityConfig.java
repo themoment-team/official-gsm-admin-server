@@ -32,8 +32,8 @@ public class SecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
     private final OAuthService oAuthService;
 
-    @Value("${redirect-base-uri}")
-    private String redirectBaseUri;
+    @Value("${redirect-base-url}")
+    private String redirectBaseUrl;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
@@ -83,7 +83,7 @@ public class SecurityConfig {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .oauth2Login()
-                .defaultSuccessUrl(redirectBaseUri)
+                .defaultSuccessUrl(redirectBaseUrl)
                 .userInfoEndpoint()
                 .userService(oAuthService);
 
