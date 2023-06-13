@@ -15,13 +15,9 @@ import java.io.IOException;
 @Component
 public class CustomAuthenticationEntryPointHandler implements AuthenticationEntryPoint {
 
-    @Value("${oauth-fail-redirect}")
-    private String oauthFailRedirectUrl;
-
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.warn("AUTHENTICATION_ENTRYPOINT");
         response.sendError(HttpServletResponse.SC_CONFLICT);
-        response.sendRedirect(oauthFailRedirectUrl);
     }
 }
