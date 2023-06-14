@@ -31,7 +31,9 @@ jobs:
         run : chmod +x gradlew
 
       - name : make yml file
-        run : touch ./src/main/resources/application.yml
+        run : mkdir ./src/main/resources
+        
+          touch ./src/main/resources/application.yml
           
           echo "${{ secrets.YML }}" > ./src/main/resources/application.yml
           
