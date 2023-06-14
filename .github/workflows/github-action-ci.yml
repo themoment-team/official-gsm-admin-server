@@ -2,11 +2,9 @@ name: official-gsm-admin-server-ci
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "*" ]
-
-permissions: read-all
+    branches: [ "develop" ]
+    
+  workflow_dispatch:
 
 jobs:
   CI:
@@ -31,9 +29,37 @@ jobs:
 
       - name : Setup Gradls's permission
         run : chmod +x gradlew 
+        
+      - name : make yml file
+        run : cd ./src/main
+              mkdir resources
+              cd ./resources
+              
+              touch ./application.yml
+              
+              echo "${{ secrets.YML }}" >> ./application.yml
+              
+        shell: bash
 
       - name: Build with Gradle
         run : ./gradlew clean build --exclude-task test
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+          
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      
+      - name: Build, tag, and push image to Amazon ECR
+        run: |
+          docker build -t official-test-server .
+          docker tag official-test-server ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/official-test-server:admin
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/official-test-server:admin
         
       - name: official-gsm-admin-server-ci-success
         uses: sarisia/actions-status-discord@v1
