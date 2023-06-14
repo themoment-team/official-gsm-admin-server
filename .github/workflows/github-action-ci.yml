@@ -33,11 +33,11 @@ jobs:
       - name : make yml file
         run : touch ./src/main/resources/application.yml
           
-          echo "${{ secrets.YML }}" >> touch ./src/main/resources/application.yml
+          echo "${{ secrets.YML }}" > ./src/main/resources/application.yml
           
           touch ./src/main/resources/application-oauth.yml
           
-          echo "${{ secrets.OAUTH_YML }}" >> touch ./src/main/resources/application-oauth.yml
+          echo "${{ secrets.OAUTH_YML }}" > ./src/main/resources/application-oauth.yml
 
         shell: bash
 
