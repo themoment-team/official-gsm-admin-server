@@ -31,17 +31,13 @@ jobs:
         run : chmod +x gradlew 
         
       - name : make yml file
-        run : cd ./src/main
-              mkdir resources
-              cd ./resources
+        run : touch ./src/main/resources/application.yml
               
-              touch ./application.yml
+              echo "${{ secrets.YML }}" >> touch ./src/main/resources/application.yml
               
-              echo "${{ secrets.YML }}" >> ./application.yml
+              touch ./src/main/resources/application-oauth.yml
               
-              touch ./application-oauth.yml
-              
-              echo "${{ secrets.OAUTH_YML }}" >> ./application-oauth.yml
+              echo "${{ secrets.OAUTH_YML }}" >> touch ./src/main/resources/application-oauth.yml
               
         shell: bash
 
