@@ -39,6 +39,10 @@ jobs:
               
               echo "${{ secrets.YML }}" >> ./application.yml
               
+              touch ./application-oauth.yml
+              
+              echo "${{ secrets.OAUTH_YML }}" >> ./application-oauth.yml
+              
         shell: bash
 
       - name: Build with Gradle
