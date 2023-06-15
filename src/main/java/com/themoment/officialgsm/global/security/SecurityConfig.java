@@ -59,12 +59,12 @@ public class SecurityConfig {
                         .requestMatchers("/health").permitAll()
                         .requestMatchers("/login/oauth2/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
-                        .requestMatchers("/auth/token/reissue").permitAll()
-                        .requestMatchers("/auth/logout").permitAll()
+                        .requestMatchers("api/auth/token/reissue").permitAll()
+                        .requestMatchers("api/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/post").permitAll()
                         .requestMatchers("/api/post/**").hasAuthority("ADMIN")
-                        .requestMatchers("/auth/unapproved/list").hasAuthority("ADMIN")
-                        .requestMatchers("/auth/approved/**").hasAuthority("ADMIN")
+                        .requestMatchers("api/auth/unapproved/list").hasAuthority("ADMIN")
+                        .requestMatchers("api/auth/approved/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated();
         httpSecurity
                 .sessionManagement()
