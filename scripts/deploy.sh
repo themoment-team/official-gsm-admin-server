@@ -4,8 +4,8 @@ REPOSITORY=/home/ec2-user/official-gsm-admin-server
 
 cd $REPOSITORY
 
-docker build -t official-admin-test-image .
+docker build -t official-test-server:admin .
 
 docker-compose up -d
 
-docker image prune
+docker rmi $(docker images -f "dangling=true" -q)
