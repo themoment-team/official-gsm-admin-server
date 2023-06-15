@@ -7,8 +7,10 @@ import com.themoment.officialgsm.domain.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +31,14 @@ public class BoardController {
             tags = {"Board Controller"}
     )
     public ResponseEntity<Void> postAdd(
+            @Parameter(
+                    name = "content", description = "post의 content - form-data", in = ParameterIn.PATH
+            )
             @RequestPart("content") AddPostRequest addPostRequest,
+            @Parameter(
+                    name = "file", description = "post의 file - form-data", in = ParameterIn.PATH,
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
             @RequestPart(value = "file", required = false) List<MultipartFile> files
     ) {
         boardService.addPost(addPostRequest, files);
@@ -45,7 +54,14 @@ public class BoardController {
     public ResponseEntity<Void> postModify(
             @Parameter(name = "postSeq", description = "post의 seq값", in = ParameterIn.PATH)
             @PathVariable Long postSeq,
+            @Parameter(
+                    name = "content", description = "post의 content - form-data", in = ParameterIn.PATH
+            )
             @RequestPart("content") ModifyPostRequest modifyPostRequest,
+            @Parameter(
+                    name = "file", description = "post의 file - form-data", in = ParameterIn.PATH,
+                    content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)
+            )
             @RequestPart(value = "file", required = false) List<MultipartFile> files
     ) {
         boardService.modifyPost(postSeq, modifyPostRequest, files);
