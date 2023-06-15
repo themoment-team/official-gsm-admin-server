@@ -45,7 +45,7 @@ public class UserService {
     @Transactional
     public void tokenReissue(String token, HttpServletResponse response) {
         if (token == null){
-            throw new CustomException("쿠키에 리프레시토큰이 없습니다.", HttpStatus.FORBIDDEN);
+            throw new CustomException("쿠키에 리프레시토큰이 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
         String secret = jwtTokenProvider.getRefreshSecret();

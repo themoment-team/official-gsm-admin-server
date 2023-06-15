@@ -65,7 +65,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/token/reissue")
+    @GetMapping("/token/refresh")
     @Operation(
             summary = "토큰 재발급 요청",
             description = "토큰을 재발급하는 api",

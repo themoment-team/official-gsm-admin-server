@@ -59,13 +59,15 @@ public class SecurityConfig {
                         .requestMatchers("/health").permitAll()
                         .requestMatchers("/login/oauth2/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
-                        .requestMatchers("api/auth/token/reissue").permitAll()
-                        .requestMatchers("api/auth/logout").permitAll()
+                        .requestMatchers("/api/auth/token/refresh").permitAll()
+                        .requestMatchers("/api/auth/logout").permitAll()
+                        .requestMatchers("/api/auth/userinfo").authenticated()
+                        .requestMatchers("/api/auth/username").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/post").permitAll()
                         .requestMatchers("/api/post/**").hasAuthority("ADMIN")
-                        .requestMatchers("api/auth/unapproved/list").hasAuthority("ADMIN")
-                        .requestMatchers("api/auth/approved/**").hasAuthority("ADMIN")
-                        .anyRequest().authenticated();
+                        .requestMatchers("/api/auth/unapproved/list").hasAuthority("ADMIN")
+                        .requestMatchers("/api/auth/approved/**").hasAuthority("ADMIN")
+                        .anyRequest().denyAll();
         httpSecurity
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.NEVER);
