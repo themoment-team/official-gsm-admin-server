@@ -81,6 +81,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
     private void userRedirect(User user){
         Role role = user.getRole();
         String userName = user.getUserName();
+
         if (role == UNAPPROVED && userName != null) {
             try {
                 httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup/pending");
