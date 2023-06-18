@@ -71,12 +71,12 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         RefreshToken entityToRedis = new RefreshToken(user.getOauthId(), refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
         refreshTokenRepository.save(entityToRedis);
         
-        userRedirect(user);
+        redirectUser(user);
 
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())), attributes, userNameAttributeName);
     }
     
-    private void userRedirect(User user){
+    private void redirectUser(User user){
         Role role = user.getRole();
         String userName = user.getUserName();
 
