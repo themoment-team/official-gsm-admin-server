@@ -27,8 +27,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 
+import static com.themoment.officialgsm.domain.auth.entity.user.Role.ADMIN;
 import static com.themoment.officialgsm.domain.auth.entity.user.Role.UNAPPROVED;
 
 @Service
@@ -84,19 +84,19 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
             try {
                 httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup/pending");
             } catch (IOException e) {
-                throw new OAuth2AuthenticationException("Role이 UNAPPROVED고 username이 null이 아닙니다.");
+                log.error("https://admin-official.hellogsm.kr/auth/signup/pending 페이지로 redirect 도중 에러가 발생했습니다.");
             }
-        } else if (user.getRole().getKey().equals("ADMIN")) {
+        } else if (role == ADMIN) {
             try {
                 httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr");
             } catch (IOException e) {
-                throw new OAuth2AuthenticationException("어드민이 아닙니다.");
+                log.error("https://admin-official.hellogsm.kr 페이지로 redirect 도중 에러가 발생했습니다.");
             }
         } else {
             try {
                 httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup");
             } catch (IOException e) {
-                throw new OAuth2AuthenticationException("Role이 UNAPPROVED고 username이 null이 아닙니다.");
+                log.error("https://admin-official.hellogsm.kr/auth//signup 페이지로 redirect 도중 에러가 발생했습니다.");
             }
         }
     }
