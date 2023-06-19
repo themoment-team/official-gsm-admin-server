@@ -1,12 +1,12 @@
 package com.themoment.officialgsm.domain.auth.service;
 
 import com.themoment.officialgsm.domain.auth.entity.token.RefreshToken;
+import com.themoment.officialgsm.domain.auth.entity.user.Role;
 import com.themoment.officialgsm.domain.auth.entity.user.User;
 import com.themoment.officialgsm.domain.auth.repository.RefreshTokenRepository;
 import com.themoment.officialgsm.domain.auth.repository.UserRepository;
 import com.themoment.officialgsm.domain.auth.dto.OAuthAttributes;
 import com.themoment.officialgsm.domain.auth.dto.UserProfile;
-import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.security.jwt.JwtTokenProvider;
 import com.themoment.officialgsm.global.util.ConstantsUtil;
 import com.themoment.officialgsm.global.util.CookieUtil;
@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -25,8 +24,12 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+
+import static com.themoment.officialgsm.domain.auth.entity.user.Role.ADMIN;
+import static com.themoment.officialgsm.domain.auth.entity.user.Role.UNAPPROVED;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +59,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
         String email = EmailUtil.getEmailDomain(userProfile.getEmail());
         if (!email.equals(schoolDomain)){
-            throw new CustomException("학교 이메일이 아닙니다.", HttpStatus.BAD_REQUEST);
+            throw new OAuth2AuthenticationException("학교 이메일이 아닙니다.");
         }
 
         User user = saveOrUpdate(userProfile);
@@ -67,8 +70,47 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         cookieUtil.addTokenCookie(httpServletResponse, ConstantsUtil.refreshToken, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         RefreshToken entityToRedis = new RefreshToken(user.getOauthId(), refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
         refreshTokenRepository.save(entityToRedis);
+        
+        redirectUser(user);
 
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())), attributes, userNameAttributeName);
+    }
+    
+    private void redirectUser(User user){
+        Role role = user.getRole();
+        String userName = user.getUserName();
+
+        if (role == UNAPPROVED && userName != null) {
+            redirectPendingPage();
+        } else if (role == ADMIN) {
+            redirectHomePage();
+        } else {
+            redirectSignupPage();
+        }
+    }
+
+    private void redirectPendingPage(){
+        try {
+            httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup/pending");
+        } catch (IOException e) {
+            log.error("https://admin-official.hellogsm.kr/auth/signup/pending 페이지로 redirect 도중 에러가 발생했습니다.", e);
+        }
+    }
+
+    private void redirectHomePage(){
+        try {
+            httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr");
+        } catch (IOException e) {
+            log.error("https://admin-official.hellogsm.kr 페이지로 redirect 도중 에러가 발생했습니다.", e);
+        }
+    }
+
+    private void redirectSignupPage(){
+        try {
+            httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup");
+        } catch (IOException e) {
+            log.error("https://admin-official.hellogsm.kr/auth/signup 페이지로 redirect 도중 에러가 발생했습니다.", e);
+        }
     }
 
     private User saveOrUpdate(UserProfile userProfile) {
