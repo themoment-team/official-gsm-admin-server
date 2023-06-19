@@ -81,23 +81,35 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         String userName = user.getUserName();
 
         if (role == UNAPPROVED && userName != null) {
-            try {
-                httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup/pending");
-            } catch (IOException e) {
-                log.error("https://admin-official.hellogsm.kr/auth/signup/pending 페이지로 redirect 도중 에러가 발생했습니다.");
-            }
+            redirectPendingPage();
         } else if (role == ADMIN) {
-            try {
-                httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr");
-            } catch (IOException e) {
-                log.error("https://admin-official.hellogsm.kr 페이지로 redirect 도중 에러가 발생했습니다.");
-            }
+            redirectHomePage();
         } else {
-            try {
-                httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup");
-            } catch (IOException e) {
-                log.error("https://admin-official.hellogsm.kr/auth//signup 페이지로 redirect 도중 에러가 발생했습니다.");
-            }
+            redirectSignupPage();
+        }
+    }
+
+    private void redirectPendingPage(){
+        try {
+            httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup/pending");
+        } catch (IOException e) {
+            log.error("https://admin-official.hellogsm.kr/auth/signup/pending 페이지로 redirect 도중 에러가 발생했습니다.");
+        }
+    }
+
+    private void redirectHomePage(){
+        try {
+            httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr");
+        } catch (IOException e) {
+            log.error("https://admin-official.hellogsm.kr 페이지로 redirect 도중 에러가 발생했습니다.");
+        }
+    }
+
+    private void redirectSignupPage(){
+        try {
+            httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup");
+        } catch (IOException e) {
+            log.error("https://admin-official.hellogsm.kr/auth//signup 페이지로 redirect 도중 에러가 발생했습니다.");
         }
     }
 
