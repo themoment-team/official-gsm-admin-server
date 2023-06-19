@@ -28,7 +28,8 @@ public class GrantorService {
                 .map(user -> new UnapprovedUserResponse(
                         user.getUserSeq(),
                         user.getUserName(),
-                        user.getRole()
+                        user.getRole(),
+                        user.getRequestedAt()
                 )).collect(Collectors.toList());
     }
 

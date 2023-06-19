@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -35,10 +36,13 @@ public class User implements Serializable {
 
     private LocalDateTime approvedAt;
 
-    public User(String oauthId, String email, Role unapproved) {
+    private String requestedAt;
+
+    public User(String oauthId, String email, Role unapproved, String requestedAt) {
         this.oauthId = oauthId;
         this.userEmail = email;
         this.role = unapproved;
+        this.requestedAt = requestedAt;
     }
 
     public void updateRoleAndGrantor(User grantor, Role role, LocalDateTime approvedAt) {
