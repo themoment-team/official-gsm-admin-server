@@ -49,7 +49,7 @@ public class UserService {
         }
 
         String secret = jwtTokenProvider.getRefreshSecret();
-        String oauthId = jwtTokenProvider.getTokenOauthId(token, secret);
+        String oauthId = jwtTokenProvider.getRefreshTokenOauthId(token, secret);
         RefreshToken refreshToken = refreshTokenRepository.findById(oauthId)
                 .orElseThrow(() -> new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST));
         String newAccessToken = jwtTokenProvider.generatedAccessToken(oauthId);

@@ -76,6 +76,20 @@ public class JwtTokenProvider {
         }
     }
 
+    private Claims getRefreshTokenBody(String token, String secret){
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSignInKey(secret))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e){
+            throw new CustomException("토큰이 만료되었습니다.", HttpStatus.BAD_REQUEST);
+        } catch (JwtException e){
+            throw new CustomException("토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     public UsernamePasswordAuthenticationToken authentication(String token){
         UserDetails userDetails = authDetailsService.loadUserByUsername(getTokenOauthId(token, accessSecret));
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -83,6 +97,10 @@ public class JwtTokenProvider {
 
     public String getTokenOauthId(String token, String secret){
         return getTokenBody(token, secret).get("oauthId", String.class);
+    }
+
+    public String getRefreshTokenOauthId(String token, String secret){
+        return getRefreshTokenBody(token, secret).get("oauthId", String.class);
     }
 
     public long getExpiredAtoAccessTokenToLong(){
