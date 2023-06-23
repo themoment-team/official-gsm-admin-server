@@ -24,7 +24,7 @@ public class GrantorService {
     private final UserUtil userUtil;
 
     public List<UnapprovedUserResponse> unapprovedListExecute() {
-        return userRepository.findUsersByRole(Role.UNAPPROVED).stream()
+        return userRepository.findUsersByRoleAndUserNameNotNull(Role.UNAPPROVED).stream()
                 .map(user -> new UnapprovedUserResponse(
                         user.getUserSeq(),
                         user.getUserName(),
