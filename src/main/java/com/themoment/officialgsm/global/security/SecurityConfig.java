@@ -63,7 +63,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/logout").permitAll()
                         .requestMatchers("/api/auth/userinfo").authenticated()
                         .requestMatchers("/api/auth/username").authenticated()
-                        .requestMatchers(HttpMethod.GET,"/api/post").permitAll()
                         .requestMatchers("/api/post/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/auth/unapproved/list").hasAuthority("ADMIN")
                         .requestMatchers("/api/auth/approved/**").hasAuthority("ADMIN")
