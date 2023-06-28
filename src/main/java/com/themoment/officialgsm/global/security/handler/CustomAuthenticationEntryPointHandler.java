@@ -17,7 +17,7 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        log.warn("AUTHENTICATION_ENTRYPOINT");
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        log.error("error :",authException);
+        response.sendRedirect("https://admin-official.hellogsm.kr/auth/signin/warning");
     }
 }
