@@ -23,10 +23,4 @@ public class GlobalExceptionHandler {
         return ErrorResponse.toResponseEntity("형식에 맞지 않는 요청입니다.", HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponse> handleCustomException(Exception e) {
-        log.error("UncheckedException", e);
-        return ErrorResponse.toResponseEntity("예외 처리되지 않은 에러가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
 }
