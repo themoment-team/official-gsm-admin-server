@@ -16,6 +16,9 @@ import java.io.IOException;
 @Slf4j
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
+    @Value("${site-address}")
+    private String siteAddress;
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         if (exception instanceof OAuth2AuthenticationException){
@@ -27,9 +30,9 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         log.error("OAuth2AuthenticationException error code = '{}'", ((OAuth2AuthenticationException) exception).getError().getErrorCode());
         if (exception.getError().getErrorCode().equals("학교 이메일이 아닙니다.")){
             try {
-                response.sendRedirect("https://admin-official.hellogsm.kr/auth/signin/warning");
+                response.sendRedirect(siteAddress + "/auth/signin/warning");
             } catch (IOException e) {
-                log.error("https://admin-official.hellogsm.kr/auth/signin/warning로 리다이렉트 도중 에러가 발생했습니다.", e);
+                log.error(siteAddress + "/auth/signin/warning로 리다이렉트 도중 에러가 발생했습니다.", e);
             }
         }
     }
