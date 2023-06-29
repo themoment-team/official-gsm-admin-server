@@ -20,7 +20,7 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String token = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
 
-        log.info("AUTHENTICATION_ENTRY_POINT");
+        log.error("AUTHENTICATION_ENTRY_POINT");
         log.info(token);
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
