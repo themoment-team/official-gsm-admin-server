@@ -81,7 +81,7 @@ public class UserService {
         BlackList blackList = BlackList.builder()
                 .oauthId(oauthId)
                 .accessToken(accessToken)
-                .timeToLive(jwtTokenProvider.getExpiredAtoAccessTokenToLong())
+                .timeToLive(jwtTokenProvider.getExpiredAtAccessTokenToLong())
                 .build();
         blackListRepository.save(blackList);
     }
