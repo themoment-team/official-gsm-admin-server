@@ -26,7 +26,14 @@ public class AwsS3Util {
 
     private final AmazonS3 amazonS3;
 
-    private final List<String> ALLOWED_EXTENSIONS = Arrays.asList(".jpg", ".png", ".mp4", ".hwp", ".pdf", ".xlsx");
+    private final List<String> ALLOWED_EXTENSIONS = Arrays.asList(
+            ".jpg", ".png", ".heic", ".jpeg", ".webp",
+            ".hwp", ".hwpx", ".owpml",
+            ".docx", ".doc",
+            ".xls", ".xlsx",
+            ".ppt", ".pptx",
+            ".pdf"
+    );
     private final String DOMAIN_URL = "http://bucket.ottokeng.site/";   // 추후 수정해야함 !
 
     public List<FileDto> uploadList(List<MultipartFile> multipartFiles) {
