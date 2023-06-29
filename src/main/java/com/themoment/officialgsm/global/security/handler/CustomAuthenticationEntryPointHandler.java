@@ -1,10 +1,11 @@
 package com.themoment.officialgsm.global.security.handler;
 
+import com.themoment.officialgsm.global.util.ConstantsUtil;
+import com.themoment.officialgsm.global.util.CookieUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,10 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        log.error("error :",authException);
-        response.sendRedirect("https://admin-official.hellogsm.kr/auth/signin/warning");
+        String token = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
+
+        log.info("AUTHENTICATION_ENTRY_POINT");
+        log.info(token);
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }
