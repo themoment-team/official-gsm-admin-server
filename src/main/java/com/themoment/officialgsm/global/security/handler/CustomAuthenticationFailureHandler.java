@@ -27,7 +27,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     }
 
     private void oAuth2AuthenticationExceptionHandling(HttpServletRequest request, HttpServletResponse response, OAuth2AuthenticationException exception) {
-        log.error("OAuth2AuthenticationException error code = '{}'", ((OAuth2AuthenticationException) exception).getError().getErrorCode());
+        log.error("OAuth2AuthenticationException error code = '{}'", exception.getError().getErrorCode());
         if (exception.getError().getErrorCode().equals("학교 이메일이 아닙니다.")){
             try {
                 response.sendRedirect(siteAddress + "/auth/signin/warning");
