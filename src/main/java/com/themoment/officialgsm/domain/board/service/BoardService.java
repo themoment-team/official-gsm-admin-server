@@ -6,6 +6,7 @@ import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
 import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
 import com.themoment.officialgsm.domain.board.entity.file.File;
 import com.themoment.officialgsm.domain.board.entity.file.FileExtension;
+import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileBulkRepository;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
@@ -34,8 +35,11 @@ public class BoardService {
 
     @Transactional
     public void addPost(AddPostRequest addPostRequest, List<MultipartFile> files) {
-        User user = currentUserUtil.getCurrentUser();
+        if(addPostRequest.getCategory() == Category.EVENT_GALLERY && files == null) {
+            throw new CustomException("행사갤러리는 이미지가 필수입니다", HttpStatus.BAD_REQUEST);
+        }
 
+        User user = currentUserUtil.getCurrentUser();
         Post post = Post.builder()
                 .postTitle(addPostRequest.getPostTitle())
                 .postContent(addPostRequest.getPostContent())
