@@ -81,4 +81,18 @@ public class BoardController {
         boardService.removePost(postSeq);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/pin/{postSeq}")
+    @Operation(
+            summary = "게시물 고정 요청",
+            description = "게시물을 고정하는 api",
+            tags = {"Board Controller"}
+    )
+    public ResponseEntity<Void> postPin(
+            @Parameter(name = "postSeq", description = "post의 seq값", in = ParameterIn.PATH)
+            @PathVariable Long postSeq
+    ) {
+        boardService.pinPost(postSeq);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
