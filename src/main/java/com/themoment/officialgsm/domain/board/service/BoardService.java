@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BoardService {
 
@@ -36,7 +37,6 @@ public class BoardService {
     private final PinnedPostRepository pinnedPostRepository;
     private final AwsS3Util awsS3Util;
 
-    @Transactional
     public void addPost(AddPostRequest addPostRequest, List<MultipartFile> files) {
         if(addPostRequest.getCategory() == Category.EVENT_GALLERY && files == null) {
             throw new CustomException("행사갤러리는 이미지가 필수입니다", HttpStatus.BAD_REQUEST);
@@ -54,7 +54,6 @@ public class BoardService {
         saveFiles(post, files);
     }
 
-    @Transactional
     public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> files) {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException("게시글 수정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
@@ -73,7 +72,6 @@ public class BoardService {
         saveFiles(post, files);
     }
 
-    @Transactional
     public void removePost(Long postSeq) {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException("게시글 삭제 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
@@ -82,7 +80,6 @@ public class BoardService {
         postRepository.delete(post);
     }
 
-    @Transactional
     public void pinPost(Long postSeq) {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException("게시글 고정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
