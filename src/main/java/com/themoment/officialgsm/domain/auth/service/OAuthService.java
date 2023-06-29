@@ -44,6 +44,9 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
     @Value("${domain}")
     private String schoolDomain;
 
+    @Value("${site-address}")
+    private String siteAddress;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
@@ -92,25 +95,25 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
     private void redirectPendingPage(){
         try {
-            httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup/pending");
+            httpServletResponse.sendRedirect(siteAddress + "/auth/signup/pending");
         } catch (IOException e) {
-            log.error("https://admin-official.hellogsm.kr/auth/signup/pending 페이지로 redirect 도중 에러가 발생했습니다.", e);
+            log.error(siteAddress + "/auth/signup/pending 페이지로 redirect 도중 에러가 발생했습니다.", e);
         }
     }
 
     private void redirectHomePage(){
         try {
-            httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr");
+            httpServletResponse.sendRedirect(siteAddress);
         } catch (IOException e) {
-            log.error("https://admin-official.hellogsm.kr 페이지로 redirect 도중 에러가 발생했습니다.", e);
+            log.error(siteAddress + "페이지로 redirect 도중 에러가 발생했습니다.", e);
         }
     }
 
     private void redirectSignupPage(){
         try {
-            httpServletResponse.sendRedirect("https://admin-official.hellogsm.kr/auth/signup");
+            httpServletResponse.sendRedirect(siteAddress + "/auth/signup");
         } catch (IOException e) {
-            log.error("https://admin-official.hellogsm.kr/auth/signup 페이지로 redirect 도중 에러가 발생했습니다.", e);
+            log.error(siteAddress + "/auth/signup 페이지로 redirect 도중 에러가 발생했습니다.", e);
         }
     }
 

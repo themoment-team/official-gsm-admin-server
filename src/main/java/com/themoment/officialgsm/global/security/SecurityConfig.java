@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -31,6 +31,8 @@ public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
     private final OAuthService oAuthService;
+
+    private final AuthenticationFailureHandler authenticationFailureHandler;
 
     @Value("${redirect-base-url}")
     private String redirectBaseUrl;
@@ -85,6 +87,7 @@ public class SecurityConfig {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .oauth2Login()
+                .failureHandler(authenticationFailureHandler)
                 .defaultSuccessUrl(redirectBaseUrl)
                 .userInfoEndpoint()
                 .userService(oAuthService);
