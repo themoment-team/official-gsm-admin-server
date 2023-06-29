@@ -7,9 +7,11 @@ import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
 import com.themoment.officialgsm.domain.board.entity.file.File;
 import com.themoment.officialgsm.domain.board.entity.file.FileExtension;
 import com.themoment.officialgsm.domain.board.entity.post.Category;
+import com.themoment.officialgsm.domain.board.entity.post.PinnedPost;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileBulkRepository;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
+import com.themoment.officialgsm.domain.board.repository.PinnedPostRepository;
 import com.themoment.officialgsm.domain.board.repository.PostRepository;
 import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.util.AwsS3Util;
@@ -30,8 +32,9 @@ public class BoardService {
     private final UserUtil currentUserUtil;
     private final PostRepository postRepository;
     private final FileRepository fileRepository;
-    private final AwsS3Util awsS3Util;
     private final FileBulkRepository fileBulkRepository;
+    private final PinnedPostRepository pinnedPostRepository;
+    private final AwsS3Util awsS3Util;
 
     @Transactional
     public void addPost(AddPostRequest addPostRequest, List<MultipartFile> files) {
@@ -77,6 +80,18 @@ public class BoardService {
 
         deletePostFiles(post.getFiles());
         postRepository.delete(post);
+    }
+
+    @Transactional
+    public void pinPost(Long postSeq) {
+        Post post = postRepository.findById(postSeq)
+                .orElseThrow(() -> new CustomException("게시글 고정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
+
+        PinnedPost pinnedPost = PinnedPost.builder()
+                .post(post)
+                .build();
+
+        pinnedPostRepository.save(pinnedPost);
     }
 
     private void saveFiles(Post post, List<MultipartFile> files) {
