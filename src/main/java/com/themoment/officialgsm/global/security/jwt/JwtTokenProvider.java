@@ -103,7 +103,7 @@ public class JwtTokenProvider {
         return getRefreshTokenBody(token, secret).get("oauthId", String.class);
     }
 
-    public long getExpiredAtoAccessTokenToLong(){
+    public long getExpiredAtAccessTokenToLong(){
         return ACCESS_TOKEN_EXPIRE_TIME/1000L;
     }
 
