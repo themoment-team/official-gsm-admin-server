@@ -35,9 +35,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
-        BlackList blackList = blackListRepository.findByAccessToken(token);
         if (token != null) {
-            if (blackList != null && blackList.getAccessToken().equals(token)) {
+            Optional<BlackList> blackList = blackListRepository.findByAccessToken(token);
+            if (blackList.isPresent() && blackList.get().getAccessToken().equals(token)) {
                 throw new CustomException("유효하지 않은 토큰입니다.", HttpStatus.CONFLICT);
             }
             UsernamePasswordAuthenticationToken auth = jwtProvider.authentication(token);
