@@ -35,6 +35,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtProvider;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.equals("/api/auth/token/refresh");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = CookieUtil.getCookieValue(request, ConstantsUtil.accessToken);
         if (token != null) {
