@@ -75,7 +75,7 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e){
             throw new TokenExpiredException("토큰이 만료되었습니다.", ErrorCode.TOKEN_EXPIRED);
         } catch (JwtException e){
-            throw new InvalidTokenException("토큰이 유효하지 않습니다.", ErrorCode.INVALID_TOKEN);
+            throw new InvalidTokenException("유효하지 않은 토큰입니다.", ErrorCode.INVALID_TOKEN);
         }
     }
 
@@ -89,7 +89,7 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e){
             throw new TokenExpiredException("리프레시 토큰이 만료되었습니다.", ErrorCode.REFRESH_TOKEN_EXPIRED);
         } catch (JwtException e){
-            throw new InvalidTokenException("리프레시 토큰이 유효하지 않습니다.", ErrorCode.INVALID_REFRESH_TOKEN);
+            throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.", ErrorCode.INVALID_REFRESH_TOKEN);
         }
     }
 
