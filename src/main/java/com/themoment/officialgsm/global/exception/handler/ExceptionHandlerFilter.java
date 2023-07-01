@@ -3,6 +3,7 @@ package com.themoment.officialgsm.global.exception.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.themoment.officialgsm.global.exception.ErrorCode;
 import com.themoment.officialgsm.global.exception.ErrorResponse;
+import com.themoment.officialgsm.global.exception.handler.exceptionCollection.AccessTokenExpiredException;
 import com.themoment.officialgsm.global.exception.handler.exceptionCollection.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,6 +28,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (InvalidTokenException e){
+            errorMessageResponse(response, e.getErrorCode());
+        } catch (AccessTokenExpiredException e){
             errorMessageResponse(response, e.getErrorCode());
         } catch (Exception e){
             log.error("알 수 없는 에러 발생", e);
