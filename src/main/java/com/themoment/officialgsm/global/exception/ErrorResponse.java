@@ -1,7 +1,9 @@
 package com.themoment.officialgsm.global.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -9,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Builder
+@RequiredArgsConstructor
 @Getter
 public class ErrorResponse {
 
@@ -22,6 +25,10 @@ public class ErrorResponse {
                         .detailMessage(detailMessage)
                         .build()
                 );
+    }
+
+    public ErrorResponse (ErrorCode errorCode){
+        this.detailMessage = errorCode.getMessage();
     }
 
 }
