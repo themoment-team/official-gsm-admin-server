@@ -33,3 +33,9 @@ services:
     links:
       - database
       - redis
+    logging:
+        driver: awslogs
+        options:
+            awslogs-group: "official-admin-test" 
+            awslogs-region: "ap-northeast-2" 
+            awslogs-stream: "admin-spring-logging"
