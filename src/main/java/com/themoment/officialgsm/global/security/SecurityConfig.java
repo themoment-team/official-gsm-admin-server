@@ -1,6 +1,7 @@
 package com.themoment.officialgsm.global.security;
 
 import com.themoment.officialgsm.domain.auth.service.OAuthService;
+import com.themoment.officialgsm.global.exception.handler.ExceptionHandlerFilter;
 import com.themoment.officialgsm.global.filter.JwtRequestFilter;
 import com.themoment.officialgsm.global.security.handler.CustomAccessDeniedHandler;
 import com.themoment.officialgsm.global.security.handler.CustomAuthenticationEntryPointHandler;
@@ -30,6 +31,9 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
+
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
+
     private final OAuthService oAuthService;
 
     private final AuthenticationFailureHandler authenticationFailureHandler;
@@ -79,7 +83,8 @@ public class SecurityConfig {
                 .authenticationEntryPoint(new CustomAuthenticationEntryPointHandler());
 
         httpSecurity
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter, JwtRequestFilter.class);
 
         httpSecurity
                 .formLogin().disable()

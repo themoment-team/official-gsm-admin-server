@@ -3,6 +3,8 @@ package com.themoment.officialgsm.domain.auth.repository;
 import com.themoment.officialgsm.domain.auth.entity.token.BlackList;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
+
 public interface BlackListRepository extends CrudRepository<BlackList, String> {
-    BlackList findByAccessToken(String accessToken);
+    Optional<BlackList> findByAccessToken(String accessToken);
 }
