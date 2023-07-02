@@ -1,10 +1,8 @@
 package com.themoment.officialgsm.global.exception.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.themoment.officialgsm.global.exception.ErrorCode;
+import com.themoment.officialgsm.global.exception.CustomException;
 import com.themoment.officialgsm.global.exception.ErrorResponse;
-import com.themoment.officialgsm.global.exception.handler.exceptionCollection.TokenExpiredException;
-import com.themoment.officialgsm.global.exception.handler.exceptionCollection.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,22 +25,19 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (InvalidTokenException e){
-            errorMessageResponse(response, e.getErrorCode());
-        } catch (TokenExpiredException e){
-            errorMessageResponse(response, e.getErrorCode());
+        } catch (CustomException e){
+            errorMessageResponse(response, e);
         } catch (Exception e){
             log.error("알 수 없는 에러 발생", e);
-            errorMessageResponse(response, ErrorCode.UNKNOWN_ERROR);
         }
     }
 
-    private void errorMessageResponse(HttpServletResponse response, ErrorCode errorCode){
+    private void errorMessageResponse(HttpServletResponse response, CustomException exception){
         response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
-        response.setStatus(errorCode.getStatus());
+        response.setStatus(exception.getHttpStatus().value());
 
         try {
-            ErrorResponse errorResponse = new ErrorResponse(errorCode);
+            ErrorResponse errorResponse = new ErrorResponse(exception.getDetailMessage());
             String errorResponseEntityToJson = objectMapper.writeValueAsString(errorResponse);
             response.getWriter().write(errorResponseEntityToJson);
         } catch (IOException e) {

@@ -1,9 +1,6 @@
 package com.themoment.officialgsm.global.security.jwt;
 
 import com.themoment.officialgsm.global.exception.CustomException;
-import com.themoment.officialgsm.global.exception.ErrorCode;
-import com.themoment.officialgsm.global.exception.handler.exceptionCollection.TokenExpiredException;
-import com.themoment.officialgsm.global.exception.handler.exceptionCollection.InvalidTokenException;
 import com.themoment.officialgsm.global.security.auth.AuthDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -73,9 +70,9 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e){
-            throw new TokenExpiredException("토큰이 만료되었습니다.", ErrorCode.TOKEN_EXPIRED);
+            throw new CustomException("Access Token Expired", HttpStatus.UNAUTHORIZED);
         } catch (JwtException e){
-            throw new InvalidTokenException("유효하지 않은 토큰입니다.", ErrorCode.INVALID_TOKEN);
+            throw new CustomException("Invalid Access Token", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -87,9 +84,9 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e){
-            throw new TokenExpiredException("리프레시 토큰이 만료되었습니다.", ErrorCode.REFRESH_TOKEN_EXPIRED);
+            throw new CustomException("Refresh Token Expired", HttpStatus.NOT_FOUND);
         } catch (JwtException e){
-            throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.", ErrorCode.INVALID_REFRESH_TOKEN);
+            throw new CustomException("Invalid Refresh Token", HttpStatus.NOT_FOUND);
         }
     }
 
