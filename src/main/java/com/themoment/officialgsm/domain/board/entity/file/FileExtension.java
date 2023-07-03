@@ -2,11 +2,25 @@ package com.themoment.officialgsm.domain.board.entity.file;
 
 public enum FileExtension {
 
-    PNG,
     JPG,
-    MP4,
+    JPEG,
+    PNG,
+    HEIC,
+    WEBP,
+
     HWP,
-    PDF,
-    XLSX
+    HWPX,
+    OWPML,
+
+    DOCX,
+    DOC,
+
+    XLS,
+    XLSX,
+
+    PPT,
+    PPTX,
+
+    PDF
 
 }
