@@ -72,10 +72,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/post/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/auth/unapproved/list").hasAuthority("ADMIN")
                         .requestMatchers("/api/auth/approved/**").hasAuthority("ADMIN")
-                        .anyRequest().denyAll();
+                        .anyRequest().permitAll();
         httpSecurity
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.NEVER);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         httpSecurity
                 .exceptionHandling()

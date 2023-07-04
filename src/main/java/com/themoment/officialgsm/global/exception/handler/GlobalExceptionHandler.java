@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -23,4 +24,8 @@ public class GlobalExceptionHandler {
         return ErrorResponse.toResponseEntity("형식에 맞지 않는 요청입니다.", HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ErrorResponse> noHandlerFoundException(NoHandlerFoundException ex) {
+        return ErrorResponse.toResponseEntity(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
