@@ -75,7 +75,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll();
         httpSecurity
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.NEVER);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         httpSecurity
                 .exceptionHandling()
