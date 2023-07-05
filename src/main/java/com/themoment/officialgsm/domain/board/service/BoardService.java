@@ -115,6 +115,10 @@ public class BoardService {
     }
 
     private void deletePostFiles(List<File> fileList) {
+        if(fileList.isEmpty()) {
+            return;
+        }
+
         List<String> deleteFileUrls = new ArrayList<>();
         for (File file : fileList) {
             deleteFileUrls.add(file.getFileUrl());
