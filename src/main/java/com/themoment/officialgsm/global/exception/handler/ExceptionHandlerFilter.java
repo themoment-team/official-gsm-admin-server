@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,7 +36,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
     private void unknownErrorMessageResponse(HttpServletResponse response, Exception exception){
         response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
-        response.setStatus(500);
+        response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
         ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
         returnError(response, errorResponse);
