@@ -27,21 +27,36 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (CustomException e){
             errorMessageResponse(response, e);
+        } catch (Exception e){
+            log.info("알 수 없는 에러입니다.", e);
+            unknownErrorMessageResponse(response, e);
         }
+    }
+
+    private void unknownErrorMessageResponse(HttpServletResponse response, Exception exception){
+        response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
+        response.setStatus(500);
+
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage());
+        returnError(response, errorResponse);
     }
 
     private void errorMessageResponse(HttpServletResponse response, CustomException exception){
         response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
         response.setStatus(exception.getHttpStatus().value());
 
+        ErrorResponse errorResponse = new ErrorResponse(exception.getDetailMessage());
+        returnError(response, errorResponse);
+    }
+
+    private void returnError(HttpServletResponse response, ErrorResponse errorResponse){
         try {
-            ErrorResponse errorResponse = new ErrorResponse(exception.getDetailMessage());
             String errorResponseEntityToJson = objectMapper.writeValueAsString(errorResponse);
             response.getWriter().write(errorResponseEntityToJson);
         } catch (IOException e) {
             log.error("Filter에서 ErrorResponse Json 변환 실패", e);
             throw new RuntimeException(e);
         }
-
     }
+
 }
