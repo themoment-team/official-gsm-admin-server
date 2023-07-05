@@ -27,8 +27,6 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (CustomException e){
             errorMessageResponse(response, e);
-        } catch (Exception e){
-            log.error("알 수 없는 에러 발생", e);
         }
     }
 
