@@ -65,9 +65,7 @@ public class BoardService {
         );
 
         List<String> deleteFileUrls = modifyPostRequest.getDeleteFileUrl();
-        if (!deleteFileUrls.isEmpty()) {
-            deleteS3Files(deleteFileUrls);
-        }
+        deleteS3Files(deleteFileUrls);
 
         saveFiles(post, files);
     }
@@ -110,6 +108,10 @@ public class BoardService {
     }
 
     private void deleteS3Files(List<String> deleteFileUrls) {
+        if(deleteFileUrls.isEmpty()) {
+            return;
+        }
+
         awsS3Util.deleteS3(deleteFileUrls);
         fileRepository.deleteByFileUrls(deleteFileUrls);
     }
