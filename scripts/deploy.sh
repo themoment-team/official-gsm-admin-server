@@ -8,4 +8,4 @@ docker build --platform linux/amd64 -t official-test-server:admin .
 
 docker-compose up -d
 
-docker rmi $(docker images -f "dangling=true" -q)
+docker image prune
