@@ -34,7 +34,6 @@ public class AwsS3Util {
             ".ppt", ".pptx",
             ".pdf"
     );
-    private final String DOMAIN_URL = "http://bucket.ottokeng.site/";   // 추후 수정해야함 !
 
     public List<FileDto> uploadList(List<MultipartFile> multipartFiles) {
         if(multipartFiles == null || multipartFiles.isEmpty()) {
@@ -57,7 +56,7 @@ public class AwsS3Util {
             amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, extractMetaData(file))
                     .withCannedAcl(CannedAccessControlList.PublicRead));
             return new FileDto(
-                    getDomainUrl(amazonS3.getUrl(bucket, fileName).toString()),
+                    amazonS3.getUrl(bucket, fileName).toString(),
                     originalFileName,
                     convertToConstant(getFileExtension(originalFileName))
             );
@@ -94,17 +93,10 @@ public class AwsS3Util {
         }
     }
 
-    private String getDomainUrl(String filePath) {
-        String s3Url = String.format("https://%s.s3.%s.amazonaws.com/", bucket, region);
-        String key = filePath.replace(s3Url, "");
-
-        return DOMAIN_URL + key;
-    }
-
     public void deleteS3(List<String> deleteFileUrls){
         List<String> deleteFileKeys = new ArrayList<>();
         for (String deleteFileUrl : deleteFileUrls) {
-            deleteFileKeys.add(deleteFileUrl.replace(DOMAIN_URL, ""));
+            deleteFileKeys.add(deleteFileUrl.substring(deleteFileUrl.lastIndexOf("/")));
         }
         DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket)
                 .withKeys(deleteFileKeys.toArray(new String[0]));
