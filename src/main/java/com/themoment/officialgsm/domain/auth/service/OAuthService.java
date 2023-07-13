@@ -68,16 +68,20 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
         User user = saveOrUpdate(userProfile);
 
+        cookieLogic(user);
+        
+        redirectUser(user);
+
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())), attributes, userNameAttributeName);
+    }
+
+    private void cookieLogic(User user){
         String accessToken = jwtTokenProvider.generatedAccessToken(user.getOauthId());
         String refreshToken = jwtTokenProvider.generatedRefreshToken(user.getOauthId());
         cookieUtil.addTokenCookie(httpServletResponse, ConstantsUtil.accessToken, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
         cookieUtil.addTokenCookie(httpServletResponse, ConstantsUtil.refreshToken, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         RefreshToken entityToRedis = new RefreshToken(user.getOauthId(), refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
         refreshTokenRepository.save(entityToRedis);
-        
-        redirectUser(user);
-
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())), attributes, userNameAttributeName);
     }
     
     private void redirectUser(User user){
