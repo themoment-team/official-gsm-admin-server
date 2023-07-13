@@ -28,12 +28,10 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
     private void oAuth2AuthenticationExceptionHandling(HttpServletRequest request, HttpServletResponse response, OAuth2AuthenticationException exception) {
         log.error("OAuth2AuthenticationException error code = '{}'", exception.getError().getErrorCode());
-        if (exception.getError().getErrorCode().equals("학교 이메일이 아닙니다.")){
-            try {
-                response.sendRedirect(siteAddress + "/auth/signin/warning");
-            } catch (IOException e) {
-                log.error(siteAddress + "/auth/signin/warning로 리다이렉트 도중 에러가 발생했습니다.", e);
-            }
+        try {
+            response.sendRedirect(siteAddress + "/auth/signin/warning");
+        } catch (IOException e) {
+            log.error(siteAddress + "/auth/signin/warning로 리다이렉트 도중 에러가 발생했습니다.", e);
         }
     }
 }
