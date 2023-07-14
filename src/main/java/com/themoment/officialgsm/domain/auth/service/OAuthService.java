@@ -41,6 +41,8 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
     private final HttpServletResponse httpServletResponse;
     private final RefreshTokenRepository refreshTokenRepository;
     private final CookieUtil cookieUtil;
+    private final EmailUtil emailUtil;
+
     @Value("${domain}")
     private String schoolDomain;
 
@@ -60,24 +62,38 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
         UserProfile userProfile = OAuthAttributes.extract(registrationId, attributes);
 
-        String email = EmailUtil.getEmailDomain(userProfile.getEmail());
-
-        if (!email.equals(schoolDomain)){
-            throw new OAuth2AuthenticationException("학교 이메일이 아닙니다.");
-        }
+        emailCheckLogic(userProfile.getEmail());
 
         User user = saveOrUpdate(userProfile);
 
+        cookieLogic(user);
+
+        redirectUser(user);
+
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())), attributes, userNameAttributeName);
+    }
+
+    private void emailCheckLogic(String email){
+        String emailDomain;
+
+        try {
+            emailDomain = emailUtil.getOauthEmailDomain(email);
+        }catch (IllegalArgumentException e){
+            throw new OAuth2AuthenticationException(e.getMessage());
+        }
+
+        if (!emailDomain.equals(schoolDomain)) {
+            throw new OAuth2AuthenticationException("학교 이메일이 아닙니다.");
+        }
+    }
+
+    private void cookieLogic(User user){
         String accessToken = jwtTokenProvider.generatedAccessToken(user.getOauthId());
         String refreshToken = jwtTokenProvider.generatedRefreshToken(user.getOauthId());
         cookieUtil.addTokenCookie(httpServletResponse, ConstantsUtil.accessToken, accessToken, jwtTokenProvider.getACCESS_TOKEN_EXPIRE_TIME(), true);
         cookieUtil.addTokenCookie(httpServletResponse, ConstantsUtil.refreshToken, refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME(), true);
         RefreshToken entityToRedis = new RefreshToken(user.getOauthId(), refreshToken, jwtTokenProvider.getREFRESH_TOKEN_EXPIRE_TIME());
         refreshTokenRepository.save(entityToRedis);
-        
-        redirectUser(user);
-
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())), attributes, userNameAttributeName);
     }
     
     private void redirectUser(User user){
