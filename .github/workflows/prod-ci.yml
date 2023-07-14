@@ -74,11 +74,17 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           zip -r deploy-$IMAGE_TAG.zip ./scripts appspec.yml
-          aws s3 cp --region ap-northeast-2 --acl private ./deploy-$IMAGE_TAG.zip s3://${{ PROD_BUCKET_NAME }}
+          aws s3 cp --region ap-northeast-2 --acl private ./deploy-$IMAGE_TAG.zip s3://${{ PROD_BUCKET_NAME }}/admin
 
 
-      - name: Code Deploy
-        run: aws deploy create-deployment --application-name ${{ secrets.PROD_CODE_DEPLOY_APP_NAME }} --deployment-config-name CodeDeployDefault.OneAtTime --deployment-group-name ${{ secrets.PROD_DEPLOYMENT_GROUP_NAME }}
+      - name: start deploy
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          aws deploy create-deployment --application-name ${{ PROD_APP_NAME }} \
+          --deployment-config-name CodeDeployDefault.OneAtATime \
+          --deployment-group-name ${{ PROD_GROUP_NAME }} \
+          --s3-location bucket=${{ PROD_BUCKET_NAME }},bundleType=zip,key=admin/deploy-$IMAGE_TAG.zip
 
       - name: official-gsm-prod-admin-server-ci-success
         uses: sarisia/actions-status-discord@v1
