@@ -62,16 +62,22 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
         UserProfile userProfile = OAuthAttributes.extract(registrationId, attributes);
 
-        String email = emailUtil.getEmailDomain(userProfile.getEmail());
+        String email;
 
-        if (!email.equals(schoolDomain)){
+        try {
+            email = emailUtil.getOauthEmailDomain(userProfile.getEmail());
+        }catch (IllegalArgumentException e){
+            throw new OAuth2AuthenticationException(e.getMessage());
+        }
+
+        if (!email.equals(schoolDomain)) {
             throw new OAuth2AuthenticationException("학교 이메일이 아닙니다.");
         }
 
         User user = saveOrUpdate(userProfile);
 
         cookieLogic(user);
-        
+
         redirectUser(user);
 
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())), attributes, userNameAttributeName);
