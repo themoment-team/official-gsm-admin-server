@@ -15,6 +15,16 @@ permissions:
 
 hooks:
   ApplicationStart:
-    - location: /scripts/deploy.sh
+    - location: /scripts/dev-deploy.sh
       timeout: 60
       runas: root
+
+    - conditions:
+      - "deploy-group-name" in [ "official-admin-test-server" ]
+
+    - location: /scripts/prod-deploy.sh
+      timeout: 60
+      runas: root
+
+    - conditions:
+        - "deploy-group-name" in [ "official-prod-admin-server" ]
