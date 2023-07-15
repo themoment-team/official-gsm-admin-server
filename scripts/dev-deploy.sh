@@ -8,4 +8,4 @@ docker build --platform linux/arm64 -t official-test-server:admin .
 
 docker-compose up -d
 
-docker image prune
+docker image prune -f
