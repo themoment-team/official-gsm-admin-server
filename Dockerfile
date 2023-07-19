@@ -15,5 +15,5 @@ RUN gradle build -x test --parallel --continue > /dev/null 2>&1 || true
 ARG JAR_FILE=build/libs/OfficialGsm-0.0.1-SNAPSHOT.jar
 ADD ${JAR_FILE} ./OfficialGsm-0.0.1.jar
 
-# Run the jar file
+# Run the jar file8
 ENTRYPOINT ["java", "-jar", "/OfficialGsm-0.0.1.jar"]
