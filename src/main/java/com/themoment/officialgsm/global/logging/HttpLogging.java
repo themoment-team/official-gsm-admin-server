@@ -111,11 +111,16 @@ public class HttpLogging{
         String uri = servletRequest.getRequestURI();
         String params = servletRequest.getQueryString();
         String userAgent = servletRequest.getHeader("User-Agent");
-        String accessToken = Arrays.stream(servletRequest.getCookies())
-                .filter(cookie -> "access_token".equals(cookie.getName()))
-                .findFirst()
-                .map(Cookie::getValue)
-                .orElse(null);
+        String accessToken = null;
+
+        Cookie[] cookies = servletRequest.getCookies();
+        if (cookies != null) {
+            accessToken = Arrays.stream(cookies)
+                    .filter(cookie -> "access_token".equals(cookie.getName()))
+                    .findFirst()
+                    .map(Cookie::getValue)
+                    .orElse(null);
+        }
 
         return new RequestInfo(ip, method, uri, params, userAgent, accessToken);
     }
