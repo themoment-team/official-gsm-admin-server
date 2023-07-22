@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -63,11 +66,10 @@ public class HttpLogging{
         Annotation[][] parameterAnnotations = signature.getMethod().getParameterAnnotations();
         RequestInfo requestInfo = extractInfo(servletRequest);
 
+        boolean isBodyCheck = false;
+
         for (int i = 0; i < parameterAnnotations.length; i++) {
             for (Annotation annotation : parameterAnnotations[i]) {
-                if(annotation instanceof RequestBody) {
-                    logJsonRequestInfo(requestInfo, code, servletRequest);
-                }
                 if (annotation instanceof RequestPart requestPart) {
                     String key = requestPart.value();
                     Object[] args = joinPoint.getArgs();
@@ -77,9 +79,30 @@ public class HttpLogging{
                     else if (key.equals("file"))
                         logFileInfo(requestInfo, code, servletRequest);
 
+                    isBodyCheck = true;
+                } else if (annotation instanceof RequestBody){
+                    logJsonRequestInfo(requestInfo, code, servletRequest);
+                    isBodyCheck = true;
                 }
             }
         }
+
+        if(isBodyCheck == false) {
+            boolean foundRequestParamOrPathVariable = false;
+            for (Annotation[] parameterAnnotation : parameterAnnotations) {
+                for (Annotation annotation : parameterAnnotation) {
+                    if (annotation instanceof RequestParam || annotation instanceof PathVariable) {
+                        logJsonRequestInfo(requestInfo, code, servletRequest);
+                        foundRequestParamOrPathVariable = true;
+                        break;
+                    }
+                }
+                if (foundRequestParamOrPathVariable) {
+                    break;
+                }
+            }
+        }
+
     }
 
     private RequestInfo extractInfo(HttpServletRequest servletRequest) {
@@ -109,7 +132,11 @@ public class HttpLogging{
                 [Key: {}, Value: {}],
                 Ip: {}, User-Agent: {}, Access_token: {}
                 """,
-                code, reqInfo.method(),  reqInfo. uri(), reqInfo.params(), key, json, reqInfo.ip(), reqInfo.userAgent(), reqInfo.accessToken());
+                code,
+                reqInfo.method(),  reqInfo. uri(), reqInfo.params(),
+                key, json,
+                reqInfo.ip(), reqInfo.userAgent(), reqInfo.accessToken()
+        );
     }
 
     private void logFileInfo(RequestInfo reqInfo, UUID code, HttpServletRequest servletRequest) {
@@ -131,7 +158,8 @@ public class HttpLogging{
                         code,
                         reqInfo.method(),  reqInfo. uri(), reqInfo.params(),
                         key, file.getOriginalFilename(), file.getContentType(), file.getSize()/1024,
-                        reqInfo.ip(), reqInfo.userAgent(), reqInfo.accessToken());
+                        reqInfo.ip(), reqInfo.userAgent(), reqInfo.accessToken()
+                );
             }
         }
     }
@@ -150,7 +178,8 @@ public class HttpLogging{
                 code,
                 reqInfo.method(),  reqInfo. uri(), reqInfo.params(),
                 requestBodyJson,
-                reqInfo.ip(), reqInfo.userAgent(), reqInfo.accessToken());
+                reqInfo.ip(), reqInfo.userAgent(), reqInfo.accessToken()
+        );
     }
 
     private void logResponseInfo(ResponseEntity result, UUID code, HttpServletRequest servletRequest) throws JsonProcessingException {
@@ -160,10 +189,13 @@ public class HttpLogging{
         log.info(
                 """
                 [{}]
-                [Response:{}] Body: {}, Status-Code: {}
+                [Response:{}] Status-Code: {},
+                Body: {}
                 """,
                 code,
-                servletRequest.getMethod(), responseBodyJson, result.getStatusCode());
+                servletRequest.getMethod(), result.getStatusCode(),
+                responseBodyJson
+        );
     }
 
 }
