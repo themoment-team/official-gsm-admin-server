@@ -97,7 +97,7 @@ public class BoardService {
             File file = File.builder()
                     .fileUrl(fileDto.getFileUrl())
                     .fileName(fileDto.getFileName())
-                    .fileExtension(FileExtension.valueOf(fileDto.getType()))
+                    .fileExtension(fileDto.getFileExtension())
                     .post(post)
                     .build();
 
