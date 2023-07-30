@@ -1,6 +1,5 @@
 package com.themoment.officialgsm.global.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 public class ErrorResponse {
 
-    private final String formatNow = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd / HH : mm : ss "));
+    private final String formatNow = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     private final String detailMessage;
 
     public static ResponseEntity<ErrorResponse> toResponseEntity(String detailMessage, HttpStatus httpStatus) {
