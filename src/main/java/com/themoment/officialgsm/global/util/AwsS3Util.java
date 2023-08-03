@@ -3,6 +3,7 @@ package com.themoment.officialgsm.global.util;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.themoment.officialgsm.domain.board.dto.FileDto;
+import com.themoment.officialgsm.domain.board.entity.file.FileExtension;
 import com.themoment.officialgsm.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,15 +27,6 @@ public class AwsS3Util {
 
     private final AmazonS3 amazonS3;
 
-    private final List<String> ALLOWED_EXTENSIONS = Arrays.asList(
-            ".jpg", ".png", ".heic", ".jpeg", ".webp",
-            ".hwp", ".hwpx", ".owpml",
-            ".docx", ".doc",
-            ".xls", ".xlsx",
-            ".ppt", ".pptx",
-            ".pdf"
-    );
-
     public List<FileDto> uploadList(List<MultipartFile> multipartFiles) {
         if(multipartFiles == null || multipartFiles.isEmpty()) {
             return Collections.emptyList();
@@ -50,11 +42,13 @@ public class AwsS3Util {
 
     private FileDto upload(MultipartFile file) {
         String originalFileName = file.getOriginalFilename();
+        assert originalFileName != null;
         String fileName = createFileName(originalFileName);
 
         try(InputStream inputStream = file.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, extractMetaData(file))
                     .withCannedAcl(CannedAccessControlList.PublicRead));
+
             return new FileDto(
                     amazonS3.getUrl(bucket, fileName).toString(),
                     originalFileName,
@@ -73,8 +67,12 @@ public class AwsS3Util {
         return objectMetadata;
     }
 
-    private String convertToConstant(String fileExtension) {
-        return fileExtension.replace(".","").toUpperCase();
+    private FileExtension convertToConstant(String fileExtension) {
+        try {
+            return FileExtension.valueOf(fileExtension);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException("파일 확장자 형식이 잘못되었습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     private String createFileName(String fileName) {
@@ -83,13 +81,9 @@ public class AwsS3Util {
 
     private String getFileExtension(String fileName){
         try {
-            String extension = fileName.substring(fileName.lastIndexOf("."));
-            if (!ALLOWED_EXTENSIONS.contains(extension.toLowerCase())) {
-                throw new CustomException("파일 확장자 형식이 잘못되었습니다.", HttpStatus.BAD_REQUEST);
-            }
-            return extension;
+            return fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
         } catch (StringIndexOutOfBoundsException e) {
-            throw new CustomException("파일 확장자가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+            throw new CustomException("파일 확장자를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
