@@ -40,6 +40,10 @@ jobs:
           touch ./src/main/resources/application-oauth.yml
           
           echo "${{ secrets.PROD_OAUTH_YML }}" > ./src/main/resources/application-oauth.yml
+        
+          touch ./src/main/resources/logback.xml
+          
+          echo "${{ secrets.LOGBACK_XML }}" > ./src/main/resources/logback.xml
 
         shell: bash
 
