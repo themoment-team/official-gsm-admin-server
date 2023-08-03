@@ -56,11 +56,11 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
-      - - name: Build, tag, and push image to Amazon ECR
-          env:
-            ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-            ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-            IMAGE_TAG: ${{ github.sha }}
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          IMAGE_TAG: ${{ github.sha }}
           run: |
             docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
             docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -72,17 +72,17 @@ jobs:
             echo "docker rm official-prod-admin-server" >> scripts/prod-deploy.sh
             echo "docker run -p 8080:8080 -d --restart always --name official-prod-admin-server $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> scripts/prod-deploy.sh
 
-        - name: upload to s3
-          env:
-            IMAGE_TAG: ${{ GITHUB.SHA }}
+      - name: upload to s3
+        env:
+          IMAGE_TAG: ${{ GITHUB.SHA }}
           run: |
             zip -r ${{ env.IMAGE_TAG }}.zip ./scripts appspec.yml
             aws s3 cp --region ap-northeast-2 --acl private ./${{ env.IMAGE_TAG }}.zip s3://${{ secrets.PROD_BUCKET_NAME }}/admin/
 
 
-        - name: start deploy
-          env:
-            IMAGE_TAG: ${{ GITHUB.SHA }}
+      - name: start deploy
+        env:
+          IMAGE_TAG: ${{ GITHUB.SHA }}
           run: |
             aws deploy create-deployment --application-name ${{ secrets.PROD_APP_NAME }} \
             --deployment-config-name CodeDeployDefault.OneAtATime \
