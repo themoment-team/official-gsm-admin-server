@@ -29,7 +29,6 @@ out/
 application.yml
 application-aws.yml
 application-oauth.yml
-logback.xml
 
 ### NetBeans ###
 /nbproject/private/
