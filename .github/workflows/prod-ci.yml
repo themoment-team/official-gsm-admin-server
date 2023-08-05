@@ -40,6 +40,10 @@ jobs:
           touch ./src/main/resources/application-oauth.yml
           
           echo "${{ secrets.PROD_OAUTH_YML }}" > ./src/main/resources/application-oauth.yml
+        
+          touch ./src/main/resources/logback.xml
+          
+          echo "${{ secrets.LOGBACK_XML }}" > ./src/main/resources/logback.xml
 
         shell: bash
 
@@ -70,7 +74,7 @@ jobs:
           echo "docker image prune -f" >> scripts/prod-deploy.sh
           echo "docker stop official-prod-admin-server" >> scripts/prod-deploy.sh
           echo "docker rm official-prod-admin-server" >> scripts/prod-deploy.sh
-          echo "docker run -p 8080:8080 -d --restart always --name official-prod-admin-server $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> scripts/prod-deploy.sh
+          echo "docker run -p 8080:8080 -d --restart always --name official-prod-admin-server --log-driver=awslogs --log-opt awslogs-region=ap-northeast-2 --log-opt awslogs-group=official-prod-log-group --log-opt awslogs-stream=admin-log $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> scripts/prod-deploy.sh
 
       - name: upload to s3
         env:

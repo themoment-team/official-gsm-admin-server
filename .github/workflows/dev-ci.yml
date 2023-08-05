@@ -43,6 +43,14 @@ jobs:
 
         shell: bash
 
+      - name: create-xml
+        id: create-xml
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "logback.xml"
+          json: ${{ secrets.LOGBACK_XML }}
+          dir: './src/main/resources/'
+
       - name: Build with Gradle
         run : ./gradlew clean build --exclude-task test
 
