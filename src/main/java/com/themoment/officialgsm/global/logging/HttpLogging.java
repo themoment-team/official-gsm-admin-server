@@ -54,17 +54,24 @@ public class HttpLogging{
 
         UUID code = UUID.randomUUID();
 
-        logRequestInfo(request, joinPoint, code);
+        boolean isHealthCheck = logRequestInfo(request, joinPoint, code);
         ResponseEntity result = (ResponseEntity) joinPoint.proceed();
-        logResponseInfo(result, code, request);
+        if(isHealthCheck == false) {
+            logResponseInfo(result, code, request);
+        }
 
         return result;
     }
 
-    private void logRequestInfo(HttpServletRequest servletRequest, ProceedingJoinPoint joinPoint, UUID code) throws JsonProcessingException, UnsupportedEncodingException {
+    private boolean logRequestInfo(HttpServletRequest servletRequest, ProceedingJoinPoint joinPoint, UUID code) throws JsonProcessingException, UnsupportedEncodingException {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Annotation[][] parameterAnnotations = signature.getMethod().getParameterAnnotations();
         RequestInfo requestInfo = extractInfo(servletRequest);
+
+        boolean isHealthCheck = false;
+        if(requestInfo.uri().equals("/health")) {
+            return !isHealthCheck;
+        }
 
         boolean isBodyCheck = false;
 
@@ -103,6 +110,7 @@ public class HttpLogging{
             }
         }
 
+        return isHealthCheck;
     }
 
     private RequestInfo extractInfo(HttpServletRequest servletRequest) {
@@ -138,7 +146,7 @@ public class HttpLogging{
                 Ip: {}, User-Agent: {}, Access_token: {}
                 """,
                 code,
-                reqInfo.method(),  reqInfo. uri(), reqInfo.params(),
+                reqInfo.method(),  reqInfo.uri(), reqInfo.params(),
                 key, json,
                 reqInfo.ip(), reqInfo.userAgent(), reqInfo.accessToken()
         );
