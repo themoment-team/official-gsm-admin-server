@@ -27,7 +27,7 @@ public class AwsS3Util {
 
     private final AmazonS3 amazonS3;
 
-    public List<FileDto> uploadList(List<MultipartFile> multipartFiles) {
+    public List<FileDto> fileUploadProcess(List<MultipartFile> multipartFiles) {
         if(multipartFiles == null || multipartFiles.isEmpty()) {
             return Collections.emptyList();
         }
@@ -35,14 +35,13 @@ public class AwsS3Util {
         List<FileDto> fileDtoList = new ArrayList<>();
 
         for (MultipartFile file : multipartFiles) {
-            fileDtoList.add(upload(file));
+            fileDtoList.add(uploadFile(file));
         }
         return fileDtoList;
     }
 
-    private FileDto upload(MultipartFile file) {
+    private FileDto uploadFile(MultipartFile file) {
         String originalFileName = file.getOriginalFilename();
-        assert originalFileName != null;
         String fileName = createFileName(originalFileName);
 
         try(InputStream inputStream = file.getInputStream()) {
