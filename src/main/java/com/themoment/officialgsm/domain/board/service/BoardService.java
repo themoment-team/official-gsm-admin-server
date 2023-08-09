@@ -37,8 +37,8 @@ public class BoardService {
     private final PinnedPostRepository pinnedPostRepository;
     private final AwsS3Util awsS3Util;
 
-    public void addPost(AddPostRequest addPostRequest, List<MultipartFile> files) {
-        if(addPostRequest.getCategory() == Category.EVENT_GALLERY && files == null) {
+    public void addPost(AddPostRequest addPostRequest, List<MultipartFile> fileList) {
+        if(addPostRequest.getCategory() == Category.EVENT_GALLERY && fileList == null) {
             throw new CustomException("행사갤러리는 이미지가 필수입니다", HttpStatus.BAD_REQUEST);
         }
 
@@ -51,10 +51,10 @@ public class BoardService {
                 .build();
 
         postRepository.save(post);
-        saveFiles(post, files);
+        saveFiles(post, fileList);
     }
 
-    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> files) {
+    public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> fileList) {
         Post post = postRepository.findById(postSeq)
                 .orElseThrow(() -> new CustomException("게시글 수정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
 
@@ -67,7 +67,7 @@ public class BoardService {
         List<String> deleteFileUrls = modifyPostRequest.getDeleteFileUrl();
         deleteS3Files(deleteFileUrls);
 
-        saveFiles(post, files);
+        saveFiles(post, fileList);
     }
 
     public void removePost(Long postSeq) {
@@ -89,10 +89,10 @@ public class BoardService {
         pinnedPostRepository.save(pinnedPost);
     }
 
-    private void saveFiles(Post post, List<MultipartFile> files) {
-        List<FileDto> fileDtoList = awsS3Util.uploadList(files);
+    private void saveFiles(Post post, List<MultipartFile> fileList) {
+        List<FileDto> fileDtoList = awsS3Util.uploadList(fileList);
 
-        List<File> fileList = new ArrayList<>();
+        List<File> uploadedFileList = new ArrayList<>();
         for (FileDto fileDto : fileDtoList) {
             File file = File.builder()
                     .fileUrl(fileDto.getFileUrl())
@@ -101,10 +101,10 @@ public class BoardService {
                     .post(post)
                     .build();
 
-            fileList.add(file);
+            uploadedFileList.add(file);
         }
 
-        fileBulkRepository.saveAll(fileList);
+        fileBulkRepository.saveAll(uploadedFileList);
     }
 
     private void deleteS3Files(List<String> deleteFileUrlList) {
