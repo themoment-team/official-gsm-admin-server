@@ -1,14 +1,17 @@
 package com.themoment.officialgsm.service.board;
 
+import com.themoment.officialgsm.domain.auth.entity.user.Role;
 import com.themoment.officialgsm.domain.auth.entity.user.User;
 import com.themoment.officialgsm.domain.auth.repository.UserRepository;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
 import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
+import com.themoment.officialgsm.domain.board.entity.file.File;
 import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
 import com.themoment.officialgsm.domain.board.repository.FileRepository;
 import com.themoment.officialgsm.domain.board.repository.PostRepository;
 import com.themoment.officialgsm.domain.board.service.BoardService;
+import com.themoment.officialgsm.global.util.AwsS3Util;
 import com.themoment.officialgsm.global.util.UserUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -69,18 +72,21 @@ class BoardServiceTest {
 
         // given
         User user = User.builder()
+                .oauthId("1234567")
                 .userName("최장우")
-                .userId("아이디")
-                .userPwd("비밀번호")
+                .userEmail("s22018@gsm.hs.kr")
+                .role(Role.ADMIN)
                 .build();
 
         userRepository.save(user);
+        fileRepository.deleteAll();
+        postRepository.deleteAll();
 
         em.flush();
         em.clear();
 
         UsernamePasswordAuthenticationToken token
-                = new UsernamePasswordAuthenticationToken(user.getUserId(),"password");
+                = new UsernamePasswordAuthenticationToken(user.getOauthId(), null);
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(token);
 
