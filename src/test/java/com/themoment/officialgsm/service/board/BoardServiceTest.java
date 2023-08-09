@@ -16,6 +16,7 @@ import com.themoment.officialgsm.global.util.UserUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,8 @@ class BoardServiceTest {
     private UserUtil userUtil;
     @Autowired
     private BoardService boardService;
+    @Autowired
+    private AwsS3Util awsS3Util;
 
     private AddPostRequest getAddPostRequest() {
         return AddPostRequest.builder()
@@ -95,6 +98,19 @@ class BoardServiceTest {
 
         // then
         assertNotNull(currentUser);
+    }
+
+    @AfterEach
+    void clearS3() {
+
+        List<File> fileList = fileRepository.findAll();
+        if (fileList.isEmpty()) {
+            return;
+        }
+
+        List<String> fileUrlList = fileList.stream().map(File::getFileUrl).toList();
+
+        awsS3Util.deleteS3(fileUrlList);
     }
 
     private void savePost(AddPostRequest addPostRequest, MockMultipartFile file) {
