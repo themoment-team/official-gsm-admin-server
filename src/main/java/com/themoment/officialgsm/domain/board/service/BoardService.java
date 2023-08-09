@@ -107,13 +107,13 @@ public class BoardService {
         fileBulkRepository.saveAll(fileList);
     }
 
-    private void deleteS3Files(List<String> deleteFileUrls) {
-        if(deleteFileUrls.isEmpty()) {
+    private void deleteS3Files(List<String> deleteFileUrlList) {
+        if(deleteFileUrlList.isEmpty()) {
             return;
         }
 
-        awsS3Util.deleteS3(deleteFileUrls);
-        fileRepository.deleteByFileUrls(deleteFileUrls);
+        awsS3Util.deleteS3(deleteFileUrlList);
+        fileRepository.deleteByFileUrls(deleteFileUrlList);
     }
 
     private void deletePostFiles(List<File> fileList) {
