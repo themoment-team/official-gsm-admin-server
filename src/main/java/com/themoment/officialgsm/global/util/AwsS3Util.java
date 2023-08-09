@@ -42,7 +42,6 @@ public class AwsS3Util {
 
     private FileDto uploadFile(MultipartFile file) {
         String originalFileName = file.getOriginalFilename();
-        assert originalFileName != null;
         String fileName = createFileName(originalFileName);
 
         try(InputStream inputStream = file.getInputStream()) {
