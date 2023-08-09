@@ -5,7 +5,6 @@ import com.themoment.officialgsm.domain.board.dto.FileDto;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
 import com.themoment.officialgsm.domain.board.dto.request.ModifyPostRequest;
 import com.themoment.officialgsm.domain.board.entity.file.File;
-import com.themoment.officialgsm.domain.board.entity.file.FileExtension;
 import com.themoment.officialgsm.domain.board.entity.post.Category;
 import com.themoment.officialgsm.domain.board.entity.post.PinnedPost;
 import com.themoment.officialgsm.domain.board.entity.post.Post;
@@ -90,7 +89,7 @@ public class BoardService {
     }
 
     private void saveFiles(Post post, List<MultipartFile> fileList) {
-        List<FileDto> fileDtoList = awsS3Util.uploadList(fileList);
+        List<FileDto> fileDtoList = awsS3Util.fileUploadProcess(fileList);
 
         List<File> uploadedFileList = new ArrayList<>();
         for (FileDto fileDto : fileDtoList) {
