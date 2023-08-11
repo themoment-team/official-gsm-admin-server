@@ -77,9 +77,7 @@ public class BoardService {
     public void pinPost(Long postSeq) {
         Post post = findPostById(postSeq);
 
-        PinnedPost pinnedPost = PinnedPost.builder()
-                .post(post)
-                .build();
+        PinnedPost pinnedPost = new PinnedPost(post);
         pinnedPostRepository.save(pinnedPost);
     }
 
