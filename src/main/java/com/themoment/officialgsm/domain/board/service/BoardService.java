@@ -54,9 +54,7 @@ public class BoardService {
     }
 
     public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> fileList) {
-        Post post = postRepository.findById(postSeq)
-                .orElseThrow(() -> new CustomException("게시글 수정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
-
+        Post post = findPostById(postSeq);
         post.update(
                 modifyPostRequest.getPostTitle(),
                 modifyPostRequest.getPostContent(),
@@ -70,22 +68,22 @@ public class BoardService {
     }
 
     public void removePost(Long postSeq) {
-        Post post = postRepository.findById(postSeq)
-                .orElseThrow(() -> new CustomException("게시글 삭제 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
+        Post post = findPostById(postSeq);
 
         deletePostFiles(post.getFiles());
         postRepository.delete(post);
     }
 
     public void pinPost(Long postSeq) {
-        Post post = postRepository.findById(postSeq)
-                .orElseThrow(() -> new CustomException("게시글 고정 과정에서 게시글을 찾지 못하였습니다.", HttpStatus.NOT_FOUND));
+        Post post = findPostById(postSeq);
 
-        PinnedPost pinnedPost = PinnedPost.builder()
-                .post(post)
-                .build();
-
+        PinnedPost pinnedPost = new PinnedPost(post);
         pinnedPostRepository.save(pinnedPost);
+    }
+
+    private Post findPostById(Long postSeq) {
+        return postRepository.findById(postSeq)
+                .orElseThrow(() -> new CustomException("게시물이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
     }
 
     private void saveFiles(Post post, List<MultipartFile> fileList) {

@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class PinnedPost {
 
     @Id
@@ -21,4 +19,8 @@ public class PinnedPost {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_seq", nullable = false)
     private Post post;
+
+    public PinnedPost(Post post) {
+        this.post = post;
+    }
 }
