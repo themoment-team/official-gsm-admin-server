@@ -70,8 +70,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/userinfo").authenticated()
                         .requestMatchers("/api/auth/username").authenticated()
                         .requestMatchers("/api/post/**").hasAnyAuthority("ADMIN", "MASTER")
-                        .requestMatchers("/api/auth/unapproved/list").hasAuthority("ADMIN")
-                        .requestMatchers("/api/auth/approved/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/auth/unapproved/list").hasAnyAuthority("ADMIN", "MASTER")
+                        .requestMatchers("/api/auth/approved/**").hasAnyAuthority("ADMIN", "MASTER")
                         .anyRequest().permitAll();
         httpSecurity
                 .sessionManagement()
