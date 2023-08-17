@@ -1,5 +1,6 @@
 package com.themoment.officialgsm.domain.board.service;
 
+import com.themoment.officialgsm.domain.auth.entity.user.Role;
 import com.themoment.officialgsm.domain.auth.entity.user.User;
 import com.themoment.officialgsm.domain.board.dto.FileDto;
 import com.themoment.officialgsm.domain.board.dto.request.AddPostRequest;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -55,6 +57,8 @@ public class BoardService {
 
     public void modifyPost(Long postSeq, ModifyPostRequest modifyPostRequest, List<MultipartFile> fileList) {
         Post post = findPostById(postSeq);
+        checkPermission(currentUserUtil.getCurrentUser(), post);
+
         post.update(
                 modifyPostRequest.getPostTitle(),
                 modifyPostRequest.getPostContent(),
@@ -69,9 +73,16 @@ public class BoardService {
 
     public void removePost(Long postSeq) {
         Post post = findPostById(postSeq);
+        checkPermission(currentUserUtil.getCurrentUser(), post);
 
         deletePostFiles(post.getFiles());
         postRepository.delete(post);
+    }
+
+    private void checkPermission(User user, Post post) {
+        if (user.getRole().equals(Role.ADMIN) && !Objects.equals(user.getOauthId(), post.getUser().getOauthId())) {
+            throw new CustomException("권한이 없는 사용자입니다.", HttpStatus.FORBIDDEN);
+        }
     }
 
     public void pinPost(Long postSeq) {

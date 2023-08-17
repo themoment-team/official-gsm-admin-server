@@ -69,7 +69,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/logout").permitAll()
                         .requestMatchers("/api/auth/userinfo").authenticated()
                         .requestMatchers("/api/auth/username").authenticated()
-                        .requestMatchers("/api/post/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/post/**").hasAnyAuthority("ADMIN", "MASTER")
                         .requestMatchers("/api/auth/unapproved/list").hasAuthority("ADMIN")
                         .requestMatchers("/api/auth/approved/**").hasAuthority("ADMIN")
                         .anyRequest().permitAll();
