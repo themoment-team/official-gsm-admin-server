@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AddPopupRequest {
 
+    private String title;
     private String link;
-
     private LocalDateTime expirationDateTime;
 }
