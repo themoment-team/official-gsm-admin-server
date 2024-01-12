@@ -23,9 +23,10 @@ public class PopupService {
     public void addPopup(AddPopupRequest addPopupRequest, MultipartFile image) {
         FileDto fileDto = awsS3Util.fileUploadProcess(List.of(image)).get(0);
         Popup popup = Popup.builder()
-                .imageUrl(fileDto.getFileUrl())
-                .link(addPopupRequest.getLink())
-                .expirationDateTime(addPopupRequest.getExpirationDateTime())
+                .popupImageUrl(fileDto.getFileUrl())
+                .popupTitle(addPopupRequest.getTitle())
+                .popupLink(addPopupRequest.getLink())
+                .popupExpirationDateTime(addPopupRequest.getExpirationDateTime())
                 .build();
 
         popupRepository.save(popup);

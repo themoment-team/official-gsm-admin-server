@@ -20,12 +20,15 @@ public class Popup {
     @Column(name = "popup_seq")
     private Long popupSeq;
 
-    @Column(name = "image_url", nullable = false)
-    private String imageUrl;
+    @Column(name = "popup_image_url", nullable = false)
+    private String popupImageUrl;
 
-    @Column(name = "link", nullable = true)
-    private String link;
+    @Column(name = "popup_title", nullable = false)
+    private String popupTitle;
 
-    @Column(name = "expiration_date_time", nullable = false)
-    private LocalDateTime expirationDateTime;
+    @Column(name = "popup_link", nullable = true)
+    private String popupLink;
+
+    @Column(name = "popup_expiration_date_time", nullable = false)
+    private LocalDateTime popupExpirationDateTime;
 }
